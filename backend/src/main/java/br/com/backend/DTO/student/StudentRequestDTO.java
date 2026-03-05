@@ -1,4 +1,4 @@
-package br.com.backend.DTO;
+package br.com.backend.DTO.student;
 
 import br.com.backend.domain.Grade;
 import jakarta.validation.constraints.Email;

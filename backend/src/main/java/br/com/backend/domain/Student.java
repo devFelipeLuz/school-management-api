@@ -1,5 +1,6 @@
 package br.com.backend.domain;
 
+import br.com.backend.domain.enums.EnrollmentStatus;
 import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;

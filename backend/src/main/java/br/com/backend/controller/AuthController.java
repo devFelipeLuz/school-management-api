@@ -1,9 +1,12 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.AuthRequest;
-import br.com.backend.DTO.AuthResponse;
+import br.com.backend.DTO.ForgotPasswordRequest;
+import br.com.backend.DTO.ResetPasswordRequest;
+import br.com.backend.DTO.authorization.AuthRequest;
+import br.com.backend.DTO.authorization.AuthResponse;
 import br.com.backend.DTO.RefreshRequest;
 import br.com.backend.service.AuthService;
+import br.com.backend.service.PasswordResetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final PasswordResetService passwordResetService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService,  PasswordResetService passwordResetService) {
         this.authService = authService;
+        this.passwordResetService = passwordResetService;
     }
 
     @PostMapping("/login")
@@ -34,5 +39,17 @@ public class AuthController {
     public ResponseEntity<Void> logout(@RequestBody RefreshRequest request) {
         authService.logout(request.refreshToken());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        passwordResetService.requestPasswordReset(request.email());
+        return ResponseEntity.ok("If the account exists, you will receive an email");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        passwordResetService.resetPassword(request.token(), request.newPassword());
+        return ResponseEntity.ok("Password successfully reset");
     }
 }

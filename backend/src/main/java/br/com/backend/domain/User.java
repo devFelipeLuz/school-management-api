@@ -1,17 +1,16 @@
 package br.com.backend.domain;
 
+import br.com.backend.domain.enums.Role;
 import br.com.backend.exception.BusinessException;
-import br.com.backend.security.RefreshToken;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.*;
 
 @Getter
@@ -33,10 +32,10 @@ public class User implements UserDetails {
 
     private boolean enabled;
 
-    private LocalDate deletedAt;
+    private Instant deletedAt;
 
     @JsonIgnore
-    private LocalDate createdAt;
+    private Instant createdAt;
 
     public User(String username, String password, Role role) {
         this.username = username;
@@ -44,7 +43,7 @@ public class User implements UserDetails {
         this.role = role;
         this.enabled = true;
         this.deletedAt = null;
-        this.createdAt = LocalDate.now();
+        this.createdAt = Instant.now();
     }
 
     public User(String username, String password) {
@@ -53,7 +52,7 @@ public class User implements UserDetails {
         this.role = null;
         this.enabled = true;
         this.deletedAt = null;
-        this.createdAt = LocalDate.now();
+        this.createdAt = Instant.now();
     }
 
     @Override
@@ -114,6 +113,6 @@ public class User implements UserDetails {
 
     public void deactivate() {
         this.enabled = false;
-        this.deletedAt = LocalDate.now();
+        this.deletedAt = Instant.now();
     }
 }

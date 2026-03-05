@@ -1,4 +1,4 @@
-package br.com.backend.DTO;
+package br.com.backend.DTO.enrollment;
 
 
 import br.com.backend.domain.Grade;

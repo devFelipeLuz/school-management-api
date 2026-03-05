@@ -14,7 +14,7 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final String SECRET = "sua-chave-super-secreta-com-no-minimo-32-caracteres";
+    private final String SECRET = "minha-chave-super-secreta-com-no-minimo-32-caracteres";
 
     public String generateToken(User user) {
         SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());

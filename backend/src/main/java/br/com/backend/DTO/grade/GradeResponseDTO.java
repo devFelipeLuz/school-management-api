@@ -1,4 +1,4 @@
-package br.com.backend.DTO;
+package br.com.backend.DTO.grade;
 
 import lombok.Getter;
 

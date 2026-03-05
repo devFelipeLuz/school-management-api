@@ -1,4 +1,4 @@
-package br.com.backend.domain;
+package br.com.backend.domain.enums;
 
 public enum Role {
     ADMIN,

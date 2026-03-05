@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.GradeRequestDTO;
-import br.com.backend.DTO.GradeResponseDTO;
+import br.com.backend.DTO.grade.GradeRequestDTO;
+import br.com.backend.DTO.grade.GradeResponseDTO;
 import br.com.backend.service.GradeService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;

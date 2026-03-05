@@ -1,53 +1,52 @@
-package br.com.backend.security;
+package br.com.backend.domain;
 
-import br.com.backend.domain.User;
 import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
 @Entity
-public class RefreshToken {
+@Table(name = "password_reset_tokens")
+public class PasswordResetToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true, length = 64)
+    @Column(nullable = false, unique = true)
     private String tokenHash;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @Column(nullable = false)
     private Instant createdAt;
 
+    @Column(nullable = false)
     private Instant expiresAt;
 
-    @Setter
-    private boolean revoked;
+    private boolean used;
 
-    public RefreshToken(String tokenHash, User user, Instant expiresAt) {
+    public PasswordResetToken(String tokenHash, User user, Instant expiresAt) {
         this.tokenHash = tokenHash;
         this.user = user;
         this.createdAt = Instant.now();
         this.expiresAt = expiresAt;
-        this.revoked = false;
+        this.used = false;
     }
 
     public void validateToken() {
-        if (this.revoked) {
-            throw new BusinessException("Token has been revoked");
+        if (this.used) {
+            throw new BusinessException("Password reset token is already used");
         }
 
         if (this.getExpiresAt().isBefore(Instant.now())) {
-            throw new BusinessException("Refresh token is expired");
+            throw new BusinessException("Password reset token expired");
         }
 
         if (this.getUser().getDeletedAt() != null) {
@@ -55,7 +54,7 @@ public class RefreshToken {
         }
     }
 
-    public void revoke() {
-        this.revoked = true;
+    public void markAsUsed() {
+        this.used = true;
     }
 }

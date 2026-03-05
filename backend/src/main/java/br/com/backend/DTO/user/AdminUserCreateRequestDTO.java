@@ -1,6 +1,6 @@
-package br.com.backend.DTO;
+package br.com.backend.DTO.user;
 
-import br.com.backend.domain.Role;
+import br.com.backend.domain.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;

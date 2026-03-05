@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.AdminUserCreateRequestDTO;
-import br.com.backend.DTO.UserResponseDTO;
+import br.com.backend.DTO.user.AdminUserCreateRequestDTO;
+import br.com.backend.DTO.user.UserResponseDTO;
 import br.com.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

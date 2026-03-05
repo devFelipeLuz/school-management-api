@@ -1,11 +1,10 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.AuthRequest;
-import br.com.backend.DTO.AuthResponse;
+import br.com.backend.DTO.authorization.AuthRequest;
+import br.com.backend.DTO.authorization.AuthResponse;
 import br.com.backend.domain.User;
+import br.com.backend.domain.RefreshToken;
 import br.com.backend.security.JwtService;
-import br.com.backend.security.RefreshToken;
-import br.com.backend.security.RefreshTokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,6 +37,8 @@ public class AuthService {
 
         User user = (User) authentication.getPrincipal();
 
+        refreshTokenService.enforceActiveTokenLimit(user);
+
         String accessToken = jwtService.generateToken(user);
         String refreshToken = refreshTokenService.createRefreshToken(user);
 
@@ -47,10 +48,9 @@ public class AuthService {
     public AuthResponse refresh(String rawRefreshToken) {
 
         RefreshToken oldToken = refreshTokenService.getValidRefreshTokenOrThrow(rawRefreshToken);
+        oldToken.revoke();
 
         User user = oldToken.getUser();
-
-        oldToken.revoke();
 
         String newAccessToken = jwtService.generateToken(user);
         String newRefreshToken = refreshTokenService.createRefreshToken(user);

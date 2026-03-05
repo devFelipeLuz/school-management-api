@@ -1,17 +1,17 @@
 package br.com.backend.util;
 
-import br.com.backend.DTO.EnrollmentResponseDTO;
-import br.com.backend.DTO.GradeResponseDTO;
-import br.com.backend.DTO.StudentResponseDTO;
-import br.com.backend.DTO.UserResponseDTO;
+import br.com.backend.DTO.enrollment.EnrollmentResponseDTO;
+import br.com.backend.DTO.grade.GradeResponseDTO;
+import br.com.backend.DTO.student.StudentResponseDTO;
+import br.com.backend.DTO.user.UserResponseDTO;
 import br.com.backend.domain.Enrollment;
 import br.com.backend.domain.Grade;
 import br.com.backend.domain.Student;
 import br.com.backend.domain.User;
 
-public final class FunctionsUtils {
+public final class toResponseDTO {
 
-    private FunctionsUtils() {
+    private toResponseDTO() {
         throw new UnsupportedOperationException("Classe de utilitários");
     }
 
@@ -46,7 +46,6 @@ public final class FunctionsUtils {
                 student.getId(),
                 student.getName(),
                 student.getEmail(),
-                student.getAge(),
                 gradeName
         );
     }

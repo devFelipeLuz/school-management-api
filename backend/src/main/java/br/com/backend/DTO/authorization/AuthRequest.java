@@ -1,4 +1,4 @@
-package br.com.backend.DTO;
+package br.com.backend.DTO.authorization;
 
 public record AuthRequest(
         String username,

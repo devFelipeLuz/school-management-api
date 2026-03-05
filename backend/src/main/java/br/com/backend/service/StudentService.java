@@ -1,12 +1,12 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.StudentRequestDTO;
-import br.com.backend.DTO.StudentResponseDTO;
+import br.com.backend.DTO.student.StudentRequestDTO;
+import br.com.backend.DTO.student.StudentResponseDTO;
 import br.com.backend.domain.Student;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.StudentRepository;
-import br.com.backend.util.FunctionsUtils;
+import br.com.backend.util.toResponseDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,25 +30,25 @@ public class StudentService {
 
         repository.save(student);
 
-        return FunctionsUtils.toStudentResponseDTO(student);
+        return toResponseDTO.toStudentResponseDTO(student);
     }
 
     public List<StudentResponseDTO> findAll() {
         return repository.findAll()
                 .stream()
-                .map(FunctionsUtils::toStudentResponseDTO)
+                .map(toResponseDTO::toStudentResponseDTO)
                 .toList();
     }
 
     public List<StudentResponseDTO> findAllByActive() {
         return repository.findAllByActiveTrue().stream()
-                .map(FunctionsUtils::toStudentResponseDTO)
+                .map(toResponseDTO::toStudentResponseDTO)
                 .toList();
     }
 
     public StudentResponseDTO findById(UUID id) {
         Student student = findActiveStudentById(id);
-        return FunctionsUtils.toStudentResponseDTO(student);
+        return toResponseDTO.toStudentResponseDTO(student);
     }
 
     public StudentResponseDTO update(UUID id, StudentRequestDTO dto) {
@@ -61,7 +61,7 @@ public class StudentService {
                 );
 
         repository.save(student);
-        return FunctionsUtils.toStudentResponseDTO(student);
+        return toResponseDTO.toStudentResponseDTO(student);
     }
 
     public void delete(UUID id) {

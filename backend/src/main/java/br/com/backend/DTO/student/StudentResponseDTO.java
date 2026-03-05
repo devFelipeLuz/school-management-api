@@ -1,4 +1,4 @@
-package br.com.backend.DTO;
+package br.com.backend.DTO.student;
 
 import lombok.Getter;
 
@@ -17,7 +17,7 @@ public class StudentResponseDTO {
 
     private String grade;
 
-    public StudentResponseDTO(UUID id, String name, String email, Integer age, String grade) {
+    public StudentResponseDTO(UUID id, String name, String email, String grade) {
         this.id = id;
         this.name = name;
         this.email = email;

@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.StudentRequestDTO;
-import br.com.backend.DTO.StudentResponseDTO;
+import br.com.backend.DTO.student.StudentRequestDTO;
+import br.com.backend.DTO.student.StudentResponseDTO;
 import br.com.backend.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

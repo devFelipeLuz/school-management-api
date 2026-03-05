@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.EnrollmentRequestDTO;
-import br.com.backend.DTO.EnrollmentResponseDTO;
+import br.com.backend.DTO.enrollment.EnrollmentRequestDTO;
+import br.com.backend.DTO.enrollment.EnrollmentResponseDTO;
 import br.com.backend.service.EnrollmentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
