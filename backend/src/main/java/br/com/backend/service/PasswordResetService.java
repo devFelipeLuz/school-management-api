@@ -1,6 +1,6 @@
 package br.com.backend.service;
 
-import br.com.backend.domain.PasswordResetToken;
+import br.com.backend.security.PasswordResetToken;
 import br.com.backend.domain.User;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.PasswordResetTokenRepository;
@@ -54,11 +54,9 @@ public class PasswordResetService {
         token.validateToken();
 
         User user = token.getUser();
-
         user.updatePassword(passwordEncoder.encode(newPassword));
 
-        repository.markAllAsUsedByUser(user);
-
+        repository.deleteAllByUser(user);
         refreshTokenService.revokeAllUserRefreshTokens(user);
     }
 }

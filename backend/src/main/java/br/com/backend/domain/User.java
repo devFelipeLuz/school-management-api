@@ -77,7 +77,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.enabled && this.deletedAt != null;
+        return this.enabled && this.deletedAt == null;
     }
 
     public static User createGlobalUser(

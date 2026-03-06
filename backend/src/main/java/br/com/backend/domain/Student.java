@@ -31,7 +31,7 @@ public class Student {
     private List<Enrollment> enrollments;
 
     @Column(name = "ACTIVE")
-    private Boolean active;
+    private boolean active;
 
     public Student(String name, String email, Integer age) {
         this.name = name;
@@ -40,13 +40,9 @@ public class Student {
         this.active = true;
     }
 
-    public void saveData(String name, String email, Integer age) {
+    public void saveData(String name, String email) {
         if (!this.active) {
             throw new BusinessException("Aluno inativo");
-        }
-
-        if (age < 1) {
-            throw new IllegalArgumentException("Idade inválida");
         }
 
         this.name = name;

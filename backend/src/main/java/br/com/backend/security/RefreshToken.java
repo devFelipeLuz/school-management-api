@@ -1,5 +1,6 @@
-package br.com.backend.domain;
+package br.com.backend.security;
 
+import br.com.backend.domain.User;
 import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;

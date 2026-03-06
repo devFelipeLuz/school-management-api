@@ -3,7 +3,7 @@ package br.com.backend.service;
 import br.com.backend.DTO.authorization.AuthRequest;
 import br.com.backend.DTO.authorization.AuthResponse;
 import br.com.backend.domain.User;
-import br.com.backend.domain.RefreshToken;
+import br.com.backend.security.RefreshToken;
 import br.com.backend.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

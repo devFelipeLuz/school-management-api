@@ -56,9 +56,7 @@ public class StudentService {
 
         student.saveData(
                 dto.getName(),
-                dto.getEmail(),
-                dto.getAge()
-                );
+                dto.getEmail());
 
         repository.save(student);
         return toResponseDTO.toStudentResponseDTO(student);
@@ -73,7 +71,7 @@ public class StudentService {
         Student student = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 
-        if (!student.getActive()) {
+        if (!student.isActive()) {
             throw new BusinessException("Aluno inativo");
         }
 

@@ -3,7 +3,7 @@ package br.com.backend.service;
 import br.com.backend.domain.User;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.RefreshTokenRepository;
-import br.com.backend.domain.RefreshToken;
+import br.com.backend.security.RefreshToken;
 import br.com.backend.security.TokenGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

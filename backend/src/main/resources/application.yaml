@@ -20,3 +20,7 @@ spring:
 
 server:
   port: 8080
+
+jwt:
+  secret: ${JWT_SECRET:minha-chave-super-chata-com-no-minimo-32-caracteres}
+  expiration: 3600

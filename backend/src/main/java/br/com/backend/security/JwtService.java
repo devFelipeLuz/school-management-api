@@ -3,6 +3,7 @@ package br.com.backend.security;
 import br.com.backend.domain.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,13 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final String SECRET = "minha-chave-super-secreta-com-no-minimo-32-caracteres";
+    private final SecretKey key;
+
+    public JwtService(@Value("${jwt.secret}") String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
 
     public String generateToken(User user) {
-        SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
         Instant now = Instant.now();
 
@@ -31,7 +35,6 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
         return Jwts.parser()
                 .verifyWith(key)
@@ -43,7 +46,6 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String username = extractUsername(token);
-        userDetails.isEnabled();
-        return username.equals(userDetails.getUsername());
+        return username.equals(userDetails.getUsername()) && userDetails.isEnabled();
     }
 }
