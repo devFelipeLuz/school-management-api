@@ -6,10 +6,11 @@ import br.com.backend.domain.Student;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.StudentRepository;
-import br.com.backend.util.toResponseDTO;
+import br.com.backend.util.ToResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 
@@ -30,25 +31,22 @@ public class StudentService {
 
         repository.save(student);
 
-        return toResponseDTO.toStudentResponseDTO(student);
+        return ToResponseDTO.toStudentResponseDTO(student);
     }
 
-    public List<StudentResponseDTO> findAll() {
-        return repository.findAll()
-                .stream()
-                .map(toResponseDTO::toStudentResponseDTO)
-                .toList();
+    public Page<StudentResponseDTO> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(ToResponseDTO::toStudentResponseDTO);
     }
 
-    public List<StudentResponseDTO> findAllByActive() {
-        return repository.findAllByActiveTrue().stream()
-                .map(toResponseDTO::toStudentResponseDTO)
-                .toList();
+    public Page<StudentResponseDTO> findAllByActive(Pageable pageable) {
+        return repository.findByActiveTrue(pageable)
+                .map(ToResponseDTO::toStudentResponseDTO);
     }
 
     public StudentResponseDTO findById(UUID id) {
         Student student = findActiveStudentById(id);
-        return toResponseDTO.toStudentResponseDTO(student);
+        return ToResponseDTO.toStudentResponseDTO(student);
     }
 
     public StudentResponseDTO update(UUID id, StudentRequestDTO dto) {
@@ -59,7 +57,7 @@ public class StudentService {
                 dto.getEmail());
 
         repository.save(student);
-        return toResponseDTO.toStudentResponseDTO(student);
+        return ToResponseDTO.toStudentResponseDTO(student);
     }
 
     public void delete(UUID id) {

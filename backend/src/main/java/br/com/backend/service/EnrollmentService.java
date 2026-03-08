@@ -11,11 +11,12 @@ import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.EnorllmentRepository;
 import br.com.backend.repository.GradeRepository;
 import br.com.backend.repository.StudentRepository;
-import br.com.backend.util.toResponseDTO;
+import br.com.backend.util.ToResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -55,24 +56,22 @@ public class EnrollmentService {
 
         repository.save(enrollment);
 
-        return toResponseDTO.enrollmentToResponseDTO(enrollment);
+        return ToResponseDTO.toEnrollmentResponseDTO(enrollment);
     }
 
-    public List<EnrollmentResponseDTO> findAll() {
-        return repository.findAll().stream()
-                .map(toResponseDTO::enrollmentToResponseDTO)
-                .toList();
+    public Page<EnrollmentResponseDTO> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(ToResponseDTO::toEnrollmentResponseDTO);
     }
 
-    public List<EnrollmentResponseDTO> findAllByStatusActive() {
-        return repository.findAllByStatusActive().stream()
-                .map(toResponseDTO::enrollmentToResponseDTO)
-                .toList();
+    public Page<EnrollmentResponseDTO> findAllByStatusActive(Pageable pageable) {
+        return repository.findByStatusActive(pageable)
+                .map(ToResponseDTO::toEnrollmentResponseDTO);
     }
 
     public EnrollmentResponseDTO findById(UUID id) {
         Enrollment enrollment = findActiveEnrollment(id);
-        return toResponseDTO.enrollmentToResponseDTO(enrollment);
+        return ToResponseDTO.toEnrollmentResponseDTO(enrollment);
     }
 
     public void cancel(UUID id) {

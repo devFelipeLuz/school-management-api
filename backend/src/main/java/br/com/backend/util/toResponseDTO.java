@@ -9,9 +9,9 @@ import br.com.backend.domain.Grade;
 import br.com.backend.domain.Student;
 import br.com.backend.domain.User;
 
-public final class toResponseDTO {
+public final class ToResponseDTO {
 
-    private toResponseDTO() {
+    private ToResponseDTO() {
         throw new UnsupportedOperationException("Classe de utilitários");
     }
 
@@ -23,7 +23,7 @@ public final class toResponseDTO {
         );
     }
 
-    public static EnrollmentResponseDTO enrollmentToResponseDTO(Enrollment enrollment) {
+    public static EnrollmentResponseDTO toEnrollmentResponseDTO(Enrollment enrollment) {
         return new EnrollmentResponseDTO(
                 enrollment.getId(),
                 enrollment.getGrade(),

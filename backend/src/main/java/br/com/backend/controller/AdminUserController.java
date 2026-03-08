@@ -4,10 +4,13 @@ import br.com.backend.DTO.user.AdminUserCreateRequestDTO;
 import br.com.backend.DTO.user.UserResponseDTO;
 import br.com.backend.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,13 +29,18 @@ public class AdminUserController {
     }
 
     @GetMapping
-    public List<UserResponseDTO> findAll() {
-        return service.findAll();
+    public Page<UserResponseDTO> findAll(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
+            Pageable pageable) {
+        return service.findAll(pageable);
     }
 
     @GetMapping
-    public List<UserResponseDTO> findAllEnabled() {
-        return service.findAllEnabled();
+    public Page<UserResponseDTO> findAllEnabled(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
+            Pageable pageable
+    ) {
+        return service.findAllEnabled(pageable);
     }
 
     @GetMapping("/{id}")

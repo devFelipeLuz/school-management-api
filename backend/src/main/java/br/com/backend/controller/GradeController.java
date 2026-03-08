@@ -4,9 +4,12 @@ import br.com.backend.DTO.grade.GradeRequestDTO;
 import br.com.backend.DTO.grade.GradeResponseDTO;
 import br.com.backend.service.GradeService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,8 +28,10 @@ public class GradeController {
     }
 
     @GetMapping
-    public List<GradeResponseDTO> findAll() {
-        return service.findAll();
+    public Page<GradeResponseDTO> findAll(
+            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
+            Pageable pageable) {
+        return service.findAll(pageable);
     }
 
     @GetMapping("/{id}")

@@ -1,9 +1,12 @@
 package br.com.backend.repository;
 
 import br.com.backend.domain.Grade;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
 public interface GradeRepository extends JpaRepository<Grade, UUID> {
+    Page<Grade> findAll(Pageable pageable);
 }

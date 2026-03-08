@@ -5,10 +5,11 @@ import br.com.backend.DTO.grade.GradeResponseDTO;
 import br.com.backend.domain.Grade;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.GradeRepository;
-import br.com.backend.util.toResponseDTO;
+import br.com.backend.util.ToResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,19 +26,18 @@ public class GradeService {
                 dto.getName()
         );
         repository.save(grade);
-        return toResponseDTO.toGradeResponseDTO(grade);
+        return ToResponseDTO.toGradeResponseDTO(grade);
     }
 
-    public List<GradeResponseDTO> findAll() {
-        return repository.findAll().stream()
-                .map(toResponseDTO::toGradeResponseDTO)
-                .toList();
+    public Page<GradeResponseDTO> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(ToResponseDTO::toGradeResponseDTO);
     }
 
     public GradeResponseDTO findById(UUID id) {
         Grade grade = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Grade não encontrada"));
 
-        return toResponseDTO.toGradeResponseDTO(grade);
+        return ToResponseDTO.toGradeResponseDTO(grade);
     }
 }

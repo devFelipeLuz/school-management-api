@@ -4,10 +4,13 @@ import br.com.backend.DTO.student.StudentRequestDTO;
 import br.com.backend.DTO.student.StudentResponseDTO;
 import br.com.backend.service.StudentService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -31,8 +34,17 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<StudentResponseDTO> findAll() {
-        return service.findAll();
+    public Page<StudentResponseDTO> findAll(
+            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
+            Pageable pageable) {
+        return service.findAll(pageable);
+    }
+
+    @GetMapping
+    public Page<StudentResponseDTO> findAllByActive(
+            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
+            Pageable pageable) {
+        return service.findAllByActive(pageable);
     }
 
     @PutMapping("/{id}")
