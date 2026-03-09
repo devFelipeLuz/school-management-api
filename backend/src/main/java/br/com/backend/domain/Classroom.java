@@ -4,34 +4,43 @@ import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Getter
 @NoArgsConstructor
+@Getter
 @Entity
-@Table(name = "grade")
-public class Grade {
+public class Classroom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "GRADE_NAME")
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "grade")
-    private List<Enrollment> enrollments = new ArrayList<>();
+    @Column(name = "classroom_capacity")
+    private int maxCapacity;
 
-    @Column(name = "GRADE_CAPACITY")
-    private Integer maxCapacity = 25;
+    @ManyToOne
+    @JoinColumn(name = "school_year_id")
+    private SchoolYear schoolYear;
 
-    private Integer activeEnrollmentsCount;
+    @Column(name = "active_enrollments")
+    private int activeEnrollmentsCount;
 
-    public Grade(String name) {
+    @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
+    private List<Enrollment> enrollments;
+
+    public Classroom(String name, SchoolYear schoolYear) {
         this.name = name;
+        this.maxCapacity = 25;
+        this.schoolYear = schoolYear;
+        this.activeEnrollmentsCount = 0;
+        this.enrollments = new ArrayList<>();
     }
 
     public void validateCapacity() {
@@ -41,7 +50,9 @@ public class Grade {
     }
 
     public void addEnrollment(Enrollment enrollment) {
+        validateCapacity();
         this.enrollments.add(enrollment);
+        increaseActiveEnrollmentsCount();
     }
 
     public void increaseActiveEnrollmentsCount() {
@@ -63,5 +74,9 @@ public class Grade {
     public void cancelEnrollment(Enrollment enrollment) {
         enrollment.cancel();
         this.decreaseActiveEnrollmentsCount();
+    }
+
+    public void changeCapacity(int newCapacity) {
+        this.maxCapacity = newCapacity;
     }
 }

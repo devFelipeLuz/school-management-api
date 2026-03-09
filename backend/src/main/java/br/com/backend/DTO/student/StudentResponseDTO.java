@@ -15,13 +15,13 @@ public class StudentResponseDTO {
 
     private Integer age;
 
-    private String grade;
+    private String classroom;
 
-    public StudentResponseDTO(UUID id, String name, String email, String grade) {
+    public StudentResponseDTO(UUID id, String name, String email, String classroom) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.age = age;
-        this.grade = grade;
+        this.classroom = classroom;
     }
 }

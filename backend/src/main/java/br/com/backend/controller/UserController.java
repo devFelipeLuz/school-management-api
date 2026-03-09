@@ -1,6 +1,6 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.user.AdminUserCreateRequestDTO;
+import br.com.backend.DTO.user.UserCreateRequestDTO;
 import br.com.backend.DTO.user.UserResponseDTO;
 import br.com.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,18 +16,18 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/admin/users")
-public class AdminUserController {
+public class UserController {
 
     private UserService service;
 
-    public AdminUserController(UserService service) {
+    public UserController(UserService service) {
         this.service = service;
     }
 
     @Operation(summary = "Registra um usuário admin")
     @PostMapping
-    public UserResponseDTO register(@Valid @RequestBody AdminUserCreateRequestDTO dto) {
-        return service.createAdminUser(dto);
+    public UserResponseDTO register(@Valid @RequestBody UserCreateRequestDTO dto) {
+        return service.create(dto);
     }
 
     @Operation(summary = "Busca todos os usuários e retorna em páginas")
@@ -55,16 +55,16 @@ public class AdminUserController {
 
     @Operation(summary = "Atualiza o username de um usuário encontrado por ID")
     @PutMapping("/{id}")
-    public UserResponseDTO updateAdminUserUsername(@PathVariable UUID id,
-                                                   @Valid @RequestBody AdminUserCreateRequestDTO dto) {
-        return service.updateAdminUsername(id, dto);
+    public UserResponseDTO updateUsername(@PathVariable UUID id,
+                                          @Valid @RequestBody UserCreateRequestDTO dto) {
+        return service.updateEmail(id, dto);
     }
 
     @Operation(summary = "Atualiza um password de um usuário encontrado por ID")
     @PutMapping("/{id}")
-    public UserResponseDTO updateAdminUserPassword(@PathVariable UUID id,
-                                                   @Valid @RequestBody AdminUserCreateRequestDTO dto){
-        return service.updateAdminUserPassword(id, dto);
+    public UserResponseDTO updatePassword(@PathVariable UUID id,
+                                          @Valid @RequestBody UserCreateRequestDTO dto){
+        return service.updatePassword(id, dto);
     }
 
     @Operation(summary = "Deleta um usuário encontrado por ID")

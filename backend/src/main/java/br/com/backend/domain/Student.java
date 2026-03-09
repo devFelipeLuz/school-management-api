@@ -5,6 +5,7 @@ import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,32 +22,33 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "STUDENT_NAME")
+    @Column(name = "student_name")
     private String name;
-
-    @Column(name = "STUDENT_EMAIL")
-    private String email;
 
     @OneToMany(mappedBy = "student")
     private List<Enrollment> enrollments;
 
-    @Column(name = "ACTIVE")
+    @Column(name = "active")
     private boolean active;
 
-    public Student(String name, String email, Integer age) {
+    @Setter
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
+    public Student(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Student name is null or blank");
+        }
+
         this.name = name;
-        this.email = email;
         this.enrollments = new ArrayList<>();
         this.active = true;
     }
 
-    public void saveData(String name, String email) {
-        if (!this.active) {
-            throw new BusinessException("Aluno inativo");
-        }
-
+    public void updateData(String name) {
+        ensureActive();
         this.name = name;
-        this.email = email;
     }
 
     public void deactivate() {
@@ -59,10 +61,7 @@ public class Student {
     }
 
     public void validateCanEnroll() {
-        if (!this.active) {
-            throw new BusinessException("Aluno inativo");
-        }
-
+        ensureActive();
         if (hasActiveEnrollment()) {
             throw new BusinessException("Aluno já possui matrícula ativa");
         }
@@ -76,5 +75,11 @@ public class Student {
         return this.enrollments.stream()
                 .filter(e -> e.getStatus() == EnrollmentStatus.ACTIVE)
                 .findFirst();
+    }
+
+    public void ensureActive() {
+        if (!this.active) {
+            throw new BusinessException("Aluno inativo");
+        }
     }
 }

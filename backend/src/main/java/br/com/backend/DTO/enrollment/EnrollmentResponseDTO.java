@@ -1,7 +1,8 @@
 package br.com.backend.DTO.enrollment;
 
 
-import br.com.backend.domain.Grade;
+import br.com.backend.domain.Classroom;
+import br.com.backend.domain.SchoolYear;
 import br.com.backend.domain.Student;
 import lombok.Getter;
 
@@ -12,13 +13,16 @@ public class EnrollmentResponseDTO {
 
     private UUID id;
 
-    private Grade grade;
-
     private Student student;
 
-    public EnrollmentResponseDTO(UUID id, Grade grade, Student student) {
+    private Classroom classroom;
+
+    private SchoolYear schoolYear;
+
+    public EnrollmentResponseDTO(UUID id, Student student, Classroom classroom, SchoolYear schoolYear) {
         this.id = id;
-        this.grade = grade;
         this.student = student;
+        this.classroom = classroom;
+        this.schoolYear = schoolYear;
     }
 }

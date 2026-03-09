@@ -23,8 +23,10 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String username;
+    @Column(unique = true, nullable = false)
+    private String email;
 
+    @Column(unique = true, nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -32,24 +34,28 @@ public class User implements UserDetails {
 
     private boolean enabled;
 
+    @Column(nullable = false, updatable = false)
     private Instant deletedAt;
 
     @JsonIgnore
     private Instant createdAt;
 
-    public User(String username, String password, Role role) {
-        this.username = username;
+    public User(String email, String password, Role role) {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email is null or blank");
+        }
+
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("Password is null or blank");
+        }
+
+        if (role == null) {
+            throw new IllegalArgumentException("Role is null or blank");
+        }
+
+        this.email = email;
         this.password = password;
         this.role = role;
-        this.enabled = true;
-        this.deletedAt = null;
-        this.createdAt = Instant.now();
-    }
-
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-        this.role = null;
         this.enabled = true;
         this.deletedAt = null;
         this.createdAt = Instant.now();
@@ -58,6 +64,11 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getAuthority()));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
     @Override
@@ -80,39 +91,32 @@ public class User implements UserDetails {
         return this.enabled && this.deletedAt == null;
     }
 
-    public static User createGlobalUser(
-            String username,
-            String encodedPassword) {
-
-        return new User(username, encodedPassword);
-    }
-
-    public static User createAdminUser(
-            String username,
+    public static User createUser(
+            String email,
             String encodedPassword,
             Role role) {
 
-        return new User(username, encodedPassword, role);
+        return new User(email, encodedPassword, role);
     }
 
-    public void updateUsername(String username) {
-        if (!this.enabled) {
-            throw new BusinessException("Usuário desabilitado");
-        }
-
-        this.username = username;
+    public void updateEmail(String email) {
+        ensureActive();
+        this.email = email;
     }
 
     public void updatePassword(String password) {
-        if (!this.enabled) {
-            throw new BusinessException("Usuário desabilitado");
-        }
-
+        ensureActive();
         this.password = password;
     }
 
     public void deactivate() {
         this.enabled = false;
         this.deletedAt = Instant.now();
+    }
+
+    public void ensureActive() {
+        if (!this.enabled) {
+            throw new BusinessException("Usuário desabilitado");
+        }
     }
 }

@@ -1,17 +1,17 @@
-package br.com.backend.DTO.grade;
+package br.com.backend.DTO.classroom;
 
 import lombok.Getter;
 
 import java.util.UUID;
 
 @Getter
-public class GradeResponseDTO {
+public class ClassroomResponseDTO {
 
     private UUID id;
 
     private String name;
 
-    public GradeResponseDTO(UUID id, String name) {
+    public ClassroomResponseDTO(UUID id, String name) {
         this.id = id;
         this.name = name;
     }

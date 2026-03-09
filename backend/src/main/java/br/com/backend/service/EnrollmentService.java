@@ -2,15 +2,11 @@ package br.com.backend.service;
 
 import br.com.backend.DTO.enrollment.EnrollmentRequestDTO;
 import br.com.backend.DTO.enrollment.EnrollmentResponseDTO;
-import br.com.backend.domain.Enrollment;
+import br.com.backend.domain.*;
 import br.com.backend.domain.enums.EnrollmentStatus;
-import br.com.backend.domain.Grade;
-import br.com.backend.domain.Student;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
-import br.com.backend.repository.EnorllmentRepository;
-import br.com.backend.repository.GradeRepository;
-import br.com.backend.repository.StudentRepository;
+import br.com.backend.repository.*;
 import br.com.backend.util.ToResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,34 +21,40 @@ public class EnrollmentService {
 
     private EnorllmentRepository repository;
     private StudentRepository studentRepo;
-    private GradeRepository gradeRepo;
+    private ClassroomRepository classRepository;
+    private SchoolYearRepository schoolYearRepository;
 
     public EnrollmentService(
             EnorllmentRepository repository,
             StudentRepository studentRepo,
-            GradeRepository gradeRepo) {
+            ClassroomRepository classRepository,
+            SchoolYearRepository schoolYearRepository) {
 
         this.repository = repository;
         this.studentRepo = studentRepo;
-        this.gradeRepo = gradeRepo;
+        this.classRepository = classRepository;
+        this.schoolYearRepository = schoolYearRepository;
     }
 
     public EnrollmentResponseDTO enroll(EnrollmentRequestDTO dto) {
         Student student = studentRepo.findById(dto.getStudent().getId())
                         .orElseThrow(() -> new EntityNotFoundException("Student não encontrado"));
 
-        Grade grade = gradeRepo.findById(dto.getGrade().getId())
+        Classroom classroom = classRepository.findById(dto.getClassroom().getId())
                         .orElseThrow(() -> new EntityNotFoundException("Grade não encontrada"));
 
+        SchoolYear schoolYear = schoolYearRepository.findById(dto.getSchoolYear().getId())
+                        .orElseThrow(() -> new EntityNotFoundException("SchoolYear não encontrado"));
 
-        grade.validateCapacity();
+
+        classroom.validateCapacity();
         student.validateCanEnroll();
 
-        Enrollment enrollment = new Enrollment(student, grade);
+        Enrollment enrollment = new Enrollment(student, classroom, schoolYear);
 
-        grade.increaseActiveEnrollmentsCount();
+        classroom.increaseActiveEnrollmentsCount();
         student.addEnrollment(enrollment);
-        grade.addEnrollment(enrollment);
+        classroom.addEnrollment(enrollment);
 
         repository.save(enrollment);
 
@@ -76,7 +78,7 @@ public class EnrollmentService {
 
     public void cancel(UUID id) {
         Enrollment enrollment = findActiveEnrollment(id);
-        enrollment.getGrade().cancelEnrollment(enrollment);
+        enrollment.getClassroom().cancelEnrollment(enrollment);
         repository.save(enrollment);
     }
 

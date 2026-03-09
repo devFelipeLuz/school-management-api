@@ -24,13 +24,8 @@ public class StudentService {
     }
 
     public StudentResponseDTO create(StudentRequestDTO dto) {
-        Student student = new Student(
-                dto.getName(),
-                dto.getEmail(),
-                dto.getAge());
-
+        Student student = new Student(dto.getName());
         repository.save(student);
-
         return ToResponseDTO.toStudentResponseDTO(student);
     }
 
@@ -51,11 +46,7 @@ public class StudentService {
 
     public StudentResponseDTO update(UUID id, StudentRequestDTO dto) {
         Student student = findActiveStudentById(id);
-
-        student.saveData(
-                dto.getName(),
-                dto.getEmail());
-
+        student.updateData(dto.getName());
         repository.save(student);
         return ToResponseDTO.toStudentResponseDTO(student);
     }
@@ -63,6 +54,7 @@ public class StudentService {
     public void delete(UUID id) {
         Student student = findActiveStudentById(id);
         student.deactivate();
+        repository.save(student);
     }
 
     public Student findActiveStudentById(UUID id) {

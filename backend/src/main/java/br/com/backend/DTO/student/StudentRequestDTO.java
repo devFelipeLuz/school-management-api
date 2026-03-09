@@ -1,6 +1,6 @@
 package br.com.backend.DTO.student;
 
-import br.com.backend.domain.Grade;
+import br.com.backend.domain.Classroom;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -23,5 +23,5 @@ public class StudentRequestDTO {
     private Integer age;
 
     @NotBlank(message = "Grade is required")
-    private Grade grade;
+    private Classroom classroom;
 }

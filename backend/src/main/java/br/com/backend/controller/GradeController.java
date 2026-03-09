@@ -1,8 +1,8 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.grade.GradeRequestDTO;
-import br.com.backend.DTO.grade.GradeResponseDTO;
-import br.com.backend.service.GradeService;
+import br.com.backend.DTO.classroom.ClassroomRequestDTO;
+import br.com.backend.DTO.classroom.ClassroomResponseDTO;
+import br.com.backend.service.ClassroomService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -17,21 +17,21 @@ import java.util.UUID;
 @RequestMapping("/grades")
 public class GradeController {
 
-    private final GradeService service;
+    private final ClassroomService service;
 
-    public GradeController(GradeService service) {
+    public GradeController(ClassroomService service) {
         this.service = service;
     }
 
     @Operation(summary = "Registra uma Grade")
     @PostMapping
-    public GradeResponseDTO register(@Valid @RequestBody GradeRequestDTO dto) {
+    public ClassroomResponseDTO register(@Valid @RequestBody ClassroomRequestDTO dto) {
         return service.create(dto);
     }
 
     @Operation(summary = "Busca todas as Grades e retorna em páginas")
     @GetMapping
-    public Page<GradeResponseDTO> findAll(
+    public Page<ClassroomResponseDTO> findAll(
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAll(pageable);
@@ -39,7 +39,7 @@ public class GradeController {
 
     @Operation(summary = "Busca uma Grade por ID")
     @GetMapping("/{id}")
-    public GradeResponseDTO findById(@PathVariable UUID id) {
+    public ClassroomResponseDTO findById(@PathVariable UUID id) {
         return service.findById(id);
     }
 }
