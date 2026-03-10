@@ -82,8 +82,6 @@ public class EnrollmentService {
         repository.save(enrollment);
     }
 
-
-
     public Enrollment findActiveEnrollment(UUID id) {
         Enrollment enrollment = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Matrícula não encontrada"));

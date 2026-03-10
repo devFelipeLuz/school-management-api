@@ -18,7 +18,7 @@ import java.util.UUID;
 @RequestMapping("/enrollments")
 public class EnrollmentController {
 
-    private EnrollmentService service;
+    private final EnrollmentService service;
 
     public EnrollmentController(EnrollmentService service) {
         this.service = service;

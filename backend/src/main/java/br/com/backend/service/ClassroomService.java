@@ -34,7 +34,7 @@ public class ClassroomService {
 
     public ClassroomResponseDTO findById(UUID id) {
         Classroom classroom = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Grade não encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("Classroom não encontrada"));
 
         return ToResponseDTO.toClassroomResponseDTO(classroom);
     }

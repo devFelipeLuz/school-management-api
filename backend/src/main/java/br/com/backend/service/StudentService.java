@@ -57,7 +57,7 @@ public class StudentService {
         repository.save(student);
     }
 
-    public Student findActiveStudentById(UUID id) {
+    private Student findActiveStudentById(UUID id) {
         Student student = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 

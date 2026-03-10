@@ -12,7 +12,10 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "enrollment")
+@Table(name = "enrollment",
+uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"student_id", "classroom_id"})
+})
 public class Enrollment {
 
     @Id

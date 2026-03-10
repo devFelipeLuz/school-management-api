@@ -15,11 +15,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/grades")
-public class GradeController {
+public class ClassroomController {
 
     private final ClassroomService service;
 
-    public GradeController(ClassroomService service) {
+    public ClassroomController(ClassroomService service) {
         this.service = service;
     }
 

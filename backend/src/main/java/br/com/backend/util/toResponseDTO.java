@@ -1,5 +1,6 @@
 package br.com.backend.util;
 
+import br.com.backend.DTO.assessment.AssessmentResponseDTO;
 import br.com.backend.DTO.enrollment.EnrollmentResponseDTO;
 import br.com.backend.DTO.classroom.ClassroomResponseDTO;
 import br.com.backend.DTO.student.StudentResponseDTO;
@@ -36,7 +37,7 @@ public final class ToResponseDTO {
     }
 
     public static StudentResponseDTO toStudentResponseDTO(Student student) {
-        String gradeName = student.getActiveEnrollments()
+        String classroomName = student.getActiveEnrollments()
                 .map(e -> e.getClassroom().getName())
                 .orElse(null);
 
@@ -44,7 +45,19 @@ public final class ToResponseDTO {
                 student.getId(),
                 student.getName(),
                 student.getUser().getEmail(),
-                gradeName
+                classroomName
+        );
+    }
+
+    public static AssessmentResponseDTO toAssessmentResponseDTO(Assessment assessment) {
+        return new AssessmentResponseDTO(
+                assessment.getId(),
+                assessment.getTitle(),
+                assessment.getTeachingAssignment().getSubject().getName(),
+                assessment.getType().toString(),
+                assessment.getTeachingAssignment().getProfessor().getName(),
+                assessment.getTeachingAssignment().getClassroom().getName(),
+                assessment.getGrade().toString()
         );
     }
 }
