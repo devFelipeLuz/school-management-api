@@ -1,6 +1,6 @@
 package br.com.backend.service;
 
-import br.com.backend.domain.User;
+import br.com.backend.entity.User;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.RefreshTokenRepository;
 import br.com.backend.security.RefreshToken;

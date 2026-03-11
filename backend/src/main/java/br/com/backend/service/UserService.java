@@ -1,11 +1,11 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.user.UserCreateRequestDTO;
-import br.com.backend.DTO.user.UserResponseDTO;
-import br.com.backend.domain.User;
+import br.com.backend.DTO.request.UserCreateRequestDTO;
+import br.com.backend.DTO.response.UserResponseDTO;
+import br.com.backend.entity.User;
 import br.com.backend.exception.EntityNotFoundException;
+import br.com.backend.mapper.UserMapper;
 import br.com.backend.repository.UserRepository;
-import br.com.backend.util.ToResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,35 +36,35 @@ public class UserService {
 
         repository.save(adminUser);
 
-        return ToResponseDTO.toUserResponseDTO(adminUser);
+        return UserMapper.toDTO(adminUser);
     }
 
     public Page<UserResponseDTO> findAll(Pageable pageable) {
         return repository.findAll(pageable)
-                .map(ToResponseDTO::toUserResponseDTO);
+                .map(UserMapper::toDTO);
     }
 
     public Page<UserResponseDTO> findAllEnabled(Pageable pageable) {
         return repository.findAllByEnabledTrue(pageable)
-                .map(ToResponseDTO::toUserResponseDTO);
+                .map(UserMapper::toDTO);
     }
 
     public UserResponseDTO findById(UUID id) {
         User user = findActiveUserById(id);
-        return ToResponseDTO.toUserResponseDTO(user);
+        return UserMapper.toDTO(user);
     }
 
     public UserResponseDTO updateEmail(UUID id, UserCreateRequestDTO dto) {
         User adminUser = findActiveUserById(id);
         adminUser.updateEmail(dto.getEmail());
-        return ToResponseDTO.toUserResponseDTO(adminUser);
+        return UserMapper.toDTO(adminUser);
     }
 
     public UserResponseDTO updatePassword(UUID id, UserCreateRequestDTO dto) {
         String encondedPassword = encoder.encode(dto.getPassword());
         User adminUser = findActiveUserById(id);
         adminUser.updatePassword(encondedPassword);
-        return ToResponseDTO.toUserResponseDTO(adminUser);
+        return UserMapper.toDTO(adminUser);
     }
 
     public void delete(UUID id) {

@@ -1,6 +1,6 @@
 package br.com.backend.service;
 
-import br.com.backend.domain.User;
+import br.com.backend.entity.User;
 import br.com.backend.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -1,7 +1,7 @@
 package br.com.backend.service;
 
 import br.com.backend.security.PasswordResetToken;
-import br.com.backend.domain.User;
+import br.com.backend.entity.User;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.PasswordResetTokenRepository;
 import br.com.backend.repository.UserRepository;

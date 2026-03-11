@@ -1,0 +1,12 @@
+package br.com.backend.DTO.request;
+
+import br.com.backend.entity.enums.AssessmentType;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.UUID;
+
+public record AssessmentRequestDTO (
+        @NotNull String title,
+        @NotNull AssessmentType type,
+        @NotNull UUID teachingAssignmentId
+    ) {}

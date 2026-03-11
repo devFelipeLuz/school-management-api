@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.user.UserCreateRequestDTO;
-import br.com.backend.DTO.user.UserResponseDTO;
+import br.com.backend.DTO.request.UserCreateRequestDTO;
+import br.com.backend.DTO.response.UserResponseDTO;
 import br.com.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

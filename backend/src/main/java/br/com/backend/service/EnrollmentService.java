@@ -1,13 +1,13 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.enrollment.EnrollmentRequestDTO;
-import br.com.backend.DTO.enrollment.EnrollmentResponseDTO;
-import br.com.backend.domain.*;
-import br.com.backend.domain.enums.EnrollmentStatus;
+import br.com.backend.DTO.request.EnrollmentRequestDTO;
+import br.com.backend.DTO.response.EnrollmentResponseDTO;
+import br.com.backend.entity.*;
+import br.com.backend.entity.enums.EnrollmentStatus;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
+import br.com.backend.mapper.EnrollmentMapper;
 import br.com.backend.repository.*;
-import br.com.backend.util.ToResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -58,22 +58,22 @@ public class EnrollmentService {
 
         repository.save(enrollment);
 
-        return ToResponseDTO.toEnrollmentResponseDTO(enrollment);
+        return EnrollmentMapper.toDTO(enrollment);
     }
 
     public Page<EnrollmentResponseDTO> findAll(Pageable pageable) {
         return repository.findAll(pageable)
-                .map(ToResponseDTO::toEnrollmentResponseDTO);
+                .map(EnrollmentMapper::toDTO);
     }
 
     public Page<EnrollmentResponseDTO> findAllByStatusActive(Pageable pageable) {
         return repository.findByStatusActive(pageable)
-                .map(ToResponseDTO::toEnrollmentResponseDTO);
+                .map(EnrollmentMapper::toDTO);
     }
 
     public EnrollmentResponseDTO findById(UUID id) {
         Enrollment enrollment = findActiveEnrollment(id);
-        return ToResponseDTO.toEnrollmentResponseDTO(enrollment);
+        return EnrollmentMapper.toDTO(enrollment);
     }
 
     public void cancel(UUID id) {

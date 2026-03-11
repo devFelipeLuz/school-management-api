@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.enrollment.EnrollmentRequestDTO;
-import br.com.backend.DTO.enrollment.EnrollmentResponseDTO;
+import br.com.backend.DTO.request.EnrollmentRequestDTO;
+import br.com.backend.DTO.response.EnrollmentResponseDTO;
 import br.com.backend.service.EnrollmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

@@ -1,10 +1,10 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.ForgotPasswordRequest;
-import br.com.backend.DTO.ResetPasswordRequest;
-import br.com.backend.DTO.authorization.AuthRequest;
-import br.com.backend.DTO.authorization.AuthResponse;
-import br.com.backend.DTO.RefreshRequest;
+import br.com.backend.DTO.request.ForgotPasswordRequest;
+import br.com.backend.DTO.request.ResetPasswordRequest;
+import br.com.backend.DTO.request.AuthRequest;
+import br.com.backend.DTO.response.AuthResponse;
+import br.com.backend.DTO.request.RefreshRequest;
 import br.com.backend.service.AuthService;
 import br.com.backend.service.PasswordResetService;
 import io.swagger.v3.oas.annotations.Operation;

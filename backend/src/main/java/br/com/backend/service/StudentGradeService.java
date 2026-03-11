@@ -1,16 +1,16 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.grade.StudentGradeRequestDTO;
-import br.com.backend.DTO.grade.StudentGradeResponseDTO;
-import br.com.backend.DTO.grade.GradeUpdateDTO;
-import br.com.backend.domain.Assessment;
-import br.com.backend.domain.Enrollment;
-import br.com.backend.domain.StudentGrade;
+import br.com.backend.DTO.request.StudentGradeRequestDTO;
+import br.com.backend.DTO.response.StudentGradeResponseDTO;
+import br.com.backend.DTO.request.GradeUpdateDTO;
+import br.com.backend.entity.Assessment;
+import br.com.backend.entity.Enrollment;
+import br.com.backend.entity.StudentGrade;
 import br.com.backend.exception.EntityNotFoundException;
+import br.com.backend.mapper.StudentGradeMapper;
 import br.com.backend.repository.AssessmentRepository;
 import br.com.backend.repository.EnrollmentRepository;
 import br.com.backend.repository.StudentGradeRepository;
-import br.com.backend.util.ToResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -50,24 +50,24 @@ public class StudentGradeService {
 
         StudentGrade grade = new StudentGrade(assessment, enrollment);
         repository.save(grade);
-        return ToResponseDTO.toStudentGradeResponseDTO(grade);
+        return StudentGradeMapper.toDTO(grade);
     }
 
     public Page<StudentGradeResponseDTO> findAll(Pageable pageable) {
         return repository.findAll(pageable)
-                .map(ToResponseDTO::toStudentGradeResponseDTO);
+                .map(StudentGradeMapper::toDTO);
     }
 
     public StudentGradeResponseDTO findById(UUID id) {
         return repository.findById(id)
-                .map(ToResponseDTO::toStudentGradeResponseDTO)
+                .map(StudentGradeMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Grade not found"));
     }
 
     public StudentGradeResponseDTO update(UUID id, GradeUpdateDTO dto) {
         StudentGrade grade = findActiveStudentGrade(id);
         grade.setGrade(dto.grade());
-        return ToResponseDTO.toStudentGradeResponseDTO(grade);
+        return StudentGradeMapper.toDTO(grade);
     }
 
     public void delete(UUID id) {
@@ -77,7 +77,7 @@ public class StudentGradeService {
 
     public Page<StudentGradeResponseDTO> findByAssessmentId(UUID assessmentId, Pageable pageable) {
         return repository.findByAssessmentId(assessmentId, pageable)
-                .map(ToResponseDTO::toStudentGradeResponseDTO);
+                .map(StudentGradeMapper::toDTO);
     }
 
     private StudentGrade findActiveStudentGrade(UUID id) {

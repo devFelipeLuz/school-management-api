@@ -1,6 +1,6 @@
 package br.com.backend.repository;
 
-import br.com.backend.domain.User;
+import br.com.backend.entity.User;
 import br.com.backend.security.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

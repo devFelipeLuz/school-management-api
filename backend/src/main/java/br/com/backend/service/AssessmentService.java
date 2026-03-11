@@ -1,13 +1,13 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.assessment.AssessmentRequestDTO;
-import br.com.backend.DTO.assessment.AssessmentResponseDTO;
-import br.com.backend.domain.Assessment;
-import br.com.backend.domain.TeachingAssignment;
+import br.com.backend.DTO.request.AssessmentRequestDTO;
+import br.com.backend.DTO.response.AssessmentResponseDTO;
+import br.com.backend.entity.Assessment;
+import br.com.backend.entity.TeachingAssignment;
 import br.com.backend.exception.EntityNotFoundException;
+import br.com.backend.mapper.AssessmentMapper;
 import br.com.backend.repository.AssessmentRepository;
 import br.com.backend.repository.TeachingAssignmentRepository;
-import br.com.backend.util.ToResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,17 +39,17 @@ public class AssessmentService {
 
         repository.save(assessment);
 
-        return ToResponseDTO.toAssessmentResponseDTO(assessment);
+        return AssessmentMapper.toDTO(assessment);
     }
 
     public Page<AssessmentResponseDTO> findAll(Pageable pageable) {
         return repository.findAll(pageable)
-                .map(ToResponseDTO::toAssessmentResponseDTO);
+                .map(AssessmentMapper::toDTO);
     }
 
     public AssessmentResponseDTO findById(UUID id) {
         return repository.findById(id)
-                .map(ToResponseDTO::toAssessmentResponseDTO)
+                .map(AssessmentMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Assessment não encontrado"));
     }
 
@@ -66,7 +66,7 @@ public class AssessmentService {
         );
 
         repository.save(assessment);
-        return ToResponseDTO.toAssessmentResponseDTO(assessment);
+        return AssessmentMapper.toDTO(assessment);
     }
 
     public void delete(UUID id) {

@@ -1,6 +1,6 @@
 package br.com.backend.repository;
 
-import br.com.backend.domain.Subject;
+import br.com.backend.entity.Subject;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

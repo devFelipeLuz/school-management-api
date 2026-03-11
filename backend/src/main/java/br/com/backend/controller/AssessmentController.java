@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.assessment.AssessmentRequestDTO;
-import br.com.backend.DTO.assessment.AssessmentResponseDTO;
+import br.com.backend.DTO.request.AssessmentRequestDTO;
+import br.com.backend.DTO.response.AssessmentResponseDTO;
 import br.com.backend.service.AssessmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;

@@ -1,8 +1,8 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.authorization.AuthRequest;
-import br.com.backend.DTO.authorization.AuthResponse;
-import br.com.backend.domain.User;
+import br.com.backend.DTO.request.AuthRequest;
+import br.com.backend.DTO.response.AuthResponse;
+import br.com.backend.entity.User;
 import br.com.backend.security.RefreshToken;
 import br.com.backend.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;

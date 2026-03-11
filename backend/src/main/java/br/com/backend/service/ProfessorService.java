@@ -1,13 +1,13 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.professor.ProfessorRequestDTO;
-import br.com.backend.DTO.professor.ProfessorResponseDTO;
-import br.com.backend.domain.Professor;
-import br.com.backend.domain.User;
+import br.com.backend.DTO.request.ProfessorRequestDTO;
+import br.com.backend.DTO.response.ProfessorResponseDTO;
+import br.com.backend.entity.Professor;
+import br.com.backend.entity.User;
 import br.com.backend.exception.EntityNotFoundException;
+import br.com.backend.mapper.ProfessorMapper;
 import br.com.backend.repository.ProfessorRepository;
 import br.com.backend.repository.UserRepository;
-import br.com.backend.util.ToResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,24 +33,24 @@ public class ProfessorService {
 
         Professor professor = new Professor(dto.name(), user);
         repository.save(professor);
-        return ToResponseDTO.toProfessorResponseDTO(professor);
+        return ProfessorMapper.toDTO(professor);
     }
 
     public Page<ProfessorResponseDTO> findAll(Pageable pageable) {
         return repository.findAll(pageable)
-                .map(ToResponseDTO::toProfessorResponseDTO);
+                .map(ProfessorMapper::toDTO);
     }
 
     public ProfessorResponseDTO findById(UUID id) {
         return repository.findById(id)
-                .map(ToResponseDTO::toProfessorResponseDTO)
+                .map(ProfessorMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Professor not found"));
     }
 
     public ProfessorResponseDTO update(UUID id, ProfessorRequestDTO dto) {
         Professor professor = findProfessor(id);
         professor.updateName(dto.name());
-        return ToResponseDTO.toProfessorResponseDTO(professor);
+        return ProfessorMapper.toDTO(professor);
     }
 
     public void delete(UUID id) {

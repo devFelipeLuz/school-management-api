@@ -1,6 +1,6 @@
 package br.com.backend.security;
 
-import br.com.backend.domain.User;
+import br.com.backend.entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;

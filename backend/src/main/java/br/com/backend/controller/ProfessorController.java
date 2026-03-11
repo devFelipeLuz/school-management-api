@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.professor.ProfessorRequestDTO;
-import br.com.backend.DTO.professor.ProfessorResponseDTO;
+import br.com.backend.DTO.request.ProfessorRequestDTO;
+import br.com.backend.DTO.response.ProfessorResponseDTO;
 import br.com.backend.service.ProfessorService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

@@ -1,8 +1,8 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.grade.GradeUpdateDTO;
-import br.com.backend.DTO.grade.StudentGradeRequestDTO;
-import br.com.backend.DTO.grade.StudentGradeResponseDTO;
+import br.com.backend.DTO.request.GradeUpdateDTO;
+import br.com.backend.DTO.request.StudentGradeRequestDTO;
+import br.com.backend.DTO.response.StudentGradeResponseDTO;
 import br.com.backend.service.StudentGradeService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
