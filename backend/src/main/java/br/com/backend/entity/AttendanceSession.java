@@ -52,4 +52,16 @@ public class AttendanceSession {
         records.add(record);
         return record;
     }
+
+    public void updateAttendance(UUID id, AttendanceStatus newStatus) {
+        this.records.stream()
+                .filter(record -> record.getId().equals(id))
+                .findFirst()
+                .ifPresentOrElse(
+                        record -> record.updateStatus(newStatus),
+                        () -> {
+                            throw new EntityNotFoundException("Registro de presença não encontrado nesta sessão");
+                        }
+                );
+    }
 }

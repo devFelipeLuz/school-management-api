@@ -1,5 +1,6 @@
 package br.com.backend.entity;
 
+import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class SchoolYear {
     @Column(nullable = false, updatable = false)
     private Instant startDate;
 
+    @Column(updatable = false)
     private Instant endDate;
 
     @Column(name = "active", nullable = false)
@@ -36,5 +38,17 @@ public class SchoolYear {
         this.startDate = Instant.now();
         this.endDate = null;
         this.active = true;
+    }
+
+    public void updateYear(Integer year) {
+        this.year = year;
+    }
+
+    public void deactivate() {
+        if (!this.active) {
+            throw new BusinessException("School year is already inactive");
+        }
+
+        this.active = false;
     }
 }

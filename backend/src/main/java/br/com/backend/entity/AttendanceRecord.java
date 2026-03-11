@@ -49,4 +49,8 @@ public class AttendanceRecord {
         this.enrollment = enrollment;
         this.status = status;
     }
+
+    public void updateStatus(AttendanceStatus status) {
+        this.status = status;
+    }
 }
