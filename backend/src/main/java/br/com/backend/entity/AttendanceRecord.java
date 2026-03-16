@@ -40,7 +40,8 @@ public class AttendanceRecord {
 
         this.attendanceSession = Objects.requireNonNull(
                 attendanceSession, "AttendanceSession cannot be null");
-        this.enrollment = Objects.requireNonNull(enrollment, "Enrollment cannot be null");
+        this.enrollment = Objects.requireNonNull(
+                enrollment, "Enrollment cannot be null");
         this.status = ensureStatus(status);
     }
 

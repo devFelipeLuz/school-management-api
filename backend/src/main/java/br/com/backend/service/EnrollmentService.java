@@ -3,6 +3,7 @@ package br.com.backend.service;
 import br.com.backend.dto.request.EnrollmentRequest;
 import br.com.backend.dto.response.EnrollmentResponseDTO;
 import br.com.backend.entity.*;
+import br.com.backend.entity.enums.EnrollmentStatus;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.EnrollmentMapper;
 import br.com.backend.repository.*;
@@ -20,28 +21,28 @@ public class EnrollmentService {
     private final EnrollmentRepository repository;
     private final StudentService studentService;
     private final ClassroomService classroomService;
-    private final SchooYearService schooYearService;
+    private final SchoolYearService schoolYearService;
 
     public EnrollmentService(EnrollmentRepository repository,
                              StudentService studentService,
-                             ClassroomService classroomService,
-                             SchooYearService schooYearService) {
+                             SchoolYearService schoolYearService,
+                             ClassroomService classroomService) {
 
         this.repository = repository;
         this.studentService = studentService;
         this.classroomService = classroomService;
-        this.schooYearService = schooYearService;
+        this.schoolYearService = schoolYearService;
     }
 
     public EnrollmentResponseDTO enroll(EnrollmentRequest dto) {
         Student student = studentService.findActiveStudentById(dto.studentId());
+        SchoolYear schoolYear = schoolYearService.findActiveSchoolYear(dto.schoolYearId());
         Classroom classroom = classroomService.findActiveClassroomById(dto.classroomId());
-        SchoolYear schoolYear = schooYearService.findActiveSchoolYear(dto.schoolYearId());
 
         classroom.ensureCapacity();
         student.ensureCanEnroll();
 
-        Enrollment enrollment = new Enrollment(student, classroom, schoolYear);
+        Enrollment enrollment = new Enrollment(student, schoolYear, classroom);
         enrollment.register();
         Enrollment saved = repository.save(enrollment);
         return EnrollmentMapper.toDTO(saved);
@@ -53,7 +54,7 @@ public class EnrollmentService {
     }
 
     public Page<EnrollmentResponseDTO> findAllActive(Pageable pageable) {
-        return repository.findByStatusActive(pageable)
+        return repository.findByStatus(EnrollmentStatus.ACTIVE, pageable)
                 .map(EnrollmentMapper::toDTO);
     }
 
@@ -69,9 +70,10 @@ public class EnrollmentService {
         return EnrollmentMapper.toDTO(enrollment);
     }
 
-    public void cancel(UUID id) {
+    public EnrollmentResponseDTO cancel(UUID id) {
         Enrollment enrollment = findActiveEnrollmentById(id);
         enrollment.cancelEnrollment();
+        return  EnrollmentMapper.toDTO(enrollment);
     }
 
     protected Enrollment findActiveEnrollmentById(UUID id) {

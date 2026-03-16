@@ -1,5 +1,7 @@
 package br.com.backend.service;
 
+import br.com.backend.dto.request.UpdatePasswordRequest;
+import br.com.backend.dto.request.UpdateUsernameRequest;
 import br.com.backend.dto.request.UserCreateRequest;
 import br.com.backend.dto.response.UserResponseDTO;
 import br.com.backend.entity.User;
@@ -31,12 +33,12 @@ public class UserService {
 
     //Usado pelo controller
     public UserResponseDTO register(UserCreateRequest dto) {
-        User saved = createUser(dto.email(), dto.password(), dto.role());
+        User saved = registerUser(dto.email(), dto.password(), dto.role());
         return UserMapper.toDTO(saved);
     }
 
     //Usado por services internos
-    public User createUser(String email, String password, Role role) {
+    protected User registerUser(String email, String password, Role role) {
         String encodedPassword = encoder.encode(password);
         User user = User.createUser(email, encodedPassword, role);
         return repository.save(user);
@@ -62,33 +64,33 @@ public class UserService {
     }
 
     //Usado pelo controller
-    public UserResponseDTO updateEmail(UUID id, UserCreateRequest dto) {
+    public UserResponseDTO updateEmail(UUID id, UpdateUsernameRequest dto) {
         User user = changeEmail(id, dto.email());
         return UserMapper.toDTO(user);
     }
 
     //Usado pelo controller
-    public UserResponseDTO updatePassword(UUID id, UserCreateRequest dto) {
+    public UserResponseDTO updatePassword(UUID id, UpdatePasswordRequest dto) {
         User user = changePassword(id, dto.password());
         return UserMapper.toDTO(user);
     }
 
     //Usado por services internos
-    public User changeEmail(UUID id, String email) {
+    protected User changeEmail(UUID id, String email) {
         User user = findActiveUserById(id);
         user.updateEmail(email);
         return user;
     }
 
     //Usado por services internos
-    public User changePassword(UUID id, String password) {
+    protected User changePassword(UUID id, String password) {
         User user = findActiveUserById(id);
         user.updatePassword(encoder.encode(password));
         return user;
     }
 
     //Usado pelo controller
-    public void deactivateUser(UUID id) {
+    public void deactivate(UUID id) {
         User user = findActiveUserById(id);
         user.deactivate();
     }

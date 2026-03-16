@@ -4,7 +4,6 @@ import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 
 import java.util.UUID;
 
@@ -21,8 +20,12 @@ public class Subject {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false)
+    private boolean active;
+
     public Subject(String name) {
         this.name = validateName(name);
+        this.active = true;
     }
 
     private String validateName(String name) {
@@ -35,5 +38,16 @@ public class Subject {
 
     public void updateName(String name) {
         this.name = validateName(name);
+    }
+
+    public void ensureActive() {
+        if (!this.active) {
+            throw new BusinessException("Subject is not active");
+        }
+    }
+
+    public void deactivate() {
+        ensureActive();
+        this.active = false;
     }
 }

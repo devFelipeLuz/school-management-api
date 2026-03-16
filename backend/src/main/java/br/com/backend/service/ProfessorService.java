@@ -29,7 +29,7 @@ public class ProfessorService {
     }
 
     public ProfessorResponseDTO register(ProfessorCreateRequest dto) {
-        User user = userService.createUser(dto.email(), dto.password(), Role.PROFESSOR);
+        User user = userService.registerUser(dto.email(), dto.password(), Role.PROFESSOR);
 
         Professor professor = new Professor(dto.name(), user);
         Professor saved = repository.save(professor);

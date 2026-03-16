@@ -2,7 +2,7 @@ package br.com.backend.controller;
 
 import br.com.backend.dto.request.SchoolYearRequest;
 import br.com.backend.dto.response.SchoolYearResponseDTO;
-import br.com.backend.service.SchooYearService;
+import br.com.backend.service.SchoolYearService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -16,9 +16,9 @@ import java.util.UUID;
 @RequestMapping("/schoolyear")
 public class SchoolYearController {
 
-    private final SchooYearService service;
+    private final SchoolYearService service;
 
-    public SchoolYearController(SchooYearService service) {
+    public SchoolYearController(SchoolYearService service) {
         this.service = service;
     }
 

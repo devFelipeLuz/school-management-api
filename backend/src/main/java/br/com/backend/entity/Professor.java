@@ -25,7 +25,7 @@ public class Professor {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @Column(name = "active")
+    @Column(nullable = false)
     private boolean active;
 
     public Professor(String name, User user) {
@@ -35,6 +35,7 @@ public class Professor {
     }
 
     public void deactivate() {
+        ensureActive();
         this.active = false;
     }
 

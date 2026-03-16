@@ -30,11 +30,7 @@ public class SchoolYear {
     private boolean active;
 
     public SchoolYear(Integer year) {
-        if (year == null || year <= 0) {
-            throw new IllegalArgumentException("Year is null or blank");
-        }
-
-        this.year = year;
+        this.year = validateYear(year);
         this.startDate = Instant.now();
         this.endDate = null;
         this.active = true;
@@ -57,5 +53,12 @@ public class SchoolYear {
 
         this.active = false;
         this.endDate = Instant.now();
+    }
+
+    private Integer validateYear(Integer year) {
+        if (year == null || year <= 0) {
+            throw new IllegalArgumentException("Year is null or blank");
+        }
+        return year;
     }
 }

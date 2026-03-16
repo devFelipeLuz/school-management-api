@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -42,22 +43,10 @@ public class Enrollment {
     @Column(name = "cancellation_date")
     private Instant canceledAt;
 
-    public Enrollment(Student student, Classroom classroom, SchoolYear schoolYear) {
-        if (student == null) {
-            throw new IllegalArgumentException("Student não pode ser null");
-        }
-
-        if (classroom == null) {
-            throw new IllegalArgumentException("Classroom não pode ser null");
-        }
-
-        if (schoolYear == null) {
-            throw  new IllegalArgumentException("SchoolYear não pode ser null");
-        }
-
-        this.student = student;
-        this.classroom = classroom;
-        this.schoolYear = schoolYear;
+    public Enrollment(Student student, SchoolYear schoolYear, Classroom classroom) {
+        this.student = Objects.requireNonNull(student, "Student must not be null");
+        this.schoolYear = Objects.requireNonNull(schoolYear, "School year cannot be null");
+        this.classroom = Objects.requireNonNull(classroom, "classroom cannot be null");
         this.status = EnrollmentStatus.ACTIVE;
         this.enrolledAt = Instant.now();
     }

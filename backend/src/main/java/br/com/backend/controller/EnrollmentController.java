@@ -63,7 +63,7 @@ public class EnrollmentController {
     @Operation(summary = "Cancel enrollment")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void cancelEnrollment(@PathVariable UUID id) {
-        service.cancel(id);
+    public EnrollmentResponseDTO cancelEnrollment(@PathVariable UUID id) {
+        return service.cancel(id);
     }
 }

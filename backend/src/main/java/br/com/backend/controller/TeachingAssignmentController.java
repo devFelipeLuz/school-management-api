@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
 import br.com.backend.dto.request.TeachingAssignmentRequest;
-import br.com.backend.dto.response.TeachingAssignmetResponseDTO;
+import br.com.backend.dto.response.TeachingAssignmentResponseDTO;
 import br.com.backend.service.TeachingAssignmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -27,13 +27,13 @@ public class TeachingAssignmentController {
     @Operation(summary = "Create assignment")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public TeachingAssignmetResponseDTO register(@Valid @RequestBody TeachingAssignmentRequest dto) {
+    public TeachingAssignmentResponseDTO register(@Valid @RequestBody TeachingAssignmentRequest dto) {
         return service.register(dto);
     }
 
     @Operation(summary = "List assignments")
     @GetMapping
-    public Page<TeachingAssignmetResponseDTO> getAssignments(
+    public Page<TeachingAssignmentResponseDTO> getAssignments(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
             Pageable pageable) {
         return service.findAll(pageable);
@@ -41,7 +41,7 @@ public class TeachingAssignmentController {
 
     @Operation(summary = "Find assignment by id")
     @GetMapping("/{id}")
-    public TeachingAssignmetResponseDTO getAssignmentById(@PathVariable UUID id) {
+    public TeachingAssignmentResponseDTO getAssignmentById(@PathVariable UUID id) {
         return service.findById(id);
     }
 

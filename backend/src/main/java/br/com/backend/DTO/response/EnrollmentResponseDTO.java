@@ -5,6 +5,6 @@ import java.util.UUID;
 public record EnrollmentResponseDTO(
         UUID id,
         String studentName,
-        String classroomName,
-        Integer schoolYearName
+        Integer schoolYearName,
+        String classroomName
 ) {}

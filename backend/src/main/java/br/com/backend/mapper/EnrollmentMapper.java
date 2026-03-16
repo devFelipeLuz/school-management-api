@@ -15,14 +15,14 @@ public final class EnrollmentMapper {
 
     public static EnrollmentResponseDTO toDTO(Enrollment enrollment) {
         Student student = enrollment.getStudent();
-        Classroom classroom = enrollment.getClassroom();
         SchoolYear schoolYear = enrollment.getSchoolYear();
+        Classroom classroom = enrollment.getClassroom();
 
         return new EnrollmentResponseDTO(
                 enrollment.getId(),
                 student.getName(),
-                classroom.getName(),
-                schoolYear.getYear()
+                schoolYear.getYear(),
+                classroom.getName()
         );
     }
 }

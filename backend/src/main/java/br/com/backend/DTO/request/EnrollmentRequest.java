@@ -9,9 +9,9 @@ public record EnrollmentRequest(
         @NotNull @NotBlank(message = "StudentID is required")
         UUID studentId,
 
-        @NotNull @NotBlank(message = "ClassroomID is required")
-        UUID classroomId,
-
         @NotNull @NotBlank(message = "SchoolYearID is required")
-        UUID schoolYearId
+        UUID schoolYearId,
+
+        @NotNull @NotBlank(message = "ClassroomID is required")
+        UUID classroomId
 ) {}

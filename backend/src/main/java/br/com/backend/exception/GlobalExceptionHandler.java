@@ -3,6 +3,7 @@ package br.com.backend.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -67,6 +68,24 @@ public class GlobalExceptionHandler {
         for (FieldError f : ex.getBindingResult().getFieldErrors()) {
             err.addError(f.getField(), f.getDefaultMessage());
         }
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<StandardError> handlerBadCredentialsException(
+            BadCredentialsException ex,
+            HttpServletRequest request) {
+
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        ValidationError err = new ValidationError(
+                Instant.now(),
+                status.value(),
+                "Bad credentials",
+                "Username or password is incorrect",
+                request.getRequestURI()
+        );
 
         return ResponseEntity.status(status).body(err);
     }

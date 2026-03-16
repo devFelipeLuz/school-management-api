@@ -1,11 +1,12 @@
 package br.com.backend.service;
 
 import br.com.backend.dto.request.TeachingAssignmentRequest;
-import br.com.backend.dto.response.TeachingAssignmetResponseDTO;
+import br.com.backend.dto.response.TeachingAssignmentResponseDTO;
 import br.com.backend.entity.Classroom;
 import br.com.backend.entity.Professor;
 import br.com.backend.entity.Subject;
 import br.com.backend.entity.TeachingAssignment;
+import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.TeachingAssignmentMapper;
 import br.com.backend.repository.TeachingAssignmentRepository;
@@ -36,9 +37,14 @@ public class TeachingAssignmentService {
         this.classroomService = classroomService;
     }
 
-    public TeachingAssignmetResponseDTO register(TeachingAssignmentRequest dto) {
+    public TeachingAssignmentResponseDTO register(TeachingAssignmentRequest dto) {
+        if (repository.existsByProfessorIdAndSubjectIdAndClassroomId(
+                dto.professorId(), dto.subjectId(), dto.classroomId())) {
+            throw new BusinessException("Teaching Assignment already exists");
+        }
+
         Professor professor = professorService.findActiveProfessorById(dto.professorId());
-        Subject subject = subjectService.findSubjectById(dto.subjectId());
+        Subject subject = subjectService.findActiveSubjectById(dto.subjectId());
         Classroom classroom = classroomService.findActiveClassroomById(dto.classroomId());
 
         TeachingAssignment assignment = new TeachingAssignment(professor, subject, classroom);
@@ -46,12 +52,12 @@ public class TeachingAssignmentService {
         return TeachingAssignmentMapper.toDTO(saved);
     }
 
-    public Page<TeachingAssignmetResponseDTO> findAll(Pageable pageable) {
+    public Page<TeachingAssignmentResponseDTO> findAll(Pageable pageable) {
         return repository.findAll(pageable)
                 .map(TeachingAssignmentMapper::toDTO);
     }
 
-    public TeachingAssignmetResponseDTO findById(UUID id) {
+    public TeachingAssignmentResponseDTO findById(UUID id) {
         return repository.findById(id)
                 .map(TeachingAssignmentMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("TeachingAssignment not found"));
@@ -64,6 +70,6 @@ public class TeachingAssignmentService {
 
     protected TeachingAssignment findAssignmentById(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Assignment not found"));
+                .orElseThrow(() -> new EntityNotFoundException("TeachingAssignment not found"));
     }
 }

@@ -20,7 +20,10 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
 
-    public AuthService(AuthenticationManager manager, JwtService jwtService, RefreshTokenService refreshTokenService){
+    public AuthService(AuthenticationManager manager,
+                       JwtService jwtService,
+                       RefreshTokenService refreshTokenService){
+
         this.manager = manager;
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
@@ -48,6 +51,7 @@ public class AuthService {
     public AuthResponse refresh(String rawRefreshToken) {
 
         RefreshToken oldToken = refreshTokenService.getValidRefreshTokenOrThrow(rawRefreshToken);
+
         oldToken.revoke();
 
         User user = oldToken.getUser();

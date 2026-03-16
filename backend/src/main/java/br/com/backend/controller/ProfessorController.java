@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequestMapping("/professors")
 public class ProfessorController {
 
-    private ProfessorService service;
+    private final ProfessorService service;
 
     public ProfessorController(ProfessorService service) {
         this.service = service;

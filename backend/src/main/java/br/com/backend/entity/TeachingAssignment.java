@@ -4,8 +4,8 @@ import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -34,18 +34,20 @@ public class TeachingAssignment {
     private Classroom classroom;
 
     public TeachingAssignment (Professor professor, Subject subject, Classroom classroom) {
-        if (professor == null) throw new BusinessException("professor cannot be null");
-        if (subject == null) throw new BusinessException("subject cannot be null");
-        if (classroom == null) throw new BusinessException("classroom cannot be null");
-
-        this.professor = professor;
-        this.subject = subject;
-        this.classroom = classroom;
+        this.professor = Objects.requireNonNull(professor, "professor cannot be null");
+        this.subject = Objects.requireNonNull(subject, "subject cannot be null");
+        this.classroom = Objects.requireNonNull(classroom, "classroom cannot be null");
     }
 
     private void ensureProfessorIsActive() {
         if (!this.professor.isActive()) {
             throw new BusinessException("Professor is not active");
+        }
+    }
+
+    private void ensureSubjectIsActive() {
+        if (!this.subject.isActive()) {
+            throw new BusinessException("Subject is not active");
         }
     }
 
@@ -63,6 +65,7 @@ public class TeachingAssignment {
 
     public void ensureAllIsActive() {
         ensureProfessorIsActive();
+        ensureSubjectIsActive();
         ensureSchoolYearIsActive();
         ensureClassroomIsActive();
     }

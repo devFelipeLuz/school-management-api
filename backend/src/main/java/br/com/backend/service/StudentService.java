@@ -34,7 +34,7 @@ public class StudentService {
     }
 
     public StudentResponseDTO register(StudentCreateRequest dto) {
-        User user = userService.createUser(dto.email(), dto.password(), Role.STUDENT);
+        User user = userService.registerUser(dto.email(), dto.password(), Role.STUDENT);
 
         Student student = new Student(dto.name(), user);
         Student saved = repository.save(student);

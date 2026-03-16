@@ -6,9 +6,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class ValidationError extends StandardError {
 
-    @Getter
     private List<FieldMessage> errors = new ArrayList<>();
 
     public ValidationError(Instant timestamp, Integer status, String error, String message, String path) {

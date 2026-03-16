@@ -5,10 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @NoArgsConstructor
 @Getter
@@ -40,19 +37,10 @@ public class Classroom {
     private boolean active;
 
     public Classroom(String name, SchoolYear schoolYear) {
-        if (name == null || name.isBlank()) {
-            throw new BusinessException("Name cannot be null or blank");
-        }
-
-        if (schoolYear == null) {
-            throw new BusinessException("School year cannot be null");
-        }
-
         schoolYear.ensureActive();
-
-        this.name = name;
+        this.name = validateName(name);
         this.maxCapacity = 25;
-        this.schoolYear = schoolYear;
+        this.schoolYear = Objects.requireNonNull(schoolYear, "School year cannot be null");
         this.activeEnrollmentsCount = 0;
         this.enrollments = new ArrayList<>();
         this.active = true;
@@ -109,5 +97,13 @@ public class Classroom {
         if (!this.active) {
             throw new BusinessException("Classroom is not active");
         }
+    }
+
+    public String validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new BusinessException("Name cannot be null or blank");
+        }
+
+        return name;
     }
 }

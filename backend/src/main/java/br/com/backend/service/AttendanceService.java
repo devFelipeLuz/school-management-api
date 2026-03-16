@@ -6,6 +6,7 @@ import br.com.backend.dto.response.AttendanceSessionResponseDTO;
 import br.com.backend.entity.AttendanceSession;
 import br.com.backend.entity.Enrollment;
 import br.com.backend.entity.TeachingAssignment;
+import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.AttendanceMapper;
 import br.com.backend.repository.AttendanceRepository;
@@ -34,6 +35,10 @@ public class AttendanceService {
     }
 
     public AttendanceSessionResponseDTO register(AttendanceCreateRequest dto) {
+        if (repository.existsByAssignmentAndDate(dto.teachingAssignmentId(), dto.date())) {
+            throw new BusinessException("Session already exists");
+        }
+
         TeachingAssignment assignment = teachingAssignmentService
                 .findAssignmentById(dto.teachingAssignmentId());
 
@@ -58,11 +63,12 @@ public class AttendanceService {
                 .orElseThrow(() -> new EntityNotFoundException("Attendance Not Found"));
     }
 
-    public AttendanceSessionResponseDTO update (UUID sessiontId,
-                                                UUID recordId,
-                                                AttendanceRecordRequest recordDto) {
+    public AttendanceSessionResponseDTO update (
+            UUID sessionId,
+            UUID recordId,
+            AttendanceRecordRequest recordDto) {
 
-        AttendanceSession session = findAttendanceSessionById(sessiontId);
+        AttendanceSession session = findAttendanceSessionById(sessionId);
         session.updateAttendance(recordId, recordDto.status());
         return AttendanceMapper.toDTO(session);
     }
@@ -72,7 +78,7 @@ public class AttendanceService {
         repository.delete(session);
     }
 
-    private AttendanceSession findAttendanceSessionById(UUID id) {
+    protected AttendanceSession findAttendanceSessionById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Attendance session Not Found"));
     }

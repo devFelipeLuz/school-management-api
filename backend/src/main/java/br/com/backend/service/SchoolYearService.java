@@ -15,11 +15,11 @@ import java.util.UUID;
 
 @Service
 @Transactional
-public class SchooYearService {
+public class SchoolYearService {
 
     private final SchoolYearRepository repository;
 
-    public SchooYearService(SchoolYearRepository repository) {
+    public SchoolYearService(SchoolYearRepository repository) {
         this.repository = repository;
     }
 

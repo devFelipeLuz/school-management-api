@@ -20,16 +20,16 @@ import java.util.UUID;
 public class ClassroomService {
 
     private final ClassroomRepository repository;
-    private final SchooYearService schooYearService;
+    private final SchoolYearService schoolYearService;
 
     public ClassroomService(ClassroomRepository repository,
-                            SchooYearService schooYearService) {
+                            SchoolYearService schoolYearService) {
         this.repository = repository;
-        this.schooYearService = schooYearService;
+        this.schoolYearService = schoolYearService;
     }
 
     public ClassroomResponseDTO register(ClassroomCreateRequest dto) {
-        SchoolYear schoolYear = schooYearService.findActiveSchoolYear(dto.schoolYearId());
+        SchoolYear schoolYear = schoolYearService.findActiveSchoolYear(dto.schoolYearId());
 
         Classroom classroom = new Classroom(dto.name(), schoolYear);
         Classroom saved = repository.save(classroom);

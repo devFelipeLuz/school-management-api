@@ -1,5 +1,7 @@
 package br.com.backend.controller;
 
+import br.com.backend.dto.request.UpdatePasswordRequest;
+import br.com.backend.dto.request.UpdateUsernameRequest;
 import br.com.backend.dto.request.UserCreateRequest;
 import br.com.backend.dto.response.UserResponseDTO;
 import br.com.backend.service.UserService;
@@ -24,13 +26,14 @@ public class UserController {
         this.service = service;
     }
 
-    @Operation(summary = "Registra User")
+    @Operation(summary = "Create user")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public UserResponseDTO register(@Valid @RequestBody UserCreateRequest dto) {
         return service.register(dto);
     }
 
-    @Operation(summary = "Busca Users e retorna em páginas")
+    @Operation(summary = "List users")
     @GetMapping
     public Page<UserResponseDTO> getUsers(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
@@ -38,7 +41,7 @@ public class UserController {
         return service.findAll(pageable);
     }
 
-    @Operation(summary = "Busca Users habilitados e retorna em páginas")
+    @Operation(summary = "List enabled users")
     @GetMapping("/enabled")
     public Page<UserResponseDTO> getEnabledUsers(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
@@ -47,30 +50,30 @@ public class UserController {
         return service.findAllEnabled(pageable);
     }
 
-    @Operation(summary = "Busca User por ID")
+    @Operation(summary = "Find user by id")
     @GetMapping("/{id}")
     public UserResponseDTO findById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
-    @Operation(summary = "Atualiza username de User encontrado por ID")
-    @PatchMapping("/{id}")
+    @Operation(summary = "Update username")
+    @PatchMapping("/{id}/username")
     public UserResponseDTO updateUsername(@PathVariable UUID id,
-                                          @Valid @RequestBody UserCreateRequest dto) {
+                                          @Valid @RequestBody UpdateUsernameRequest dto) {
         return service.updateEmail(id, dto);
     }
 
-    @Operation(summary = "Atualiza password User encontrado por ID")
-    @PatchMapping("/{id}")
+    @Operation(summary = "Update password")
+    @PatchMapping("/{id}/password")
     public UserResponseDTO updatePassword(@PathVariable UUID id,
-                                          @Valid @RequestBody UserCreateRequest dto){
+                                          @Valid @RequestBody UpdatePasswordRequest dto){
         return service.updatePassword(id, dto);
     }
 
-    @Operation(summary = "Deleta User encontrado por ID")
+    @Operation(summary = "Deactivate user")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
-        service.deactivateUser(id);
+    public void deactivateUser(@PathVariable UUID id) {
+        service.deactivate(id);
     }
 }

@@ -34,7 +34,7 @@ public class SubjectController {
     @Operation(summary = "List subjects")
     @GetMapping
     public Page<SubjectResponseDTO> getSubjects(
-            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.DESC)
+            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAll(pageable);
     }
@@ -52,10 +52,10 @@ public class SubjectController {
         return service.updateName(id, dto);
     }
 
-    @Operation(summary = "Delete subject")
+    @Operation(summary = "Deactivate subject")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable UUID id) {
-        service.delete(id);
+    public void deactivateSubject(@PathVariable UUID id) {
+        service.deactivate(id);
     }
 }
