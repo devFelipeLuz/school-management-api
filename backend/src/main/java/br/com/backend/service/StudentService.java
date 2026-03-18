@@ -51,8 +51,9 @@ public class StudentService {
     }
 
     public StudentResponseDTO findById(UUID id) {
-        Student student = findActiveStudentById(id);
-        return StudentMapper.toDTO(student);
+        return repository.findById(id)
+                .map(StudentMapper::toDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found"));
     }
 
     public StudentResponseDTO update(UUID id, StudentUpdateRequest dto) {

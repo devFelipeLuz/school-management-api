@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -28,4 +29,9 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID
     void deleteOldTokens(Instant threshold);
 
     List<RefreshToken> findByUserAndRevokedFalseOrderByCreatedAtAsc(User user);
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM RefreshToken rt WHERE rt.user.id = :userId")
+    void deleteAllByUserId(UUID userId);
 }

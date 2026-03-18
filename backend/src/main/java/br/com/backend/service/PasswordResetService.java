@@ -21,12 +21,19 @@ public class PasswordResetService {
     private final PasswordResetTokenRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
+    private final EmailService emailService;
 
-    public PasswordResetService(UserRepository userRepository, PasswordResetTokenRepository repository, PasswordEncoder passwordEncoder, RefreshTokenService refreshTokenService) {
+    public PasswordResetService(UserRepository userRepository,
+                                PasswordResetTokenRepository repository,
+                                PasswordEncoder passwordEncoder,
+                                RefreshTokenService refreshTokenService,
+                                EmailService emailService) {
+
         this.userRepository = userRepository;
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
+        this.emailService = emailService;
     }
 
     public void requestPasswordReset(String email) {
@@ -41,11 +48,11 @@ public class PasswordResetService {
             PasswordResetToken token = new PasswordResetToken(tokenHash, user, expiresAt);
 
             repository.save(token);
+            emailService.sendResetPasswordEmail(rawToken, user.getEmail());
         });
     }
 
     public void resetPassword(String rawToken, String newPassword) {
-
         String tokenHash = TokenGenerator.hashToken(rawToken);
 
         PasswordResetToken token = repository.findByTokenHash(tokenHash)

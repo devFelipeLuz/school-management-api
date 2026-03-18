@@ -73,7 +73,7 @@ public class AttendanceServiceTest {
 
     @Test
     void shouldRegisterAttendance() {
-        when(repository.existsByAssignmentAndDate(
+        when(repository.existsByTeachingAssignmentAndDate(
                 createRequest.teachingAssignmentId(), createRequest.date()))
                 .thenReturn(false);
 
@@ -172,7 +172,7 @@ public class AttendanceServiceTest {
 
     @Test
     void shouldThrowExceptionWhenSessionAlreadyExists() {
-        when(repository.existsByAssignmentAndDate(any(), any()))
+        when(repository.existsByTeachingAssignmentAndDate(any(), any()))
                 .thenReturn(true);
 
         assertThrows(

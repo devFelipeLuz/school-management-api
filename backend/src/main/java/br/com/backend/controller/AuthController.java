@@ -8,6 +8,7 @@ import br.com.backend.dto.request.RefreshRequest;
 import br.com.backend.service.AuthService;
 import br.com.backend.service.PasswordResetService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,11 +39,11 @@ public class AuthController {
         return authService.refresh(request.refreshToken());
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Realiza logout do usuário")
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestBody RefreshRequest request) {
+    public void logout(@RequestBody RefreshRequest request) {
         authService.logout(request.refreshToken());
-        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Realiza requisição de reset de senha")

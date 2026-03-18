@@ -55,14 +55,13 @@ public class EnrollmentController {
     }
 
     @Operation(summary = "Finish enrollment")
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/finish")
     public EnrollmentResponseDTO finishEnrollment(@PathVariable UUID id) {
         return service.finishEnrollment(id);
     }
 
     @Operation(summary = "Cancel enrollment")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @PatchMapping("/{id}/cancel")
     public EnrollmentResponseDTO cancelEnrollment(@PathVariable UUID id) {
         return service.cancel(id);
     }

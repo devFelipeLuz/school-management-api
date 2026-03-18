@@ -19,7 +19,6 @@ public class AuthService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
 
-
     public AuthService(AuthenticationManager manager,
                        JwtService jwtService,
                        RefreshTokenService refreshTokenService){

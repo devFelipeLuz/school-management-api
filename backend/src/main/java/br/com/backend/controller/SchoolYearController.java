@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/schoolyear")
+@RequestMapping("/school-years")
 public class SchoolYearController {
 
     private final SchoolYearService service;

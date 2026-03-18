@@ -35,7 +35,7 @@ public class AttendanceService {
     }
 
     public AttendanceSessionResponseDTO register(AttendanceCreateRequest dto) {
-        if (repository.existsByAssignmentAndDate(dto.teachingAssignmentId(), dto.date())) {
+        if (repository.existsByTeachingAssignmentAndDate(dto.teachingAssignmentId(), dto.date())) {
             throw new BusinessException("Session already exists");
         }
 

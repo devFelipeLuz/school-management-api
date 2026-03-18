@@ -6,5 +6,6 @@ public record StudentResponseDTO(
         UUID id,
         String name,
         String email,
-        String classroom
+        String classroom,
+        boolean active
 ) {}

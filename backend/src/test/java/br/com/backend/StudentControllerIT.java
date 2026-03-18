@@ -1,11 +1,16 @@
 package br.com.backend;
 
+import br.com.backend.builders.StudentCreateRequestBuilder;
+import br.com.backend.builders.StudentUpdateRequestBuilder;
+import br.com.backend.dto.request.StudentCreateRequest;
+import br.com.backend.dto.request.StudentUpdateRequest;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.UUID;
 
@@ -18,37 +23,42 @@ public class StudentControllerIT extends AbstractInegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private String defaultStudentJson() {
-        return """
-                {
-                    "name": "Ricardo Cruz",
-                    "email": "ricardo.cruz@email.com",
-                    "password": "teste@12345"
-                }
-                """;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private <T> String toJson(T object) throws Exception{
+        return objectMapper.writeValueAsString(object);
     }
 
-    private String createStudentAndReturnId() throws Exception {
-        String json = defaultStudentJson();
+    private UUID createStudentAndReturnId() throws Exception {
+        StudentCreateRequest request = StudentCreateRequestBuilder.builder()
+                .withName("Ricardo Cruz")
+                .withEmail("ricardo.cruz@email.com")
+                .withPassword("password")
+                .build();
 
         MvcResult result = mockMvc.perform(post("/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+                .content(toJson(request)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        String response = result.getResponse().getContentAsString();
+        String id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
 
-        return JsonPath.read(response, "$.id");
+        return UUID.fromString(id);
     }
 
     @Test
     void shouldCreateStudent() throws Exception {
-        String json = defaultStudentJson();
+        StudentCreateRequest request = StudentCreateRequestBuilder.builder()
+                .withName("Ricardo Cruz")
+                .withEmail("ricardo.cruz@email.com")
+                .withPassword("password")
+                .build();
 
         mockMvc.perform(post("/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+                .content(toJson(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.name").value("Ricardo Cruz"))
@@ -57,69 +67,65 @@ public class StudentControllerIT extends AbstractInegrationTest {
 
     @Test
     void shouldFindStudentById() throws Exception {
-        String id = createStudentAndReturnId();
+        UUID id = createStudentAndReturnId();
 
-        mockMvc.perform(get("/students/" + id))
+        mockMvc.perform(get("/students/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Ricardo Cruz"));
-
     }
 
     @Test
     void shouldUpdateStudent() throws Exception {
-        String id = createStudentAndReturnId();
+        UUID id = createStudentAndReturnId();
 
-        String json = """
-                {
-                    "name": "Ezio Auditore"
-                }
-                """;
+        StudentUpdateRequest request = StudentUpdateRequestBuilder.builder()
+                .withName("Ezio Auditore")
+                .build();
 
-        mockMvc.perform(patch("/students/" + id)
+        mockMvc.perform(patch("/students/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+                .content(toJson(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Ezio Auditore"))
                 .andExpect(jsonPath("$.email").value("ricardo.cruz@email.com"));
 
-        mockMvc.perform(get("/students/" + id))
+        mockMvc.perform(get("/students/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Ezio Auditore"));
     }
 
     @Test
     void shouldDeactivateStudent() throws Exception {
-        String id = createStudentAndReturnId();
+        UUID id = createStudentAndReturnId();
 
-        mockMvc.perform(delete("/students/" + id))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(patch("/students/{id}/deactivate", id))
+                .andExpect(status().isOk());
 
-        mockMvc.perform(get("/students/" + id))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("/students/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Ricardo Cruz"))
+                .andExpect(jsonPath("$.active").value(false));
     }
 
     @Test
     void shouldReturn404WhenStudentNotFound() throws Exception {
         String randomId = UUID.randomUUID().toString();
 
-        mockMvc.perform(get("/students/" + randomId))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.errors").isNotEmpty());
+        mockMvc.perform(get("/students/{id}", randomId))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldNotCreateStudentWithInvalidEmail() throws Exception {
-        String json = """
-                {
-                    "name": "Student Test",
-                    "email": "test",
-                    "password": "test"
-                }
-                """;
+        StudentCreateRequest request = StudentCreateRequestBuilder.builder()
+                .withName("Ricardo Cruz")
+                .withEmail("wrong")
+                .withPassword("password")
+                .build();
 
         mockMvc.perform(post("/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isBadRequest());
+                .content(toJson(request)))
+                .andExpect(status().isUnprocessableContent());
     }
 }

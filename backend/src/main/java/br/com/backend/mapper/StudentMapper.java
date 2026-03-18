@@ -21,7 +21,8 @@ public final class StudentMapper {
                 student.getId(),
                 student.getName(),
                 user.getEmail(),
-                classroomName
+                classroomName,
+                student.isActive()
         );
     }
 }

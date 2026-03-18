@@ -62,8 +62,8 @@ public class StudentController {
     }
 
     @Operation(summary = "Deactivate student")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/{id}/deactivate")
     public void deactivateStudent(@PathVariable UUID id) {
         service.deactivate(id);
     }

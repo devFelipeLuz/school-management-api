@@ -9,6 +9,6 @@ public record ClassroomCreateRequest(
         @NotBlank(message = "Classroom is required")
         String name,
 
-        @NotNull @NotBlank(message = "SchoolYearID is required")
+        @NotNull (message = "SchoolYearID is required")
         UUID schoolYearId
 ) {}
