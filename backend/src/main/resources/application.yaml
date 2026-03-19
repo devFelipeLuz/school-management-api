@@ -18,9 +18,25 @@ spring:
     init:
       mode: always
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 server:
   port: 8080
 
 jwt:
   secret: ${JWT_SECRET:minha-chave-super-chata-com-no-minimo-32-caracteres}
   expiration: 3600
+
+app:
+  frontend:
+    url: ${FRONTEND_URL:http://localhost:3000}
