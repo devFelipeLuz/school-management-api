@@ -35,6 +35,13 @@ public class ProfessorController {
         return service.register(dto);
     }
 
+    @Operation(summary = "Find professor by id")
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
+    public ProfessorResponseDTO getProfessorById(@PathVariable UUID id) {
+        return service.findById(id);
+    }
+
     @Operation(summary = "List professors")
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -45,13 +52,6 @@ public class ProfessorController {
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAll(active, pageable);
-    }
-
-    @Operation(summary = "Find professor by id")
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
-    public ProfessorResponseDTO getProfessorById(@PathVariable UUID id) {
-        return service.findById(id);
     }
 
     @Operation(summary = "Update professor")

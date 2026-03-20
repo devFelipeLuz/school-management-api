@@ -29,15 +29,20 @@ public class SchoolYearService {
         return SchoolYearMapper.toDTO(saved);
     }
 
-    public Page<SchoolYearResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
-                .map(SchoolYearMapper::toDTO);
-    }
-
     public SchoolYearResponseDTO findById(UUID id) {
         return repository.findById(id)
                 .map(SchoolYearMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("SchoolYear not found"));
+    }
+
+    public Page<SchoolYearResponseDTO> findAll(Boolean active, Pageable pageable) {
+        if (active == null) {
+            return repository.findAll(pageable)
+                    .map(SchoolYearMapper::toDTO);
+        }
+
+        return repository.findByActive(active, pageable)
+                .map(SchoolYearMapper::toDTO);
     }
 
     public SchoolYearResponseDTO update(UUID id, SchoolYearRequest dto) {

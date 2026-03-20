@@ -9,4 +9,6 @@ import java.util.UUID;
 
 public interface SchoolYearRepository extends JpaRepository<SchoolYear, UUID> {
     Page<SchoolYear> findAll(Pageable pageable);
+
+    Page<SchoolYear> findByActive(Boolean active, Pageable pageable);
 }

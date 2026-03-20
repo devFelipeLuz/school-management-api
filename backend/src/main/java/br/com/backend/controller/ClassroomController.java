@@ -35,6 +35,13 @@ public class ClassroomController {
         return service.register(dto);
     }
 
+    @Operation(summary = "Find classroom by id")
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public ClassroomResponseDTO getClassroomById(@PathVariable UUID id) {
+        return service.findById(id);
+    }
+
     @Operation(summary = "List classrooms")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
@@ -46,13 +53,6 @@ public class ClassroomController {
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAll(active, pageable);
-    }
-
-    @Operation(summary = "Find classroom by id")
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public ClassroomResponseDTO getClassroomById(@PathVariable UUID id) {
-        return service.findById(id);
     }
 
     @Operation(summary = "Change classroom capacity")

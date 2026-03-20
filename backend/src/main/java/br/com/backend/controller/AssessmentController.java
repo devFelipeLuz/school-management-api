@@ -34,6 +34,13 @@ public class AssessmentController {
         return service.register(dto);
     }
 
+    @Operation(summary = "Find assessment by id")
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public AssessmentResponseDTO getAssessmentById(@PathVariable UUID id) {
+        return service.findById(id);
+    }
+
     @Operation(summary = "List assessments")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
@@ -41,13 +48,6 @@ public class AssessmentController {
             @PageableDefault(size = 10, sort = "assessmentDate", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAll(pageable);
-    }
-
-    @Operation(summary = "Find assessment by id")
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public AssessmentResponseDTO getAssessmentById(@PathVariable UUID id) {
-        return service.findById(id);
     }
 
     @Operation(summary = "Update assessment")

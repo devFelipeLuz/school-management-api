@@ -34,6 +34,13 @@ public class AttendanceController {
         return service.register(dto);
     }
 
+    @Operation(summary = "Find attendance by id")
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public AttendanceSessionResponseDTO getAttendanceById(@PathVariable UUID id) {
+        return service.findById(id);
+    }
+
     @Operation(summary = "List attendances")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
@@ -41,13 +48,6 @@ public class AttendanceController {
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
             Pageable pageable) {
         return service.findAll(pageable);
-    }
-
-    @Operation(summary = "Find attendance by id")
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public AttendanceSessionResponseDTO getAttendanceById(@PathVariable UUID id) {
-        return service.findById(id);
     }
 
     @Operation(summary = "Update attendance")

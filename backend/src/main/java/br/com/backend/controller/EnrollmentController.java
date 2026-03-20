@@ -36,9 +36,17 @@ public class EnrollmentController {
         return service.enroll(dto);
     }
 
+    @Operation(summary = "Find enrollment by id")
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
+    public EnrollmentResponseDTO getEnrollmentById(
+            @PathVariable UUID id) {
+        return service.findById(id);
+    }
+
     @Operation(summary = "List enrollments")
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
     public Page<EnrollmentResponseDTO> getEnrollments(
             @Parameter(description = "Filter by enrollment status (ACTIVE, CANCELED or FINISHED)")
             @RequestParam
@@ -47,14 +55,6 @@ public class EnrollmentController {
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAll(status, pageable);
-    }
-
-    @Operation(summary = "Find enrollment by id")
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public EnrollmentResponseDTO getEnrollmentById(
-            @PathVariable UUID id) {
-        return service.findById(id);
     }
 
     @Operation(summary = "Finish enrollment")
