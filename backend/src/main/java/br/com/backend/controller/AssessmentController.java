@@ -30,7 +30,7 @@ public class AssessmentController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public AssessmentResponseDTO register(@Valid @RequestBody AssessmentCreateRequest dto) {
+    public AssessmentResponseDTO registerAssessment(@Valid @RequestBody AssessmentCreateRequest dto) {
         return service.register(dto);
     }
 
@@ -53,8 +53,8 @@ public class AssessmentController {
     @Operation(summary = "Update assessment")
     @PatchMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public AssessmentResponseDTO updateAssessment(@PathVariable UUID id,
-                                                  @Valid @RequestBody AssessmentUpdateRequest dto) {
+    public AssessmentResponseDTO updateAssessment(
+            @PathVariable UUID id, @Valid @RequestBody AssessmentUpdateRequest dto) {
         return service.update(id, dto);
     }
 
@@ -62,7 +62,7 @@ public class AssessmentController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public void delete(@PathVariable UUID id) {
+    public void deleteAssessment(@PathVariable UUID id) {
         service.delete(id);
     }
 }
