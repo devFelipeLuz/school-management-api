@@ -48,7 +48,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public Page<UserResponseDTO> getUsers(
             @Parameter(description = "Filter by enabled status (true or false)")
-            @RequestParam
+            @RequestParam(required = false)
             Boolean enabled,
 
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
