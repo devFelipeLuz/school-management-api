@@ -9,9 +9,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
-    Page<User> findAllByEnabledTrue(Pageable pageable);
-
     Page<User> findAll(Pageable pageable);
+
+    Page<User> findByEnabled(Boolean enabled, Pageable pageable);
 
     Optional<User> findByEmail(String email);
 }

@@ -45,22 +45,21 @@ public class UserService {
     }
 
     //Usado pelo controller
-    public Page<UserResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
-                .map(UserMapper::toDTO);
-    }
-
-    //Usado pelo controller
-    public Page<UserResponseDTO> findAllEnabled(Pageable pageable) {
-        return repository.findAllByEnabledTrue(pageable)
-                .map(UserMapper::toDTO);
-    }
-
-    //Usado pelo controller
     public UserResponseDTO findById(UUID id) {
         return repository.findById(id)
                 .map(UserMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
+    //Usado pelo controller
+    public Page<UserResponseDTO> findAll(Boolean enabled, Pageable pageable) {
+        if (enabled == null) {
+            return repository.findAll(pageable)
+                    .map(UserMapper::toDTO);
+        }
+
+        return repository.findByEnabled(enabled, pageable)
+                .map(UserMapper::toDTO);
     }
 
     //Usado pelo controller
