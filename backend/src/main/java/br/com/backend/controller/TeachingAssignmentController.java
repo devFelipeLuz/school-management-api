@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -27,12 +28,14 @@ public class TeachingAssignmentController {
     @Operation(summary = "Create assignment")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public TeachingAssignmentResponseDTO register(@Valid @RequestBody TeachingAssignmentRequest dto) {
+    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
+    public TeachingAssignmentResponseDTO registerAssignment(@Valid @RequestBody TeachingAssignmentRequest dto) {
         return service.register(dto);
     }
 
     @Operation(summary = "List assignments")
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
     public Page<TeachingAssignmentResponseDTO> getAssignments(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
             Pageable pageable) {
@@ -41,6 +44,7 @@ public class TeachingAssignmentController {
 
     @Operation(summary = "Find assignment by id")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
     public TeachingAssignmentResponseDTO getAssignmentById(@PathVariable UUID id) {
         return service.findById(id);
     }
@@ -48,6 +52,7 @@ public class TeachingAssignmentController {
     @Operation(summary = "Delete assignment")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
     public void deleteAssignmentById(@PathVariable UUID id) {
         service.delete(id);
     }
