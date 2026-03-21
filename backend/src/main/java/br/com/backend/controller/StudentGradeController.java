@@ -47,14 +47,14 @@ public class StudentGradeController {
 
     @Operation(summary = "Find grade by id")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
     public StudentGradeResponseDTO findGradeById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
     @Operation(summary = "List grades")
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<StudentGradeResponseDTO> getGrades(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
             Pageable pageable) {
