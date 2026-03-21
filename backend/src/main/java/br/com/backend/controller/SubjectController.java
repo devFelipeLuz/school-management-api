@@ -66,6 +66,7 @@ public class SubjectController {
     @Operation(summary = "Deactivate subject")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void deactivateSubject(@PathVariable UUID id) {
         service.deactivate(id);
     }

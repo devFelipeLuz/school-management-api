@@ -29,7 +29,7 @@ public class StudentGradeController {
     @Operation(summary = "Create grade")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public StudentGradeResponseDTO registerGrade(@Valid @RequestBody StudentGradeCreateRequest dto) {
         return service.register(dto);
     }

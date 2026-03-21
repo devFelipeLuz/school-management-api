@@ -38,7 +38,7 @@ public class EnrollmentController {
 
     @Operation(summary = "Find enrollment by id")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public EnrollmentResponseDTO getEnrollmentById(
             @PathVariable UUID id) {
         return service.findById(id);
