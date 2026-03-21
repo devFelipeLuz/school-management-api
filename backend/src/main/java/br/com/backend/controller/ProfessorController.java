@@ -47,7 +47,8 @@ public class ProfessorController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public Page<ProfessorResponseDTO> getProfessors(
             @Parameter(description = "Filter by active status (true or false)")
-            @RequestParam Boolean active,
+            @RequestParam(required = false)
+            Boolean active,
 
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable) {

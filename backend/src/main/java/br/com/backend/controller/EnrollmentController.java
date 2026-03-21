@@ -49,7 +49,7 @@ public class EnrollmentController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<EnrollmentResponseDTO> getEnrollments(
             @Parameter(description = "Filter by enrollment status (ACTIVE, CANCELED or FINISHED)")
-            @RequestParam
+            @RequestParam(required = false)
             EnrollmentStatus status,
 
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)

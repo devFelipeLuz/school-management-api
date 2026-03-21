@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public record SubjectResponseDTO(
         UUID id,
-        String name
+        String name,
+        Boolean active
 ) {
 }

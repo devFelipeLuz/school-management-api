@@ -46,7 +46,7 @@ public class SchoolYearController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<SchoolYearResponseDTO> getSchoolYears(
             @Parameter(description = "Filter by status active (true or false)")
-            @RequestParam
+            @RequestParam(required = false)
             Boolean active,
 
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)

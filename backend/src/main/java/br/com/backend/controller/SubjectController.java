@@ -47,7 +47,7 @@ public class SubjectController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<SubjectResponseDTO> getSubjects(
             @Parameter(description = "Filter by status active (true or false)")
-            @RequestParam
+            @RequestParam(required = false)
             Boolean active,
 
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
