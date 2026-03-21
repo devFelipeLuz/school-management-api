@@ -28,14 +28,14 @@ public class TeachingAssignmentController {
     @Operation(summary = "Create assignment")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public TeachingAssignmentResponseDTO registerAssignment(@Valid @RequestBody TeachingAssignmentRequest dto) {
         return service.register(dto);
     }
 
     @Operation(summary = "List assignments")
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<TeachingAssignmentResponseDTO> getAssignments(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
             Pageable pageable) {
@@ -44,7 +44,7 @@ public class TeachingAssignmentController {
 
     @Operation(summary = "Find assignment by id")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public TeachingAssignmentResponseDTO getAssignmentById(@PathVariable UUID id) {
         return service.findById(id);
     }
@@ -52,7 +52,7 @@ public class TeachingAssignmentController {
     @Operation(summary = "Delete assignment")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public void deleteAssignmentById(@PathVariable UUID id) {
         service.delete(id);
     }
