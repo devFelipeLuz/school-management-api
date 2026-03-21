@@ -46,7 +46,7 @@ public class EnrollmentController {
 
     @Operation(summary = "List enrollments")
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<EnrollmentResponseDTO> getEnrollments(
             @Parameter(description = "Filter by enrollment status (ACTIVE, CANCELED or FINISHED)")
             @RequestParam
