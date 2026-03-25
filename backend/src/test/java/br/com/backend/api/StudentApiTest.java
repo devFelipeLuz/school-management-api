@@ -1,7 +1,9 @@
 package br.com.backend.api;
 
+import br.com.backend.builders.dto.StudentUpdateRequestBuilder;
 import br.com.backend.config.BaseApiTest;
 import br.com.backend.dto.request.StudentCreateRequest;
+import br.com.backend.dto.request.StudentUpdateRequest;
 import br.com.backend.helper.AuthHelper;
 import br.com.backend.helper.StudentHelper;
 import io.restassured.http.ContentType;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -148,5 +151,56 @@ public class StudentApiTest extends BaseApiTest {
                 .get("/students")
         .then()
                 .statusCode(401);
+    }
+
+    @Test
+    void shouldUpdateStudent() {
+        ExtractableResponse<Response> student = studentHelper.createStudentAndReturn(
+                "Ricardo Juarez",
+                "ricardo.juarez@school.com",
+                "student"
+        );
+
+        String studentToken = studentHelper.getStudentToken(
+                "ricardo.juarez@school.com",
+                "student");
+
+        UUID studentId = studentHelper.getStudentId(student);
+
+        StudentUpdateRequest request = StudentUpdateRequestBuilder.builder()
+                .withName("Ricardo Juarez")
+                .withEmail("ricardo.juarez.student@school.com")
+                .withPassword("student")
+                .build();
+
+
+        given()
+                .header("Authorization", "Bearer " + studentToken)
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .patch("/students/{id}", studentId)
+        .then()
+                .statusCode(200)
+                .body("name", equalTo("Ricardo Juarez"))
+                .body("email", equalTo("ricardo.juarez.student@school.com"));
+    }
+
+    @Test
+    void shouldDeactivateStudent() {
+        ExtractableResponse<Response> student = studentHelper.createStudentAndReturn(
+                "Ricardo Juarez",
+                "ricardo.juarez@school.com",
+                "student"
+        );
+
+        UUID studentId = studentHelper.getStudentId(student);
+
+        given()
+                .header("Authorization", "Bearer " + helper.getAdminAccessToken())
+        .when()
+                .delete("/students/{id}/deactivate", studentId)
+        .then()
+                .statusCode(204);
     }
 }

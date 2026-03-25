@@ -58,9 +58,10 @@ public class StudentController {
 
     @Operation(summary = "Update student")
     @PatchMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
-    public StudentResponseDTO updateStudent(@PathVariable UUID id,
-                                     @Valid @RequestBody StudentUpdateRequest dto) {
+    @PreAuthorize("hasAuthority('ADMIN') or @studentService.isOwner(#id, principal.id)")
+    public StudentResponseDTO updateStudent(
+            @PathVariable UUID id,
+            @Valid @RequestBody StudentUpdateRequest dto) {
         return service.update(id, dto);
     }
 
