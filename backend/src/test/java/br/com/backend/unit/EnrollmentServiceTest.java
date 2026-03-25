@@ -1,9 +1,11 @@
 package br.com.backend.unit;
 
-import br.com.backend.builders.*;
+import br.com.backend.builders.entity.ClassroomBuilder;
+import br.com.backend.builders.entity.EnrollmentBuilder;
+import br.com.backend.builders.entity.SchoolYearBuilder;
+import br.com.backend.builders.entity.StudentBuilder;
 import br.com.backend.dto.request.EnrollmentRequest;
 import br.com.backend.entity.*;
-import br.com.backend.entity.enums.Role;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.EnrollmentRepository;
@@ -17,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 import java.util.UUID;

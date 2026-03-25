@@ -1,7 +1,9 @@
 package br.com.backend.integration;
 
+import br.com.backend.helper.IntegrationTestHelper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -17,7 +19,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureMockMvc(addFilters = false)
 @WithMockUser(authorities = "ADMIN")
 @Transactional
-public abstract class AbstractInegrationTest {
+@Import({IntegrationTestHelper.class})
+public abstract class AbstractIntegrationTest {
 
     @Container
     static PostgreSQLContainer<?> postgres =

@@ -1,11 +1,12 @@
 package br.com.backend.unit;
 
-import br.com.backend.builders.*;
+import br.com.backend.builders.entity.AssessmentBuilder;
+import br.com.backend.builders.entity.ClassroomBuilder;
+import br.com.backend.builders.entity.TeachingAssignmentBuilder;
 import br.com.backend.dto.request.AssessmentCreateRequest;
 import br.com.backend.dto.request.AssessmentUpdateRequest;
 import br.com.backend.entity.*;
 import br.com.backend.entity.enums.AssessmentType;
-import br.com.backend.entity.enums.Role;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.AssessmentRepository;

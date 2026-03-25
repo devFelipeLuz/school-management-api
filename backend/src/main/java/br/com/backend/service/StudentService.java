@@ -83,8 +83,15 @@ public class StudentService {
 
     public Student findActiveStudentById(UUID id) {
         Student student = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Student not found"));
         student.ensureActive();
         return student;
+    }
+
+    public boolean isOwner(UUID studentId, UUID userId) {
+        Student student = repository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found"));
+
+        return student.getUser().getId().equals(userId);
     }
 }

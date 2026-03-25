@@ -1,4 +1,4 @@
-package br.com.backend.builders;
+package br.com.backend.builders.entity;
 
 import br.com.backend.entity.Professor;
 import br.com.backend.entity.User;

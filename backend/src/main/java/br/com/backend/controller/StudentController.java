@@ -37,7 +37,7 @@ public class StudentController {
 
     @Operation(summary = "Find student by id")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize("hasAuthority('ADMIN') or @studentService.isOwner(#id, principal.id)")
     public StudentResponseDTO getStudentById(@PathVariable UUID id) {
         return service.findById(id);
     }

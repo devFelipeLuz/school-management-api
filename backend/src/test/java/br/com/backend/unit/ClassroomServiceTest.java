@@ -1,7 +1,7 @@
 package br.com.backend.unit;
 
-import br.com.backend.builders.ClassroomBuilder;
-import br.com.backend.builders.SchoolYearBuilder;
+import br.com.backend.builders.entity.ClassroomBuilder;
+import br.com.backend.builders.entity.SchoolYearBuilder;
 import br.com.backend.dto.request.ClassroomChangeCapacityRequest;
 import br.com.backend.dto.request.ClassroomCreateRequest;
 import br.com.backend.entity.Classroom;

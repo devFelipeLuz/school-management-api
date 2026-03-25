@@ -1,4 +1,4 @@
-package br.com.backend.builders;
+package br.com.backend.builders.dto;
 
 import br.com.backend.dto.request.StudentUpdateRequest;
 

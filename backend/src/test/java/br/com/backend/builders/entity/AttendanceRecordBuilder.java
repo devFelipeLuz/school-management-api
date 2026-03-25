@@ -1,4 +1,4 @@
-package br.com.backend.builders;
+package br.com.backend.builders.entity;
 
 import br.com.backend.entity.AttendanceRecord;
 import br.com.backend.entity.AttendanceSession;

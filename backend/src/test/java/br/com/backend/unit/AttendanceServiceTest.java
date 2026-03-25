@@ -1,9 +1,9 @@
 package br.com.backend.unit;
 
-import br.com.backend.builders.AttendanceRecordBuilder;
-import br.com.backend.builders.AttendanceSessionBuilder;
-import br.com.backend.builders.EnrollmentBuilder;
-import br.com.backend.builders.TeachingAssignmentBuilder;
+import br.com.backend.builders.entity.AttendanceRecordBuilder;
+import br.com.backend.builders.entity.AttendanceSessionBuilder;
+import br.com.backend.builders.entity.EnrollmentBuilder;
+import br.com.backend.builders.entity.TeachingAssignmentBuilder;
 import br.com.backend.dto.request.AttendanceCreateRequest;
 import br.com.backend.dto.request.AttendanceRecordRequest;
 import br.com.backend.entity.AttendanceRecord;

@@ -1,14 +1,14 @@
 package br.com.backend.integration;
 
-import br.com.backend.builders.StudentCreateRequestBuilder;
-import br.com.backend.builders.StudentUpdateRequestBuilder;
+import br.com.backend.builders.dto.StudentCreateRequestBuilder;
+import br.com.backend.builders.dto.StudentUpdateRequestBuilder;
 import br.com.backend.dto.request.StudentCreateRequest;
 import br.com.backend.dto.request.StudentUpdateRequest;
+import br.com.backend.helper.IntegrationTestHelper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.ObjectMapper;
@@ -19,17 +19,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class StudentControllerIT extends AbstractInegrationTest {
+public class StudentControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private IntegrationTestHelper helper;
 
-    private <T> String toJson(T object) throws Exception{
-        return objectMapper.writeValueAsString(object);
-    }
 
     private UUID createStudentAndReturnId() throws Exception {
         StudentCreateRequest request = StudentCreateRequestBuilder.builder()
@@ -40,7 +37,7 @@ public class StudentControllerIT extends AbstractInegrationTest {
 
         MvcResult result = mockMvc.perform(post("/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(request)))
+                .content(helper.toJson(request)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -59,7 +56,7 @@ public class StudentControllerIT extends AbstractInegrationTest {
 
         mockMvc.perform(post("/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(request)))
+                .content(helper.toJson(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.name").value("Ricardo Cruz"))
@@ -85,7 +82,7 @@ public class StudentControllerIT extends AbstractInegrationTest {
 
         mockMvc.perform(patch("/students/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(request)))
+                .content(helper.toJson(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Ezio Auditore"))
                 .andExpect(jsonPath("$.email").value("ricardo.cruz@email.com"));
@@ -126,7 +123,7 @@ public class StudentControllerIT extends AbstractInegrationTest {
 
         mockMvc.perform(post("/students")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(request)))
+                .content(helper.toJson(request)))
                 .andExpect(status().isUnprocessableContent());
     }
 }

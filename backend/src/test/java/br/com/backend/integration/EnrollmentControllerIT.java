@@ -1,11 +1,12 @@
 package br.com.backend.integration;
 
-import br.com.backend.builders.EnrollmentRequestBuilder;
+import br.com.backend.builders.dto.EnrollmentRequestBuilder;
 import br.com.backend.dto.request.ClassroomCreateRequest;
 import br.com.backend.dto.request.EnrollmentRequest;
 import br.com.backend.dto.request.SchoolYearRequest;
 import br.com.backend.dto.request.StudentCreateRequest;
 import br.com.backend.entity.enums.EnrollmentStatus;
+import br.com.backend.helper.IntegrationTestHelper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,31 +21,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class EnrollmentControllerIT extends AbstractInegrationTest {
+public class EnrollmentControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private IntegrationTestHelper helper;
 
-
-    private <T> String toJson(T object) throws Exception{
-        return objectMapper.writeValueAsString(object);
-    }
-
-    private <T> UUID postAndReturnId(String url, T request)  throws Exception {
-        MvcResult result = mockMvc.perform(post(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(request)))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        String id = JsonPath.read(
-                result.getResponse().getContentAsString(), "$.id");
-
-        return UUID.fromString(id);
-    }
 
     private UUID createStudentAndReturnId() throws Exception {
         StudentCreateRequest request = new StudentCreateRequest(
@@ -52,13 +36,13 @@ public class EnrollmentControllerIT extends AbstractInegrationTest {
                 "ricardo.juarez@email.com",
                 "123456");
 
-        return postAndReturnId("/students", request);
+        return helper.postAndReturnId("/students", request);
     }
 
     private UUID createSchoolYearAndReturnId() throws Exception {
         SchoolYearRequest request = new SchoolYearRequest(2026);
 
-        return postAndReturnId("/school-years", request);
+        return helper.postAndReturnId("/school-years", request);
     }
 
     private UUID createClassroomAndReturnId() throws Exception {
@@ -66,7 +50,7 @@ public class EnrollmentControllerIT extends AbstractInegrationTest {
 
         ClassroomCreateRequest request = new ClassroomCreateRequest("3.A", schoolYearId);
 
-        return postAndReturnId("/classrooms", request);
+        return helper.postAndReturnId("/classrooms", request);
     }
 
     private UUID createEnrollmentAndReturnId() throws Exception {
@@ -80,7 +64,7 @@ public class EnrollmentControllerIT extends AbstractInegrationTest {
                 .withClassroomId(classroomId)
                 .build();
 
-        return postAndReturnId("/enrollments", request);
+        return helper.postAndReturnId("/enrollments", request);
     }
 
     @Test
@@ -97,7 +81,7 @@ public class EnrollmentControllerIT extends AbstractInegrationTest {
 
         mockMvc.perform(post("/enrollments")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(request)))
+                .content(helper.toJson(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.studentName").value("Ricardo Juarez"))

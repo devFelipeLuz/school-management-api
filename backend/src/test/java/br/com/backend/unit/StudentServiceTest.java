@@ -1,7 +1,7 @@
 package br.com.backend.unit;
 
-import br.com.backend.builders.StudentBuilder;
-import br.com.backend.builders.UserBuilder;
+import br.com.backend.builders.entity.StudentBuilder;
+import br.com.backend.builders.entity.UserBuilder;
 import br.com.backend.dto.request.StudentCreateRequest;
 import br.com.backend.dto.request.StudentUpdateRequest;
 import br.com.backend.entity.Student;

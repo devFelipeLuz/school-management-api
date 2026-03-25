@@ -1,77 +1,33 @@
 package br.com.backend.api;
 
-import br.com.backend.builders.AuthRequestBuilder;
-import br.com.backend.config.DataInitializer;
+import br.com.backend.builders.dto.AuthRequestBuilder;
+import br.com.backend.builders.dto.UserCreateRequestBuilder;
+import br.com.backend.config.BaseApiTest;
 import br.com.backend.dto.request.AuthRequest;
+import br.com.backend.dto.request.RefreshRequest;
 import br.com.backend.dto.request.UserCreateRequest;
 import br.com.backend.entity.enums.Role;
-import io.restassured.RestAssured;
+import br.com.backend.helper.AuthHelper;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Transactional
-@Import(DataInitializer.class)
-public class AuthApiTest {
+public class AuthApiTest extends BaseApiTest {
 
-    @LocalServerPort
-    private int port;
-
-    private AuthRequest request;
-
-    @BeforeEach
-    void setup() {
-        RestAssured.reset();
-        RestAssured.baseURI = "http://127.0.0.1";
-        RestAssured.port = port;
-
-        RestAssured.config = RestAssured.config()
-                .encoderConfig(io.restassured.config.EncoderConfig.encoderConfig()
-                        .appendDefaultContentCharsetToContentTypeIfUndefined(false));
-
-        request = AuthRequestBuilder.builder()
-                .withEmail("admin@admin.com")
-                .withPassword("admin")
-                .build();
-    }
-
-    private String getAdminToken() {
-        return given()
-                    .contentType(ContentType.JSON)
-                    .body(request)
-                .when()
-                    .post("/auth/login")
-                .then()
-                    .statusCode(200)
-                    .extract()
-                    .path("accessToken");
-    }
-
-    private String getStudentToken() {
-        AuthRequest request =
-                new AuthRequest("student@school.com", "student");
-
-        return given()
-                        .contentType(ContentType.JSON)
-                        .body(request)
-                    .when()
-                        .post("/auth/login")
-                    .then()
-                        .extract()
-                        .path("accessToken");
-    }
+    @Autowired
+    private AuthHelper helper;
 
     @Test
     void shouldLoginSuccessfully() {
+        AuthRequest request = AuthRequestBuilder.builder()
+                .withEmail("admin@admin.com")
+                .withPassword("admin")
+                .build();
+
         given()
             .contentType(ContentType.JSON)
             .body(request)
@@ -85,7 +41,7 @@ public class AuthApiTest {
 
     @Test
     void shouldAccessProtectedEndpoint() {
-        String token = getAdminToken();
+        String token = helper.getAdminAccessToken();
 
         given()
                 .header("Authorization", "Bearer " + token)
@@ -98,11 +54,9 @@ public class AuthApiTest {
     @Test
     void shouldNotAccessStudentWithoutToken() {
         given()
-                .log().all()
         .when()
                 .get("/students")
         .then()
-                .log().all()
                 .statusCode(403);
     }
 
@@ -118,10 +72,13 @@ public class AuthApiTest {
 
     @Test
     void shouldCreateUserSuccessfully() {
-        String token = getAdminToken();
+        String token = helper.getAdminAccessToken();
 
-        UserCreateRequest request =
-                new UserCreateRequest("teste@teste.com", "123456", Role.STUDENT);
+        UserCreateRequest request =  UserCreateRequestBuilder.builder()
+                .withEmail("test@test.com")
+                .withPassword("123456")
+                .withRole(Role.STUDENT)
+                .build();
 
         given()
                 .contentType(ContentType.JSON)
@@ -135,10 +92,13 @@ public class AuthApiTest {
 
     @Test
     void shouldReturnForbiddenWhenUserHasNoPermission() {
-        String token = getStudentToken();
+        String token = helper.getStudentAccessToken();
 
-        UserCreateRequest request =
-                new UserCreateRequest("marquinhos@school.com", "marquinhos", Role.STUDENT);
+        UserCreateRequest request = UserCreateRequestBuilder.builder()
+                .withEmail("marquinhos@school.com")
+                .withPassword("marquinhos")
+                .withRole(Role.STUDENT)
+                .build();
 
         given()
                 .contentType(ContentType.JSON)
@@ -149,5 +109,38 @@ public class AuthApiTest {
         .then()
                 .log().all()
                 .statusCode(403);
+    }
+
+    @Test
+    void shouldLogoutSuccessfully() {
+        String token = helper.getAdminAccessToken();
+
+        RefreshRequest request =
+                new RefreshRequest(helper.getAdminRefreshToken());
+
+        given()
+                .header("Authorization", "Bearer " + token)
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post("/auth/logout")
+        .then()
+                .statusCode(204);
+    }
+
+    @Test
+    void shouldRefreshToken() {
+        RefreshRequest request =
+                new RefreshRequest(helper.getAdminRefreshToken());
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post("/auth/refresh")
+        .then()
+                .statusCode(200)
+                .body("accessToken", notNullValue())
+                .body("refreshToken", notNullValue());
     }
 }

@@ -1,6 +1,6 @@
 package br.com.backend.unit;
 
-import br.com.backend.builders.UserBuilder;
+import br.com.backend.builders.entity.UserBuilder;
 import br.com.backend.dto.request.AuthRequest;
 import br.com.backend.dto.response.AuthResponse;
 import br.com.backend.entity.User;

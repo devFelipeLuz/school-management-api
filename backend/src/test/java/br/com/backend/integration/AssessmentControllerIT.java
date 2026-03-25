@@ -1,15 +1,13 @@
 package br.com.backend.integration;
 
-import br.com.backend.builders.AssessmentCreateRequestBuilder;
+import br.com.backend.builders.dto.AssessmentCreateRequestBuilder;
 import br.com.backend.dto.request.*;
 import br.com.backend.entity.enums.AssessmentType;
-import com.jayway.jsonpath.JsonPath;
+import br.com.backend.helper.IntegrationTestHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.UUID;
 
@@ -17,30 +15,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AssessmentControllerIT extends AbstractInegrationTest {
+public class AssessmentControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    private <T> String toJson(T object) throws Exception {
-        return objectMapper.writeValueAsString(object);
-    }
-
-    private <T> UUID postAndReturnId(String url, T request) throws Exception {
-        MvcResult result = mockMvc.perform(post(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(request)))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        String id = JsonPath.read(
-                result.getResponse().getContentAsString(), "$.id");
-
-        return UUID.fromString(id);
-    }
+    private IntegrationTestHelper helper;
 
     private UUID createProfessorAndReturnId() throws Exception {
         ProfessorCreateRequest request = new ProfessorCreateRequest(
@@ -48,17 +29,17 @@ public class AssessmentControllerIT extends AbstractInegrationTest {
                 "cristina.ferrari@email.com",
                 "123456");
 
-        return postAndReturnId("/professors", request);
+        return helper.postAndReturnId("/professors", request);
     }
 
     private UUID createSubjectAndReturnId() throws Exception {
         SubjectRequest request =  new SubjectRequest("História");
-        return postAndReturnId("/subjects", request);
+        return helper.postAndReturnId("/subjects", request);
     }
 
     private UUID createSchoolYearAndReturnId() throws Exception {
         SchoolYearRequest request = new SchoolYearRequest(2026);
-        return postAndReturnId("/school-years", request);
+        return helper.postAndReturnId("/school-years", request);
     }
 
     private UUID createClassroomAndReturnId() throws Exception {
@@ -67,7 +48,7 @@ public class AssessmentControllerIT extends AbstractInegrationTest {
         ClassroomCreateRequest request = new ClassroomCreateRequest(
                 "3.A", schoolYearId);
 
-        return postAndReturnId("/classrooms", request);
+        return helper.postAndReturnId("/classrooms", request);
     }
 
     private UUID createAssignmentAndReturnId() throws Exception {
@@ -78,7 +59,7 @@ public class AssessmentControllerIT extends AbstractInegrationTest {
         TeachingAssignmentRequest request = new TeachingAssignmentRequest(
                 professorId,  subjectId, classroomId);
 
-        return postAndReturnId("/assignments", request);
+        return helper.postAndReturnId("/assignments", request);
     }
 
     private UUID createAssessmentAndReturnId() throws Exception {
@@ -90,7 +71,7 @@ public class AssessmentControllerIT extends AbstractInegrationTest {
                 .withAssignmentId(assignmentId)
                 .build();
 
-        return  postAndReturnId("/assessments", request);
+        return  helper.postAndReturnId("/assessments", request);
     }
 
     @Test
@@ -105,7 +86,7 @@ public class AssessmentControllerIT extends AbstractInegrationTest {
 
         mockMvc.perform(post("/assessments")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(request)))
+                .content(helper.toJson(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.title").value("Prova de História"))
@@ -134,7 +115,7 @@ public class AssessmentControllerIT extends AbstractInegrationTest {
 
         mockMvc.perform(patch("/assessments/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(request)))
+                .content(helper.toJson(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Trabalho de História"))
                 .andExpect(jsonPath("$.type").value(AssessmentType.TRABALHO.name()))
