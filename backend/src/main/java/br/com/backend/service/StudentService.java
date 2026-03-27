@@ -10,8 +10,10 @@ import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.StudentMapper;
 import br.com.backend.repository.StudentRepository;
 import br.com.backend.repository.UserRepository;
+import br.com.backend.specification.StudentSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,13 +50,11 @@ public class StudentService {
                 .orElseThrow(() -> new EntityNotFoundException("Student not found"));
     }
 
-    public Page<StudentResponseDTO> findAll(Boolean active, Pageable pageable) {
-        if (active == null) {
-            return repository.findAll(pageable)
-                    .map(StudentMapper::toDTO);
-        }
+    public Page<StudentResponseDTO> findAll(String name, String email, Boolean active, Pageable pageable) {
+        Specification<Student> spec =
+                StudentSpecification.withFilters(name, email, active);
 
-        return repository.findByActive(active, pageable)
+        return repository.findAll(spec, pageable)
                 .map(StudentMapper::toDTO);
     }
 

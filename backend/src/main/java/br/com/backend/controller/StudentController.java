@@ -46,6 +46,12 @@ public class StudentController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<StudentResponseDTO> getStudents(
+            @Parameter(description = "Filter by parcial or full name")
+            @RequestParam(required = false) String name,
+
+            @Parameter(description = "Filter by parcial or full email")
+            @RequestParam(required = false) String email,
+
             @Parameter(description = "Filter by active status (true or false)")
             @RequestParam(required = false)
             Boolean active,
@@ -53,7 +59,7 @@ public class StudentController {
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.DESC)
             Pageable pageable) {
 
-        return service.findAll(active, pageable);
+        return service.findAll(name, email, active, pageable);
     }
 
     @Operation(summary = "Update student")
