@@ -3,8 +3,10 @@ package br.com.backend.controller;
 import br.com.backend.dto.request.AssessmentCreateRequest;
 import br.com.backend.dto.request.AssessmentUpdateRequest;
 import br.com.backend.dto.response.AssessmentResponseDTO;
+import br.com.backend.entity.enums.AssessmentType;
 import br.com.backend.service.AssessmentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,9 +47,17 @@ public class AssessmentController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<AssessmentResponseDTO> getAssessments(
+            @Parameter(description = "Filter by partial or full title")
+            @RequestParam(required = false)
+            String title,
+
+            @Parameter(description = "Filter by assessment type (PROVA, TRABALHO, LIÇÃO)")
+            @RequestParam(required = false)
+            AssessmentType type,
+
             @PageableDefault(size = 10, sort = "assessmentDate", direction = Sort.Direction.ASC)
             Pageable pageable) {
-        return service.findAll(pageable);
+        return service.findAll(title, type, pageable);
     }
 
     @Operation(summary = "Update assessment")

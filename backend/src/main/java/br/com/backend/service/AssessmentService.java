@@ -5,14 +5,19 @@ import br.com.backend.dto.request.AssessmentUpdateRequest;
 import br.com.backend.dto.response.AssessmentResponseDTO;
 import br.com.backend.entity.Assessment;
 import br.com.backend.entity.TeachingAssignment;
+import br.com.backend.entity.enums.AssessmentType;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.AssessmentMapper;
 import br.com.backend.repository.AssessmentRepository;
+import br.com.backend.specification.GenericSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -41,8 +46,14 @@ public class AssessmentService {
         return AssessmentMapper.toDTO(saved);
     }
 
-    public Page<AssessmentResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
+    public Page<AssessmentResponseDTO> findAll(String title, AssessmentType type, Pageable pageable) {
+        Map<String, Object> filter = new HashMap<>();
+        filter.put("title", title);
+        filter.put("type", type);
+
+        Specification<Assessment> spec = GenericSpecification.withFilters(filter);
+
+        return repository.findAll(spec, pageable)
                 .map(AssessmentMapper::toDTO);
     }
 
