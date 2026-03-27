@@ -46,10 +46,10 @@ public class StudentController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<StudentResponseDTO> getStudents(
-            @Parameter(description = "Filter by parcial or full name")
+            @Parameter(description = "Filter by partial or full name")
             @RequestParam(required = false) String name,
 
-            @Parameter(description = "Filter by parcial or full email")
+            @Parameter(description = "Filter by partial or full email")
             @RequestParam(required = false) String email,
 
             @Parameter(description = "Filter by active status (true or false)")

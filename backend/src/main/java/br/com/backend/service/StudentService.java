@@ -10,7 +10,7 @@ import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.StudentMapper;
 import br.com.backend.repository.StudentRepository;
 import br.com.backend.repository.UserRepository;
-import br.com.backend.specification.StudentSpecification;
+import br.com.backend.specification.GenericSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -52,7 +52,7 @@ public class StudentService {
 
     public Page<StudentResponseDTO> findAll(String name, String email, Boolean active, Pageable pageable) {
         Specification<Student> spec =
-                StudentSpecification.withFilters(name, email, active);
+                GenericSpecification.withFilters(name, email, active);
 
         return repository.findAll(spec, pageable)
                 .map(StudentMapper::toDTO);

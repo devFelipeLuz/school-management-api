@@ -1,15 +1,14 @@
 package br.com.backend.specification;
 
-import br.com.backend.entity.Student;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.persistence.criteria.Predicate;
 
-public class StudentSpecification {
+public class GenericSpecification {
 
-    public static Specification<Student> withFilters(String name, String email, Boolean active) {
+    public static <T> Specification<T> withFilters(String name, String email, Boolean active) {
         return (root, query, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
@@ -17,7 +16,7 @@ public class StudentSpecification {
             if (name != null && !name.isBlank()) {
                 String[] names = name.toLowerCase().split("\\s+");
 
-                for (String n: names) {
+                for (String n : names) {
                     predicates.add(
                             criteriaBuilder.like(
                                     criteriaBuilder.lower(root.get("name")),
@@ -25,13 +24,14 @@ public class StudentSpecification {
                             )
                     );
                 }
+
             }
 
             if (email != null && !email.isBlank()) {
                 predicates.add(
                         criteriaBuilder.like(
                                 criteriaBuilder.lower(root.get("email")),
-                                "%" + email.toLowerCase() + "%"
+                                "%" + email + "%"
                         )
                 );
             }
