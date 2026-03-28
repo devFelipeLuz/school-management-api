@@ -2,9 +2,12 @@ package br.com.backend.controller;
 
 import br.com.backend.dto.request.AttendanceCreateRequest;
 import br.com.backend.dto.request.AttendanceRecordRequest;
+import br.com.backend.dto.response.AttendanceRecordResponseDTO;
 import br.com.backend.dto.response.AttendanceSessionResponseDTO;
+import br.com.backend.entity.enums.AttendanceStatus;
 import br.com.backend.service.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,10 +47,20 @@ public class AttendanceController {
     @Operation(summary = "List attendances")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public Page<AttendanceSessionResponseDTO> getAttendances(
+    public Page<AttendanceRecordResponseDTO> getAttendances(
+            @Parameter(description = "Filter by student's name")
+            @RequestParam(required = false) String studentName,
+
+            @Parameter(description = "Filter by student's email")
+            @RequestParam(required = false)
+            String studentEmail,
+
+            @Parameter(description = "Filter by attendance status (PRESENT, ABSENT or JUSTIFIED_ABSENCE)")
+            @RequestParam(required = false) AttendanceStatus status,
+
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
             Pageable pageable) {
-        return service.findAll(pageable);
+        return service.findAll(studentName, studentEmail, status, pageable);
     }
 
     @Operation(summary = "Update attendance")

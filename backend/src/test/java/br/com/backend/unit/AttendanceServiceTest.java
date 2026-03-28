@@ -13,7 +13,7 @@ import br.com.backend.entity.TeachingAssignment;
 import br.com.backend.entity.enums.AttendanceStatus;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
-import br.com.backend.repository.AttendanceRepository;
+import br.com.backend.repository.AttendanceSessionRepository;
 import br.com.backend.service.AttendanceService;
 import br.com.backend.service.EnrollmentService;
 import br.com.backend.service.TeachingAssignmentService;
@@ -44,7 +44,7 @@ public class AttendanceServiceTest {
     private EnrollmentService enrollmentService;
 
     @Mock
-    private AttendanceRepository repository;
+    private AttendanceSessionRepository repository;
 
     @InjectMocks
     private AttendanceService service;

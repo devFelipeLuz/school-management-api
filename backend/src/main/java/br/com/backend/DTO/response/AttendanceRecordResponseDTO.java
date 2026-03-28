@@ -1,11 +1,11 @@
 package br.com.backend.dto.response;
 
-import br.com.backend.entity.enums.AttendanceStatus;
-
+import java.time.LocalDate;
 import java.util.UUID;
 
 public record AttendanceRecordResponseDTO(
-        UUID recordId,
+        UUID id,
         String studentName,
-        AttendanceStatus status
+        String status,
+        LocalDate date
 ) {}

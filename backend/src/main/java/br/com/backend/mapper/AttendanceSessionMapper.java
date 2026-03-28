@@ -7,9 +7,9 @@ import br.com.backend.entity.TeachingAssignment;
 
 import java.util.List;
 
-public class AttendanceMapper {
+public class AttendanceSessionMapper {
     
-    private AttendanceMapper() {
+    private AttendanceSessionMapper() {
         throw new IllegalArgumentException("Mapper");
     }
     

@@ -2,16 +2,23 @@ package br.com.backend.service;
 
 import br.com.backend.dto.request.AttendanceCreateRequest;
 import br.com.backend.dto.request.AttendanceRecordRequest;
+import br.com.backend.dto.response.AttendanceRecordResponseDTO;
 import br.com.backend.dto.response.AttendanceSessionResponseDTO;
+import br.com.backend.entity.AttendanceRecord;
 import br.com.backend.entity.AttendanceSession;
 import br.com.backend.entity.Enrollment;
 import br.com.backend.entity.TeachingAssignment;
+import br.com.backend.entity.enums.AttendanceStatus;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
-import br.com.backend.mapper.AttendanceMapper;
-import br.com.backend.repository.AttendanceRepository;
+import br.com.backend.mapper.AttendanceRecordMapper;
+import br.com.backend.mapper.AttendanceSessionMapper;
+import br.com.backend.repository.AttendanceRecordRepository;
+import br.com.backend.repository.AttendanceSessionRepository;
+import br.com.backend.specification.AttendanceRecordSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,21 +28,24 @@ import java.util.UUID;
 @Transactional
 public class AttendanceService {
 
-    private final AttendanceRepository repository;
+    private final AttendanceSessionRepository sessionRepository;
+    private final AttendanceRecordRepository recordRepository;
     private final TeachingAssignmentService teachingAssignmentService;
     private final EnrollmentService enrollmentService;
 
-    public AttendanceService(AttendanceRepository repository,
+    public AttendanceService(AttendanceSessionRepository sessionRepository,
+                             AttendanceRecordRepository recordRepository,
                              TeachingAssignmentService teachingAssignmentService,
                              EnrollmentService enrollmentService) {
 
-        this.repository = repository;
+        this.sessionRepository = sessionRepository;
+        this.recordRepository = recordRepository;
         this.teachingAssignmentService = teachingAssignmentService;
         this.enrollmentService = enrollmentService;
     }
 
     public AttendanceSessionResponseDTO register(AttendanceCreateRequest dto) {
-        if (repository.existsByTeachingAssignmentAndDate(dto.teachingAssignmentId(), dto.date())) {
+        if (sessionRepository.existsByTeachingAssignmentAndDate(dto.teachingAssignmentId(), dto.date())) {
             throw new BusinessException("Session already exists");
         }
 
@@ -48,18 +58,23 @@ public class AttendanceService {
         AttendanceSession session = new AttendanceSession(assignment, dto.date());
 
         session.registerAttendance(enrollment, dto.status());
-        AttendanceSession saved = repository.save(session);
-        return AttendanceMapper.toDTO(saved);
+        AttendanceSession saved = sessionRepository.save(session);
+        return AttendanceSessionMapper.toDTO(saved);
     }
 
-    public Page<AttendanceSessionResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
-                .map(AttendanceMapper::toDTO);
+    public Page<AttendanceRecordResponseDTO> findAll(
+            String studentName, String studentEmail, AttendanceStatus status, Pageable pageable) {
+
+        Specification<AttendanceRecord> spec =
+                AttendanceRecordSpecification.withFilters(studentName, studentEmail, status);
+
+        return recordRepository.findAll(spec, pageable)
+                .map(AttendanceRecordMapper::toDTO);
     }
 
     public AttendanceSessionResponseDTO findById(UUID id) {
-        return repository.findById(id)
-                .map(AttendanceMapper::toDTO)
+        return sessionRepository.findById(id)
+                .map(AttendanceSessionMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Attendance Not Found"));
     }
 
@@ -71,16 +86,16 @@ public class AttendanceService {
         AttendanceSession session = findAttendanceSessionById(sessionId);
 
         session.updateAttendance(recordId, recordDto.status());
-        return AttendanceMapper.toDTO(session);
+        return AttendanceSessionMapper.toDTO(session);
     }
 
     public void delete(UUID sessionId) {
         AttendanceSession session = findAttendanceSessionById(sessionId);
-        repository.delete(session);
+        sessionRepository.delete(session);
     }
 
     public AttendanceSession findAttendanceSessionById(UUID id) {
-        return repository.findById(id)
+        return sessionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Attendance session Not Found"));
     }
 }
