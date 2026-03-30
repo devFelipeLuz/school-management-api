@@ -10,6 +10,7 @@ import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.ProfessorMapper;
 import br.com.backend.repository.ProfessorRepository;
 import br.com.backend.specification.GenericSpecification;
+import br.com.backend.specification.ProfessorSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -48,12 +49,8 @@ public class ProfessorService {
     }
 
     public Page<ProfessorResponseDTO> findAll(String name, String email, Boolean active, Pageable pageable) {
-        Map<String, Object> filters = new HashMap<>();
-        filters.put("name", name);
-        filters.put("email", email);
-        filters.put("active", active);
-
-        Specification<Professor> spec = GenericSpecification.withFilters(filters);
+        Specification<Professor> spec =
+                ProfessorSpecification.withFilters(name, email, active);
 
         return repository.findAll(spec, pageable)
                 .map(ProfessorMapper::toDTO);
