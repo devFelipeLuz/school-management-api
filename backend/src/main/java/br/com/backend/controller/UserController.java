@@ -47,13 +47,17 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public Page<UserResponseDTO> getUsers(
+            @Parameter(description = "Filter by partial or email")
+            @RequestParam(required = false)
+            String email,
+
             @Parameter(description = "Filter by enabled status (true or false)")
             @RequestParam(required = false)
             Boolean enabled,
 
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
             Pageable pageable) {
-        return service.findAll(enabled, pageable);
+        return service.findAll(email, enabled, pageable);
     }
 
     @Operation(summary = "Update username")
