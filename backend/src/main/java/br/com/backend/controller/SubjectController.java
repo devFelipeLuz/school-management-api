@@ -46,13 +46,17 @@ public class SubjectController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<SubjectResponseDTO> getSubjects(
+            @Parameter(description = "Filter by partial or full subject name")
+            @RequestParam(required = false)
+            String name,
+
             @Parameter(description = "Filter by status active (true or false)")
             @RequestParam(required = false)
             Boolean active,
 
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable) {
-        return service.findAll(active, pageable);
+        return service.findAll(name, active, pageable);
     }
 
     @Operation(summary = "Update subject")
