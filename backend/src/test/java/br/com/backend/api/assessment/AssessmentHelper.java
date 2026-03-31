@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.TestComponent;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.request;
 
 @TestComponent
 public class AssessmentHelper {
@@ -27,21 +28,41 @@ public class AssessmentHelper {
                 .withAssignmentId(assignmentId)
                 .build();
 
-        String id = given()
-                .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
-                .contentType(ContentType.JSON)
-                .body(request)
-                .when()
-                .post("/assessments")
-                .then()
-                .statusCode(201)
-                .extract()
-                .path("id");
+        String id = createAndReturnId(request);
 
         return new AssessmentData(
                 UUID.fromString(id),
                 request.title(),
                 request.type().name(),
                 request.teachingAssignmentId());
+    }
+
+    public AssessmentData createAssessmentWithData(UUID assignmentId, String title, AssessmentType type) {
+        AssessmentCreateRequest request = AssessmentCreateRequestBuilder.builder()
+                .withTitle(title)
+                .withType(type)
+                .withAssignmentId(assignmentId)
+                .build();
+
+        String id = createAndReturnId(request);
+
+        return new AssessmentData(
+                UUID.fromString(id),
+                request.title(),
+                request.type().name(),
+                request.teachingAssignmentId());
+    }
+
+    private String createAndReturnId(AssessmentCreateRequest request) {
+        return given()
+                .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post("/assessments")
+        .then()
+                .statusCode(201)
+                .extract()
+                .path("id");
     }
 }

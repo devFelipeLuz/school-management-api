@@ -183,6 +183,50 @@ public class AssessmentApiTest extends BaseApiTest {
     }
 
     @Test
+    void shouldFilterAssessmentsByTitle() {
+        AssessmentData assessment =
+                helper.createAssessmentWithData(
+                        assignment.getId(), "Trabalho sobre a Revolução Francesa", AssessmentType.TRABALHO);
+
+        AssessmentData anotherAssessment =
+                helper.createAssessmentWithData(
+                        assignment.getId(), "Prova de História", AssessmentType.PROVA);
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .queryParam("title", "Revolução")
+        .when()
+                .get("/assessments")
+        .then()
+                .statusCode(200)
+                .body("content.title", hasItem(assessment.getTitle()))
+                .body("content.title", not(hasItem(anotherAssessment.getTitle())))
+                .body("content.size()", greaterThanOrEqualTo(1));
+    }
+
+    @Test
+    void shouldFilterAssessmentsByType() {
+        AssessmentData assessment =
+                helper.createAssessmentWithData(
+                        assignment.getId(), "Trabalho sobre a Revolução Francesa", AssessmentType.TRABALHO);
+
+        AssessmentData anotherAssessment =
+                helper.createAssessmentWithData(
+                        assignment.getId(), "Prova de História", AssessmentType.PROVA);
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .queryParam("type", AssessmentType.TRABALHO.name())
+        .when()
+                .get("/assessments")
+        .then()
+                .statusCode(200)
+                .body("content.title", hasItem(assessment.getTitle()))
+                .body("content.title", not(hasItem(anotherAssessment.getTitle())))
+                .body("content.size()", greaterThanOrEqualTo(1));
+    }
+
+    @Test
     void shouldReturnForbiddenWhenStudentListsAssessments() {
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
