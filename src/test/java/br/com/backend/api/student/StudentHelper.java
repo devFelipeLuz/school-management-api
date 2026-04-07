@@ -55,6 +55,7 @@ public class StudentHelper {
         .when()
                 .post("/students")
         .then()
+                .log().all()
                 .statusCode(201)
                 .extract()
                 .path("id");

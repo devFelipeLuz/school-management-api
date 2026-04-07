@@ -29,6 +29,7 @@ public class GenericSpecification {
                         );
                     }
 
+                    return;
                 }
 
                 predicates.add(

@@ -34,6 +34,7 @@ public class EnrollmentHelper {
         .when()
                 .post("/enrollments")
         .then()
+                .log().all()
                 .statusCode(201)
                 .extract()
                 .path("id");

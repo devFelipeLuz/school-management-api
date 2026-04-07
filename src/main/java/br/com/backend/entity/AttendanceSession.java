@@ -47,29 +47,20 @@ public class AttendanceSession {
         ensureActive();
         ensureEnrollmentBelongsToAssignment(enrollment);
 
-        AttendanceRecord record = new AttendanceRecord(this, enrollment, status);
-
-        boolean exists = records.stream()
-                .anyMatch(r -> r.getEnrollment().equals(enrollment));
-
-        if (exists) {
+        if (validateAttendanceIsAlreadyRegistered(enrollment)) {
             throw new BusinessException("Attendance already registered for this student");
         }
 
-        records.add(record);
+        AttendanceRecord attendanceRecord =
+                new AttendanceRecord(this, enrollment, status);
+
+        records.add(attendanceRecord);
     }
 
-    public void updateAttendance(UUID id, AttendanceStatus newStatus) {
-        ensureActive();
-
-        this.records.stream()
-                .filter(record -> record.getId().equals(id))
-                .findFirst()
-                .ifPresentOrElse(record -> record.updateStatus(newStatus),
-                        () -> {
-                            throw new EntityNotFoundException("Registro de presença não encontrado nesta sessão");
-                        }
-                );
+    private void ensureActive() {
+        if (!this.active) {
+            throw new BusinessException("Attendance is not active");
+        }
     }
 
     private void ensureEnrollmentBelongsToAssignment(Enrollment enrollment) {
@@ -78,9 +69,8 @@ public class AttendanceSession {
         }
     }
 
-    public void ensureActive() {
-        if (!this.active) {
-            throw new BusinessException("Attendance is not active");
-        }
+    private boolean validateAttendanceIsAlreadyRegistered(Enrollment enrollment) {
+        return this.records.stream()
+                .anyMatch(r -> r.getEnrollment().equals(enrollment));
     }
 }

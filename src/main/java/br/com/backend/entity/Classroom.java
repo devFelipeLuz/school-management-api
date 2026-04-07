@@ -47,31 +47,38 @@ public class Classroom {
     }
 
     public void ensureCapacity() {
-        if (enrollmentCountForSchoolYear >= maxCapacity) {
+        if (validateEnrollmentsCountIsGreaterOrEqualsThanMaxCapacity()) {
             throw new BusinessException("Classroom is full");
         }
     }
 
+    private boolean validateEnrollmentsCountIsGreaterOrEqualsThanMaxCapacity() {
+        return enrollmentCountForSchoolYear >= maxCapacity;
+    }
+
     public void changeCapacity(int newCapacity) {
         ensureActive();
+        ensureNewCapacity(newCapacity);
+        this.maxCapacity = newCapacity;
+    }
 
-        if (newCapacity < enrollmentCountForSchoolYear) {
+    private boolean validateNewCapacityIsLessThanEnrollmentsCount(int newCapacity) {
+        return newCapacity < enrollmentCountForSchoolYear;
+    }
+
+    private void ensureNewCapacity(int newCapacity) {
+        if (validateNewCapacityIsLessThanEnrollmentsCount(newCapacity)) {
             throw new BusinessException("The new capacity cannot be less than active enrollments");
         }
-
-        this.maxCapacity = newCapacity;
     }
 
     public void addEnrollment(Enrollment enrollment) {
         ensureActive();
-
-        if (enrollment == null) {
-            throw new BusinessException("Enrollment cannot be null");
-        }
+        throwsExceptionWhenEnrollmentIsNull(enrollment);
 
         this.enrollments.add(enrollment);
 
-        if (enrollment.getStatus() == EnrollmentStatus.ACTIVE) {
+        if (isEnrollmentActive(enrollment)) {
             increaseActiveEnrollmentsCount();
         }
     }
@@ -83,12 +90,18 @@ public class Classroom {
 
     public void decreaseActiveEnrollmentsCount() {
         ensureActive();
-
-        if (enrollmentCountForSchoolYear == 0) {
-            throw new IllegalArgumentException("Turma vazia");
-        }
-
+        ensureEnrollmentsCountIsGreaterThanZero();
         this.enrollmentCountForSchoolYear--;
+    }
+
+    private boolean validateEnrollmentsCountEqualsZero() {
+        return enrollmentCountForSchoolYear == 0;
+    }
+
+    private void ensureEnrollmentsCountIsGreaterThanZero() {
+        if (validateEnrollmentsCountEqualsZero()) {
+            throw new BusinessException("No active enrollments to remove");
+        }
     }
 
     public List<Enrollment> getEnrollments() {
@@ -107,10 +120,31 @@ public class Classroom {
     }
 
     private String validateName(String name) {
-        if (name == null || name.isBlank()) {
+        ensureNameIsNotNullOrBlank(name);
+        return name;
+    }
+
+    private boolean nameIsNotNullOrBlank(String name) {
+        return name != null && !name.isBlank();
+    }
+
+    private void ensureNameIsNotNullOrBlank(String name) {
+        if (!nameIsNotNullOrBlank(name)) {
             throw new BusinessException("Name cannot be null or blank");
         }
+    }
 
-        return name;
+    private boolean ensureEnrollmentIsNotNull(Enrollment enrollment) {
+        return enrollment != null;
+    }
+
+    private void throwsExceptionWhenEnrollmentIsNull(Enrollment enrollment) {
+        if (!ensureEnrollmentIsNotNull(enrollment)) {
+            throw new BusinessException("Enrollment cannot be null");
+        }
+    }
+
+    private boolean isEnrollmentActive(Enrollment enrollment) {
+        return enrollment.getStatus() == EnrollmentStatus.ACTIVE;
     }
 }

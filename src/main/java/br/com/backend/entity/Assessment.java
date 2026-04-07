@@ -67,26 +67,18 @@ public class Assessment {
     }
 
     private String validateTitle(String title) {
-        throwsBusinessExceptionWithInvalidString(title);
+        if (title == null || title.isBlank()) {
+            throw new BusinessException("Title cannot be null or blank");
+        }
         return title;
     }
 
-    private boolean ensureStringIsNotNull(String string) {
-        return string != null;
-    }
-
-    private boolean ensureStringIsNotEmpty(String string) {
-        return !string.isBlank();
-    }
-
-    private void throwsBusinessExceptionWithInvalidString(String string) {
-        if (!ensureStringIsNotNull(string) && !ensureStringIsNotEmpty(string)) {
-            throw new BusinessException("Name cannot be null or blank");
-        }
+    private boolean ensureTypeIsNotNull(AssessmentType type) {
+        return type != null;
     }
 
     private AssessmentType validateType(AssessmentType type) {
-        if (type == null) {
+        if (!ensureTypeIsNotNull(type)) {
             throw new BusinessException("Type cannot be null");
         }
 

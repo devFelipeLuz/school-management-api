@@ -5,6 +5,7 @@ import br.com.backend.dto.request.SchoolYearRequest;
 import io.restassured.http.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.Year;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -16,7 +17,7 @@ public class SchoolYearHelper {
     private AuthHelper auth;
 
     public SchoolYearData createSchoolYear() {
-        int year = ThreadLocalRandom.current().nextInt(2000, 2100);
+        int year = Year.now().getValue() + ThreadLocalRandom.current().nextInt(10000);
 
         SchoolYearRequest request = new SchoolYearRequest(year);
 
@@ -27,6 +28,7 @@ public class SchoolYearHelper {
         .when()
                 .post("/school-years")
         .then()
+                .log().all()
                 .statusCode(201)
                 .extract()
                 .path("id");

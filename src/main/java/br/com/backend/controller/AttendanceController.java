@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
 import br.com.backend.dto.request.AttendanceCreateRequest;
-import br.com.backend.dto.request.AttendanceRecordRequest;
+import br.com.backend.dto.request.AttendanceRecordUpdateRequest;
 import br.com.backend.dto.response.AttendanceRecordResponseDTO;
 import br.com.backend.dto.response.AttendanceSessionResponseDTO;
 import br.com.backend.entity.enums.AttendanceStatus;
@@ -66,12 +66,12 @@ public class AttendanceController {
     @Operation(summary = "Update attendance")
     @PatchMapping("/{sessionId}/records/{recordId}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public AttendanceSessionResponseDTO updateAttendance(
+    public AttendanceRecordResponseDTO updateAttendance(
             @PathVariable UUID sessionId,
             @PathVariable UUID recordId,
-            @Valid @RequestBody AttendanceRecordRequest recordDto) {
+            @Valid @RequestBody AttendanceRecordUpdateRequest request) {
 
-        return service.update(sessionId, recordId, recordDto);
+        return service.updateAttendanceRecord(recordId, request);
     }
 
     @Operation(summary = "Delete attendance")

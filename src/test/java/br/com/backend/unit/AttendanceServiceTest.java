@@ -5,7 +5,7 @@ import br.com.backend.builders.entity.AttendanceSessionBuilder;
 import br.com.backend.builders.entity.EnrollmentBuilder;
 import br.com.backend.builders.entity.TeachingAssignmentBuilder;
 import br.com.backend.dto.request.AttendanceCreateRequest;
-import br.com.backend.dto.request.AttendanceRecordRequest;
+import br.com.backend.dto.request.AttendanceRecordUpdateRequest;
 import br.com.backend.entity.AttendanceRecord;
 import br.com.backend.entity.AttendanceSession;
 import br.com.backend.entity.Enrollment;
@@ -13,6 +13,7 @@ import br.com.backend.entity.TeachingAssignment;
 import br.com.backend.entity.enums.AttendanceStatus;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
+import br.com.backend.repository.AttendanceRecordRepository;
 import br.com.backend.repository.AttendanceSessionRepository;
 import br.com.backend.service.AttendanceService;
 import br.com.backend.service.EnrollmentService;
@@ -45,6 +46,9 @@ public class AttendanceServiceTest {
 
     @Mock
     private AttendanceSessionRepository repository;
+
+    @Mock
+    private AttendanceRecordRepository recordRepository;
 
     @InjectMocks
     private AttendanceService service;
@@ -96,26 +100,26 @@ public class AttendanceServiceTest {
 
     @Test
     void shouldUpdateAttendance() {
-        AttendanceRecord record = AttendanceRecordBuilder.builder()
+        AttendanceRecord attendanceRecord = AttendanceRecordBuilder.builder()
                 .withSession(session)
                 .withEnrollment(enrollment)
                 .build();
 
         UUID recordId = UUID.randomUUID();
-        ReflectionTestUtils.setField(record, "id", recordId);
+        ReflectionTestUtils.setField(attendanceRecord, "id", recordId);
 
-        session.getRecords().add(record);
+        session.getRecords().add(attendanceRecord);
 
-        AttendanceRecordRequest recordRequest =
-                new AttendanceRecordRequest(enrollmentId, AttendanceStatus.ABSENT);
+        AttendanceRecordUpdateRequest request =
+                new AttendanceRecordUpdateRequest(AttendanceStatus.ABSENT);
 
-        when(repository.findById(sessionId))
-                .thenReturn(Optional.of(session));
+        when(recordRepository.findById(recordId))
+                .thenReturn(Optional.of(attendanceRecord));
 
-        service.update(sessionId, recordId, recordRequest);
+        service.updateAttendanceRecord(recordId, request);
 
-        verify(repository).findById(sessionId);
-        assertEquals(AttendanceStatus.ABSENT, record.getStatus());
+        verify(repository).findById(recordId);
+        assertEquals(AttendanceStatus.ABSENT, attendanceRecord.getStatus());
     }
 
     @Test
@@ -152,25 +156,25 @@ public class AttendanceServiceTest {
 
     @Test
     void shouldThrowExceptionWhenStatusIsNull() {
-        AttendanceRecord record = AttendanceRecordBuilder.builder()
+        AttendanceRecord attendanceRecord = AttendanceRecordBuilder.builder()
                 .withSession(session)
                 .withEnrollment(enrollment)
                 .build();
 
         UUID recordId = UUID.randomUUID();
-        ReflectionTestUtils.setField(record, "id", recordId);
+        ReflectionTestUtils.setField(attendanceRecord, "id", recordId);
 
-        session.getRecords().add(record);
+        session.getRecords().add(attendanceRecord);
 
-        AttendanceRecordRequest recordRequest =
-                new AttendanceRecordRequest(enrollmentId, null);
+        AttendanceRecordUpdateRequest request =
+                new AttendanceRecordUpdateRequest(null);
 
-        when(repository.findById(sessionId))
-                .thenReturn(Optional.of(session));
+        when(recordRepository.findById(recordId))
+                .thenReturn(Optional.of(attendanceRecord));
 
         assertThrows(
                 BusinessException.class,
-                () -> service.update(sessionId, recordId, recordRequest));
+                () -> service.updateAttendanceRecord(recordId, request));
     }
 
     @Test

@@ -55,7 +55,7 @@ public class AssessmentController {
             @RequestParam(required = false)
             AssessmentType type,
 
-            @PageableDefault(size = 10, sort = "assessmentDate", direction = Sort.Direction.ASC)
+            @PageableDefault(size = 10, sort = "assessmentDate", direction = Sort.Direction.DESC)
             Pageable pageable) {
         return service.findAll(title, type, pageable);
     }

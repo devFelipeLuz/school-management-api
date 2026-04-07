@@ -1,7 +1,7 @@
 package br.com.backend.service;
 
 import br.com.backend.dto.request.AttendanceCreateRequest;
-import br.com.backend.dto.request.AttendanceRecordRequest;
+import br.com.backend.dto.request.AttendanceRecordUpdateRequest;
 import br.com.backend.dto.response.AttendanceRecordResponseDTO;
 import br.com.backend.dto.response.AttendanceSessionResponseDTO;
 import br.com.backend.entity.AttendanceRecord;
@@ -78,15 +78,10 @@ public class AttendanceService {
                 .orElseThrow(() -> new EntityNotFoundException("Attendance Not Found"));
     }
 
-    public AttendanceSessionResponseDTO update (
-            UUID sessionId,
-            UUID recordId,
-            AttendanceRecordRequest recordDto) {
-
-        AttendanceSession session = findAttendanceSessionById(sessionId);
-
-        session.updateAttendance(recordId, recordDto.status());
-        return AttendanceSessionMapper.toDTO(session);
+    public AttendanceRecordResponseDTO updateAttendanceRecord(UUID recordId, AttendanceRecordUpdateRequest request) {
+        AttendanceRecord attendanceRecord = findAttendanceRecordById(recordId);
+        attendanceRecord.updateStatus(request.status());
+        return AttendanceRecordMapper.toDTO(attendanceRecord);
     }
 
     public void delete(UUID sessionId) {
@@ -97,5 +92,10 @@ public class AttendanceService {
     public AttendanceSession findAttendanceSessionById(UUID id) {
         return sessionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Attendance session Not Found"));
+    }
+
+    private AttendanceRecord findAttendanceRecordById(UUID id) {
+        return recordRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Attendance Record not found"));
     }
 }

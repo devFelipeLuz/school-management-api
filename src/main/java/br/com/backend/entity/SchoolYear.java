@@ -58,9 +58,28 @@ public class SchoolYear {
     }
 
     private Integer validateYear(Integer year) {
-        if (year == null || year <= 0) {
-            throw new IllegalArgumentException("Year cannot be null or less than zero");
-        }
+        throwsExceptionWhenYearIsNull(year);
+        throwsExceptionWhenYearIsLesserOrEqualsToZero(year);
         return year;
+    }
+
+    private void throwsExceptionWhenYearIsNull(Integer year) {
+        if (!ensureYearIsNotNull(year)) {
+            throw new BusinessException("Year cannot be null");
+        }
+    }
+
+    private void throwsExceptionWhenYearIsLesserOrEqualsToZero(Integer year) {
+        if (!ensureYearIsGreaterThanZero(year)) {
+            throw new BusinessException("Year cannot be lesser than zero");
+        }
+    }
+
+    private boolean ensureYearIsNotNull(Integer year) {
+        return year != null;
+    }
+
+    private boolean ensureYearIsGreaterThanZero(Integer year) {
+        return year >= 0;
     }
 }

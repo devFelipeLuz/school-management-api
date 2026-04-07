@@ -50,10 +50,14 @@ public class AttendanceRecord {
     }
 
     private AttendanceStatus ensureStatus(AttendanceStatus status) {
-        if (status == null) {
+        if (!ensureStatusIsNotNull(status)) {
             throw new BusinessException("Status cannot be null");
         }
 
         return status;
+    }
+
+    private boolean ensureStatusIsNotNull(AttendanceStatus status) {
+        return status != null;
     }
 }

@@ -165,7 +165,8 @@ public class AssessmentApiTest extends BaseApiTest {
         .then()
                 .statusCode(200)
                 .body("content", not(empty()))
-                .body("content.title", hasItem(assessment.getTitle()));
+                .body("content.title", hasItem(assessment.getTitle()))
+                .body("content.size()", greaterThanOrEqualTo(1));
     }
 
     @Test

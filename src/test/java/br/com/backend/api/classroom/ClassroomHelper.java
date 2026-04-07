@@ -26,6 +26,7 @@ public class ClassroomHelper {
         .when()
                 .post("/classrooms")
         .then()
+                .log().all()
                 .statusCode(201)
                 .extract()
                 .path("id");
