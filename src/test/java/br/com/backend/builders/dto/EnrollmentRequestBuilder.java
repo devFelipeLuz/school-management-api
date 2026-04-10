@@ -7,7 +7,6 @@ import java.util.UUID;
 public class EnrollmentRequestBuilder {
 
     private UUID studentId = UUID.randomUUID();
-    private UUID schoolYearId = UUID.randomUUID();
     private UUID classroomId = UUID.randomUUID();
 
     public static EnrollmentRequestBuilder builder() {
@@ -19,17 +18,12 @@ public class EnrollmentRequestBuilder {
         return this;
     }
 
-    public EnrollmentRequestBuilder withSchoolYearId(UUID schoolYearId) {
-        this.schoolYearId = schoolYearId;
-        return this;
-    }
-
     public EnrollmentRequestBuilder withClassroomId(UUID classroomId) {
         this.classroomId = classroomId;
         return this;
     }
 
     public EnrollmentRequest build() {
-        return new EnrollmentRequest(studentId, schoolYearId, classroomId);
+        return new EnrollmentRequest(studentId, classroomId);
     }
 }

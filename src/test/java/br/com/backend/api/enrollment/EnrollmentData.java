@@ -14,7 +14,5 @@ public class EnrollmentData {
     private String studentName;
     private String studentEmail;
 
-    private Integer schoolYear;
-
     private String classroomName;
 }

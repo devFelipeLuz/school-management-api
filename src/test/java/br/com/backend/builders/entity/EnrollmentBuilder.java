@@ -12,7 +12,6 @@ public class EnrollmentBuilder {
 
     private Student student = StudentBuilder.builder().build();
     private Classroom classroom = ClassroomBuilder.builder().build();
-    private SchoolYear schoolYear = SchoolYearBuilder.builder().build();
     private UUID id = UUID.randomUUID();
 
     public static EnrollmentBuilder builder() {
@@ -21,11 +20,6 @@ public class EnrollmentBuilder {
 
     public EnrollmentBuilder withStudent(Student student) {
         this.student = student;
-        return this;
-    }
-
-    public EnrollmentBuilder withSchoolYear(SchoolYear schoolYear) {
-        this.schoolYear = schoolYear;
         return this;
     }
 
@@ -40,7 +34,7 @@ public class EnrollmentBuilder {
     }
 
     public Enrollment build() {
-        Enrollment enrollment =  new Enrollment(student, schoolYear, classroom);
+        Enrollment enrollment =  new Enrollment(student, classroom);
         ReflectionTestUtils.setField(enrollment, "id", UUID.randomUUID());
         return enrollment;
     }

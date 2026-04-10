@@ -51,7 +51,6 @@ public class EnrollmentApiTest extends BaseApiTest {
     void shouldAllowAdminToCreateEnrollment() {
         EnrollmentRequest request = EnrollmentRequestBuilder.builder()
                 .withStudentId(student.getId())
-                .withSchoolYearId(schoolYear.getId())
                 .withClassroomId(classroom.getId())
                 .build();
 
@@ -74,7 +73,6 @@ public class EnrollmentApiTest extends BaseApiTest {
     void shouldReturnForbiddenWhenProfessorCreatesEnrollment() {
         EnrollmentRequest request = EnrollmentRequestBuilder.builder()
                 .withStudentId(student.getId())
-                .withSchoolYearId(schoolYear.getId())
                 .withClassroomId(classroom.getId())
                 .build();
 
@@ -92,7 +90,6 @@ public class EnrollmentApiTest extends BaseApiTest {
     void shouldReturnForbiddenWhenStudentCreatesEnrollment() {
         EnrollmentRequest request = EnrollmentRequestBuilder.builder()
                 .withStudentId(student.getId())
-                .withSchoolYearId(schoolYear.getId())
                 .withClassroomId(classroom.getId())
                 .build();
 
@@ -109,7 +106,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldAllowAdminToGetEnrollmentById() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -119,7 +116,6 @@ public class EnrollmentApiTest extends BaseApiTest {
                 .statusCode(200)
                 .body("id", notNullValue())
                 .body("studentName", equalTo(enrollment.getStudentName()))
-                .body("schoolYearName", equalTo(enrollment.getSchoolYear()))
                 .body("classroomName", equalTo(enrollment.getClassroomName()))
                 .body("status", equalTo(EnrollmentStatus.ACTIVE.name()));
     }
@@ -127,7 +123,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldAllowProfessorToGetEnrollmentById() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
@@ -137,7 +133,6 @@ public class EnrollmentApiTest extends BaseApiTest {
                 .statusCode(200)
                 .body("id", notNullValue())
                 .body("studentName", equalTo(enrollment.getStudentName()))
-                .body("schoolYearName", equalTo(enrollment.getSchoolYear()))
                 .body("classroomName", equalTo(enrollment.getClassroomName()))
                 .body("status", equalTo(EnrollmentStatus.ACTIVE.name()));
     }
@@ -145,7 +140,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldReturnForbiddenWhenStudentGetsEnrollmentById() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
@@ -158,7 +153,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldAllowAdminToListEnrollments() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -173,7 +168,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldAllowProfessorToListEnrollments() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
@@ -193,9 +188,9 @@ public class EnrollmentApiTest extends BaseApiTest {
                 "Manolo Rei", "manolo.rei@school.com");
 
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
         EnrollmentData anotherEnrollment =
-                helper.createEnrollment(anotherStudent, schoolYear, classroom);
+                helper.createEnrollment(anotherStudent, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -217,9 +212,9 @@ public class EnrollmentApiTest extends BaseApiTest {
                 "Renato Russo", "renato.russo@school.com");
 
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
         EnrollmentData anotherEnrollment =
-                helper.createEnrollment(anotherStudent, schoolYear, classroom);
+                helper.createEnrollment(anotherStudent, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -248,9 +243,9 @@ public class EnrollmentApiTest extends BaseApiTest {
                 "Raphael Rossatto", "raphael.rossatto@school.com");
 
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
         EnrollmentData anotherEnrollment =
-                helper.createEnrollment(anotherStudent, schoolYear, classroom);
+                helper.createEnrollment(anotherStudent, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -285,7 +280,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldAllowAdminToFinishEnrollment() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -300,7 +295,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldReturnForbiddenWhenProfessorFinishesEnrollment() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
@@ -313,7 +308,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldReturnForbiddenWhenStudentFinishesEnrollment() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
@@ -326,7 +321,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldAllowAdminToCancelEnrollment() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -341,7 +336,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldReturnForbiddenWhenProfessorCancelsEnrollment() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
@@ -354,7 +349,7 @@ public class EnrollmentApiTest extends BaseApiTest {
     @Test
     void shouldReturnForbiddenWhenStudentCancelsEnrollment() {
         EnrollmentData enrollment =
-                helper.createEnrollment(student, schoolYear, classroom);
+                helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())

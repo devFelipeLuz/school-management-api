@@ -23,6 +23,7 @@ public final class EnrollmentMapper {
                 student.getName(),
                 schoolYear.getYear(),
                 classroom.getName(),
+                enrollment.getEnrolledAt(),
                 enrollment.getStatus()
         );
     }

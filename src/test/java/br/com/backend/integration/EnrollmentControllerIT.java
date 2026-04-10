@@ -51,12 +51,10 @@ public class EnrollmentControllerIT extends AbstractIntegrationTest {
 
     private UUID createEnrollmentAndReturnId() throws Exception {
         UUID studentId = createStudentAndReturnId();
-        UUID schoolYearId = createSchoolYearAndReturnId();
         UUID classroomId = createClassroomAndReturnId();
 
         EnrollmentRequest request = EnrollmentRequestBuilder.builder()
                 .withStudentId(studentId)
-                .withSchoolYearId(schoolYearId)
                 .withClassroomId(classroomId)
                 .build();
 
@@ -66,12 +64,10 @@ public class EnrollmentControllerIT extends AbstractIntegrationTest {
     @Test
     void shouldCreateEnrollment() throws Exception {
         UUID studentId = createStudentAndReturnId();
-        UUID schoolYearId = createSchoolYearAndReturnId();
         UUID classroomId = createClassroomAndReturnId();
 
         EnrollmentRequest request = EnrollmentRequestBuilder.builder()
                 .withStudentId(studentId)
-                .withSchoolYearId(schoolYearId)
                 .withClassroomId(classroomId)
                 .build();
 

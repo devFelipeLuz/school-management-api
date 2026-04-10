@@ -23,26 +23,21 @@ public class EnrollmentService {
     private final EnrollmentRepository repository;
     private final StudentService studentService;
     private final ClassroomService classroomService;
-    private final SchoolYearService schoolYearService;
 
     public EnrollmentService(EnrollmentRepository repository,
                              StudentService studentService,
-                             SchoolYearService schoolYearService,
                              ClassroomService classroomService) {
 
         this.repository = repository;
         this.studentService = studentService;
         this.classroomService = classroomService;
-        this.schoolYearService = schoolYearService;
     }
 
     public EnrollmentResponseDTO enroll(EnrollmentRequest dto) {
         Student student = studentService.findActiveStudentById(dto.studentId());
-        SchoolYear schoolYear = schoolYearService.findActiveSchoolYear(dto.schoolYearId());
         Classroom classroom = classroomService.findActiveClassroomById(dto.classroomId());
 
-
-        Enrollment enrollment = new Enrollment(student, schoolYear, classroom);
+        Enrollment enrollment = new Enrollment(student, classroom);
         enrollment.register();
         Enrollment saved = repository.save(enrollment);
         return EnrollmentMapper.toDTO(saved);
@@ -60,6 +55,13 @@ public class EnrollmentService {
 
         return repository.findAll(spec, pageable)
                 .map(EnrollmentMapper::toDTO);
+    }
+
+    public EnrollmentResponseDTO activateEnrollment(UUID id) {
+        Enrollment enrollment = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
+        enrollment.activateEnrollment();
+        return EnrollmentMapper.toDTO(enrollment);
     }
 
     public EnrollmentResponseDTO finishEnrollment(UUID id) {

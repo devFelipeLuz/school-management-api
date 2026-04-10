@@ -34,9 +34,6 @@ public class EnrollmentServiceTest {
     private StudentService studentService;
 
     @Mock
-    private SchoolYearService schoolYearService;
-
-    @Mock
     private ClassroomService classroomService;
 
     @Mock
@@ -47,14 +44,12 @@ public class EnrollmentServiceTest {
 
 
     private Student student;
-    private SchoolYear schoolYear;
     private Classroom classroom;
     private Enrollment enrollment;
 
     private EnrollmentRequest request;
 
     private UUID studentId;
-    private UUID schoolYearId;
     private UUID classroomId;
     private UUID enrollmentId;
 
@@ -62,27 +57,23 @@ public class EnrollmentServiceTest {
     @BeforeEach
     void setUp() {
         studentId = UUID.randomUUID();
-        schoolYearId = UUID.randomUUID();
         classroomId = UUID.randomUUID();
         enrollmentId = UUID.randomUUID();
 
         student = StudentBuilder.builder().build();
-        schoolYear = SchoolYearBuilder.builder().build();
         classroom = ClassroomBuilder.builder().build();
         enrollment = EnrollmentBuilder.builder()
                 .withStudent(student)
-                .withSchoolYear(schoolYear)
                 .withClassroom(classroom)
                 .withId(enrollmentId)
                 .build();
 
-        request = new EnrollmentRequest(studentId, schoolYearId, classroomId);
+        request = new EnrollmentRequest(studentId, classroomId);
     }
 
     @Test
     void shouldEnrollStudentSuccessfully() {
         when(studentService.findActiveStudentById(studentId)).thenReturn(student);
-        when(schoolYearService.findActiveSchoolYear(schoolYearId)).thenReturn(schoolYear);
         when(classroomService.findActiveClassroomById(classroomId)).thenReturn(classroom);
         when(repository.save(any()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -95,7 +86,6 @@ public class EnrollmentServiceTest {
     @Test
     void shouldThrowExceptionWhenClassroomIsFull() {
         when(studentService.findActiveStudentById(studentId)).thenReturn(student);
-        when(schoolYearService.findActiveSchoolYear(schoolYearId)).thenReturn(schoolYear);
         when(classroomService.findActiveClassroomById(classroomId)).thenReturn(classroom);
 
         classroom.changeCapacity(1);
@@ -118,7 +108,7 @@ public class EnrollmentServiceTest {
 
     @Test
     void shouldFinishEnrollment() {
-        Enrollment enrollment = new Enrollment(student, schoolYear, classroom);
+        Enrollment enrollment = new Enrollment(student, classroom);
 
         when(repository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
 
@@ -147,7 +137,6 @@ public class EnrollmentServiceTest {
     @Test
     void shouldNotSaveEnrollmentWhenClassroomIsFull() {
         when(studentService.findActiveStudentById(studentId)).thenReturn(student);
-        when(schoolYearService.findActiveSchoolYear(schoolYearId)).thenReturn(schoolYear);
         when(classroomService.findActiveClassroomById(classroomId)).thenReturn(classroom);
 
         classroom.changeCapacity(1);

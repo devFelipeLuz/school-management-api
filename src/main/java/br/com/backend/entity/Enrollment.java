@@ -15,7 +15,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "enrollment",
 uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"student_id", "classroom_id", "school_year_id"})
+        @UniqueConstraint(columnNames = {"student_id", "classroom_id"})
 })
 public class Enrollment {
 
@@ -46,9 +46,9 @@ public class Enrollment {
     @Column(name = "cancellation_date")
     private Instant canceledAt;
 
-    public Enrollment(Student student, SchoolYear schoolYear, Classroom classroom) {
+    public Enrollment(Student student, Classroom classroom) {
         this.student = Objects.requireNonNull(student, "Student must not be null");
-        this.schoolYear = Objects.requireNonNull(schoolYear, "School year cannot be null");
+        this.schoolYear = classroom.getSchoolYear();
         this.classroom = Objects.requireNonNull(classroom, "classroom cannot be null");
         this.status = EnrollmentStatus.ACTIVE;
         this.enrolledAt = Instant.now();
@@ -68,14 +68,34 @@ public class Enrollment {
                 && finishedAt != null;
     }
 
+    public void activateEnrollment() {
+        if (this.isActive()) {
+            throw new BusinessException("Enrollment is already active.");
+        }
+
+        if (this.isCancelled()) {
+            this.classroom.increaseActiveEnrollmentsCount();
+        }
+
+        this.status = EnrollmentStatus.ACTIVE;
+    }
+
     public void finishEnrollment() {
         ensureAllActive();
+
+        if (this.isFinished()) {
+            throw new BusinessException("Enrollment is already finished");
+        }
+
         this.status = EnrollmentStatus.FINISHED;
         this.finishedAt = Instant.now();
     }
 
     public void cancelEnrollment() {
-        ensureActive();
+        if (this.isCancelled()) {
+            throw new BusinessException("Enrollment is already cancelled");
+        }
+
         this.classroom.decreaseActiveEnrollmentsCount();
         this.status = EnrollmentStatus.CANCELED;
         this.canceledAt = Instant.now();
@@ -83,7 +103,7 @@ public class Enrollment {
 
     public void ensureActive() {
         if (!this.isActive()) {
-            throw new BusinessException("Esta matrícula não está ativa");
+            throw new BusinessException("Enrollment is not active");
         }
     }
 

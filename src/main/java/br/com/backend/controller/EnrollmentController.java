@@ -61,6 +61,13 @@ public class EnrollmentController {
         return service.findAll(studentName, status, pageable);
     }
 
+    @Operation(summary = "Activate enrollment")
+    @PatchMapping("/{id}/activate")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public EnrollmentResponseDTO activateEnrollment(@PathVariable UUID id) {
+        return service.activateEnrollment(id);
+    }
+
     @Operation(summary = "Finish enrollment")
     @PatchMapping("/{id}/finish")
     @PreAuthorize("hasAuthority('ADMIN')")

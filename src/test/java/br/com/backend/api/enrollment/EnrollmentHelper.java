@@ -20,10 +20,9 @@ public class EnrollmentHelper {
     @Autowired
     private AuthHelper auth;
 
-    public EnrollmentData createEnrollment(StudentData student, SchoolYearData schoolYear, ClassroomData classroom) {
+    public EnrollmentData createEnrollment(StudentData student, ClassroomData classroom) {
         EnrollmentRequest request = EnrollmentRequestBuilder.builder()
                 .withStudentId(student.getId())
-                .withSchoolYearId(schoolYear.getId())
                 .withClassroomId(classroom.getId())
                 .build();
 
@@ -43,7 +42,6 @@ public class EnrollmentHelper {
                 UUID.fromString(id),
                 student.getName(),
                 student.getEmail(),
-                schoolYear.getYear(),
                 classroom.getName());
     }
 }
