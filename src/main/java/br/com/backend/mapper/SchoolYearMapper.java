@@ -13,7 +13,8 @@ public class SchoolYearMapper {
         return new SchoolYearResponseDTO(
                 schoolYear.getId(),
                 schoolYear.getYear(),
-                schoolYear.getStartDate()
+                schoolYear.getStartDate(),
+                schoolYear.isActive()
         );
     }
 }

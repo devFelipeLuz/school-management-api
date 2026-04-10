@@ -4,5 +4,9 @@ import java.util.UUID;
 
 public record ClassroomResponseDTO(
         UUID id,
-        String name
+        String name,
+        Integer enrollmentCountForSchoolYear,
+        Integer maxCapacity,
+        Integer schoolYear,
+        boolean active
 ) {}

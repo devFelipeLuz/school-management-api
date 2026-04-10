@@ -6,5 +6,6 @@ import java.util.UUID;
 public record SchoolYearResponseDTO(
         UUID id,
         Integer year,
-        Instant startDate
+        Instant startDate,
+        boolean active
 ) {}

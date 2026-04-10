@@ -11,14 +11,18 @@ import java.util.*;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "classroom")
+@Table(name = "classroom",
+uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"name", "school_year_id"})
+    }
+)
 public class Classroom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
     @Column(name = "max_capacity", nullable = false)
@@ -47,12 +51,12 @@ public class Classroom {
     }
 
     public void ensureCapacity() {
-        if (validateEnrollmentsCountIsGreaterOrEqualsThanMaxCapacity()) {
+        if (isEnrollmentsCountIsGreaterOrEqualsThanMaxCapacity()) {
             throw new BusinessException("Classroom is full");
         }
     }
 
-    private boolean validateEnrollmentsCountIsGreaterOrEqualsThanMaxCapacity() {
+    private boolean isEnrollmentsCountIsGreaterOrEqualsThanMaxCapacity() {
         return enrollmentCountForSchoolYear >= maxCapacity;
     }
 
@@ -62,12 +66,16 @@ public class Classroom {
         this.maxCapacity = newCapacity;
     }
 
-    private boolean validateNewCapacityIsLessThanEnrollmentsCount(int newCapacity) {
+    public void updateName(String name) {
+        this.name = validateName(name);
+    }
+
+    private boolean isNewCapacityLesserThanEnrollmentsCount(int newCapacity) {
         return newCapacity < enrollmentCountForSchoolYear;
     }
 
     private void ensureNewCapacity(int newCapacity) {
-        if (validateNewCapacityIsLessThanEnrollmentsCount(newCapacity)) {
+        if (isNewCapacityLesserThanEnrollmentsCount(newCapacity)) {
             throw new BusinessException("The new capacity cannot be less than active enrollments");
         }
     }
@@ -94,12 +102,12 @@ public class Classroom {
         this.enrollmentCountForSchoolYear--;
     }
 
-    private boolean validateEnrollmentsCountEqualsZero() {
+    private boolean isEnrollmentsCountEqualsZero() {
         return enrollmentCountForSchoolYear == 0;
     }
 
     private void ensureEnrollmentsCountIsGreaterThanZero() {
-        if (validateEnrollmentsCountEqualsZero()) {
+        if (isEnrollmentsCountEqualsZero()) {
             throw new BusinessException("No active enrollments to remove");
         }
     }
@@ -108,10 +116,21 @@ public class Classroom {
         return Collections.unmodifiableList(enrollments);
     }
 
+    public void ensureInactive() {
+        if (this.active) {
+            throw new BusinessException("Classroom is active");
+        }
+    }
+
     public void ensureActive() {
         if (!this.active) {
             throw new BusinessException("Classroom is not active");
         }
+    }
+
+    public void activate() {
+        ensureInactive();
+        this.active = true;
     }
 
     public void deactivate() {
@@ -120,26 +139,19 @@ public class Classroom {
     }
 
     private String validateName(String name) {
-        ensureNameIsNotNullOrBlank(name);
+        if (name == null || name.isBlank()) {
+            throw new BusinessException("Name cannot be null or blank");
+        }
+
         return name;
     }
 
-    private boolean nameIsNotNullOrBlank(String name) {
-        return name != null && !name.isBlank();
-    }
-
-    private void ensureNameIsNotNullOrBlank(String name) {
-        if (!nameIsNotNullOrBlank(name)) {
-            throw new BusinessException("Name cannot be null or blank");
-        }
-    }
-
-    private boolean ensureEnrollmentIsNotNull(Enrollment enrollment) {
-        return enrollment != null;
+    private boolean isEnrollmentNull(Enrollment enrollment) {
+        return enrollment == null;
     }
 
     private void throwsExceptionWhenEnrollmentIsNull(Enrollment enrollment) {
-        if (!ensureEnrollmentIsNotNull(enrollment)) {
+        if (isEnrollmentNull(enrollment)) {
             throw new BusinessException("Enrollment cannot be null");
         }
     }

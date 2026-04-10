@@ -46,7 +46,7 @@ public class SchoolYearController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<SchoolYearResponseDTO> getSchoolYears(
             @Parameter(description = "Filter by partial or full school year")
-            Integer year,
+            String year,
 
             @Parameter(description = "Filter by status active (true or false)")
             @RequestParam(required = false)
@@ -65,9 +65,17 @@ public class SchoolYearController {
         return service.update(id, dto);
     }
 
+    @Operation(summary = "Activate schoolYear")
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/{id}/activate")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public SchoolYearResponseDTO activateSchoolYear(@PathVariable UUID id) {
+        return service.activate(id);
+    }
+
     @Operation(summary = "Deactivate schoolYear")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/deactivate")
     @PreAuthorize("hasAuthority('ADMIN')")
     public void deactivateSchoolYear(@PathVariable UUID id) {
         service.deactivate(id);

@@ -74,6 +74,14 @@ public class StudentService {
         return StudentMapper.toDTO(student);
     }
 
+    public StudentResponseDTO activate(UUID id) {
+        Student student = repository
+                .findById(id).orElseThrow(
+                        () -> new EntityNotFoundException("Student not found"));
+        student.activate();
+        return StudentMapper.toDTO(student);
+    }
+
     public void deactivate(UUID id) {
         Student student = findActiveStudentById(id);
         student.deactivate();

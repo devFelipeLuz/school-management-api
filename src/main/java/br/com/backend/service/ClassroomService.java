@@ -1,6 +1,6 @@
 package br.com.backend.service;
 
-import br.com.backend.dto.request.ClassroomChangeCapacityRequest;
+import br.com.backend.dto.request.ClassroomUpdateRequest;
 import br.com.backend.dto.request.ClassroomCreateRequest;
 import br.com.backend.dto.response.ClassroomResponseDTO;
 import br.com.backend.entity.Classroom;
@@ -8,15 +8,13 @@ import br.com.backend.entity.SchoolYear;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.ClassroomMapper;
 import br.com.backend.repository.ClassroomRepository;
-import br.com.backend.specification.GenericSpecification;
+import br.com.backend.specification.ClassroomSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -42,11 +40,8 @@ public class ClassroomService {
     }
 
     public Page<ClassroomResponseDTO> findAll(String name, Boolean active, Pageable pageable) {
-        Map<String, Object> filters = new HashMap<>();
-        filters.put("name", name);
-        filters.put("active", active);
-
-        Specification<Classroom> spec = GenericSpecification.withFilters(filters);
+        Specification<Classroom> spec =
+                ClassroomSpecification.withFilters(name, active);
 
         return repository.findAll(spec, pageable)
                 .map(ClassroomMapper::toDTO);
@@ -58,9 +53,24 @@ public class ClassroomService {
                 .orElseThrow(() -> new EntityNotFoundException("Classroom not found"));
     }
 
-    public ClassroomResponseDTO changeCapacity(UUID id, ClassroomChangeCapacityRequest dto) {
+    public ClassroomResponseDTO update(UUID id, ClassroomUpdateRequest dto) {
         Classroom classroom = findActiveClassroomById(id);
-        classroom.changeCapacity(dto.newCapacity());
+
+        if (dto.name() != null && !dto.name().isBlank()) {
+            classroom.updateName(dto.name());
+        }
+
+        if (dto.newCapacity() != null) {
+            classroom.changeCapacity(dto.newCapacity());
+        }
+
+        return ClassroomMapper.toDTO(classroom);
+    }
+
+    public ClassroomResponseDTO activate(UUID id) {
+        Classroom classroom = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Classroom not found"));
+        classroom.activate();
         return ClassroomMapper.toDTO(classroom);
     }
 

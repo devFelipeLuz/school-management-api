@@ -71,6 +71,14 @@ public class StudentController {
         return service.update(id, dto);
     }
 
+    @Operation(summary = "Activate student")
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/{id}/activate")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public StudentResponseDTO activateStudent(@PathVariable UUID id) {
+        return service.activate(id);
+    }
+
     @Operation(summary = "Deactivate student")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/deactivate")
@@ -78,4 +86,6 @@ public class StudentController {
     public void deactivateStudent(@PathVariable UUID id) {
         service.deactivate(id);
     }
+
+
 }

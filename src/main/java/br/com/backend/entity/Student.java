@@ -42,6 +42,11 @@ public class Student {
         this.name = validateName(name);
     }
 
+    public void activate() {
+        ensureInactive();
+        this.active = true;
+    }
+
     public void deactivate() {
         ensureActive();
         this.active = false;
@@ -70,9 +75,15 @@ public class Student {
                 .findFirst();
     }
 
+    public void ensureInactive() {
+        if (this.active) {
+            throw new BusinessException("Student is already active");
+        }
+    }
+
     public void ensureActive() {
         if (!this.active) {
-            throw new BusinessException("Aluno inativo");
+            throw new BusinessException("Student is already inactive");
         }
     }
 

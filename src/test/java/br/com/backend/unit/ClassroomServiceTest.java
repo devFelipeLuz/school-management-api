@@ -2,7 +2,7 @@ package br.com.backend.unit;
 
 import br.com.backend.builders.entity.ClassroomBuilder;
 import br.com.backend.builders.entity.SchoolYearBuilder;
-import br.com.backend.dto.request.ClassroomChangeCapacityRequest;
+import br.com.backend.dto.request.ClassroomUpdateRequest;
 import br.com.backend.dto.request.ClassroomCreateRequest;
 import br.com.backend.entity.Classroom;
 import br.com.backend.entity.SchoolYear;
@@ -71,12 +71,13 @@ public class ClassroomServiceTest {
 
     @Test
     void shouldChangeClassroomCapacity() {
-        ClassroomChangeCapacityRequest updateRequest = new ClassroomChangeCapacityRequest(30);
+        ClassroomUpdateRequest updateRequest = new ClassroomUpdateRequest("2.C", 30);
 
         when(repository.findById(classroomId)).thenReturn(Optional.of(classroom));
 
-        service.changeCapacity(classroomId, updateRequest);
+        service.update(classroomId, updateRequest);
 
+        assertEquals("2.C", classroom.getName());
         assertEquals(30, classroom.getMaxCapacity());
         verify(repository).findById(classroomId);
     }
@@ -108,13 +109,13 @@ public class ClassroomServiceTest {
 
     @Test
     void shouldThrowExceptionWhenClassroomIsFull() {
-        ClassroomChangeCapacityRequest updateRequest = new ClassroomChangeCapacityRequest(0);
+        ClassroomUpdateRequest updateRequest = new ClassroomUpdateRequest("3.A", 30);
 
         when(repository.findById(classroomId)).thenReturn(Optional.of(classroom));
 
         classroom.increaseActiveEnrollmentsCount();
 
-        assertThrows(BusinessException.class, ()-> service.changeCapacity(classroomId, updateRequest));
+        assertThrows(BusinessException.class, ()-> service.update(classroomId, updateRequest));
     }
 
     @Test

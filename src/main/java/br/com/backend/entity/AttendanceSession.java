@@ -47,7 +47,7 @@ public class AttendanceSession {
         ensureActive();
         ensureEnrollmentBelongsToAssignment(enrollment);
 
-        if (validateAttendanceIsAlreadyRegistered(enrollment)) {
+        if (isAttendanceIsAlreadyRegistered(enrollment)) {
             throw new BusinessException("Attendance already registered for this student");
         }
 
@@ -69,7 +69,7 @@ public class AttendanceSession {
         }
     }
 
-    private boolean validateAttendanceIsAlreadyRegistered(Enrollment enrollment) {
+    private boolean isAttendanceIsAlreadyRegistered(Enrollment enrollment) {
         return this.records.stream()
                 .anyMatch(r -> r.getEnrollment().equals(enrollment));
     }

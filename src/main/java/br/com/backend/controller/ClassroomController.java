@@ -1,6 +1,6 @@
 package br.com.backend.controller;
 
-import br.com.backend.dto.request.ClassroomChangeCapacityRequest;
+import br.com.backend.dto.request.ClassroomUpdateRequest;
 import br.com.backend.dto.request.ClassroomCreateRequest;
 import br.com.backend.dto.response.ClassroomResponseDTO;
 import br.com.backend.service.ClassroomService;
@@ -64,9 +64,17 @@ public class ClassroomController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public ClassroomResponseDTO changeClassroomCapacity(
             @PathVariable UUID id,
-            @Valid @RequestBody ClassroomChangeCapacityRequest dto) {
+            @Valid @RequestBody ClassroomUpdateRequest dto) {
 
-        return service.changeCapacity(id, dto);
+        return service.update(id, dto);
+    }
+
+    @Operation(summary = "Activate classroom")
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/{id}/activate")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public ClassroomResponseDTO activateClassroom(@PathVariable UUID id) {
+        return service.activate(id);
     }
 
     @Operation(summary = "Deactivate classroom")

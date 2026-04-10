@@ -12,6 +12,10 @@ public final class ClassroomMapper {
     public static ClassroomResponseDTO toDTO(Classroom classroom) {
         return new ClassroomResponseDTO(
                 classroom.getId(),
-                classroom.getName());
+                classroom.getName(),
+                classroom.getEnrollmentCountForSchoolYear(),
+                classroom.getMaxCapacity(),
+                classroom.getSchoolYear().getYear(),
+                classroom.isActive());
     }
 }

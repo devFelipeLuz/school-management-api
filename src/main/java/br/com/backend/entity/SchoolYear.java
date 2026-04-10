@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.Year;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -40,6 +41,12 @@ public class SchoolYear {
         this.active = true;
     }
 
+    public void ensureInactive() {
+        if (this.active) {
+            throw new BusinessException("School year is active");
+        }
+    }
+
     public void ensureActive() {
         if (!this.active) {
             throw new BusinessException("School year is inactive");
@@ -51,35 +58,25 @@ public class SchoolYear {
         this.year = validateYear(year);
     }
 
+    public void activate() {
+        ensureInactive();
+        this.active = true;
+    }
+
     public void deactivate() {
         ensureActive();
         this.active = false;
-        this.endDate = Instant.now();
     }
 
     private Integer validateYear(Integer year) {
-        throwsExceptionWhenYearIsNull(year);
-        throwsExceptionWhenYearIsLesserOrEqualsToZero(year);
-        return year;
-    }
-
-    private void throwsExceptionWhenYearIsNull(Integer year) {
-        if (!ensureYearIsNotNull(year)) {
+        if (year == null) {
             throw new BusinessException("Year cannot be null");
         }
-    }
 
-    private void throwsExceptionWhenYearIsLesserOrEqualsToZero(Integer year) {
-        if (!ensureYearIsGreaterThanZero(year)) {
-            throw new BusinessException("Year cannot be lesser than zero");
+        if (year <= 0) {
+            throw new BusinessException("Year must be a positive number");
         }
-    }
 
-    private boolean ensureYearIsNotNull(Integer year) {
-        return year != null;
-    }
-
-    private boolean ensureYearIsGreaterThanZero(Integer year) {
-        return year >= 0;
+        return year;
     }
 }
