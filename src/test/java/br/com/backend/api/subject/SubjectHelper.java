@@ -1,7 +1,7 @@
 package br.com.backend.api.subject;
 
 import br.com.backend.api.authentication.AuthHelper;
-import br.com.backend.dto.request.SubjectRequest;
+import br.com.backend.dto.request.SubjectCreateRequest;
 import io.restassured.http.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +17,7 @@ public class SubjectHelper {
     public SubjectData createSubject() {
         String name = "subject " + UUID.randomUUID();
 
-        SubjectRequest request = new SubjectRequest(name);
+        SubjectCreateRequest request = new SubjectCreateRequest(name);
 
         String id = given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())

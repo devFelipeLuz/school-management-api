@@ -1,6 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.dto.request.SubjectRequest;
+import br.com.backend.dto.request.SubjectCreateRequest;
+import br.com.backend.dto.request.SubjectUpdateRequest;
 import br.com.backend.dto.response.SubjectResponseDTO;
 import br.com.backend.service.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +31,7 @@ public class SubjectController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public SubjectResponseDTO registerSubject(@Valid @RequestBody SubjectRequest dto) {
+    public SubjectResponseDTO registerSubject(@Valid @RequestBody SubjectCreateRequest dto) {
         return service.register(dto);
     }
 
@@ -61,14 +62,20 @@ public class SubjectController {
     @Operation(summary = "Update subject")
     @PatchMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public SubjectResponseDTO updateSubject(@PathVariable UUID id,
-                                     @Valid @RequestBody SubjectRequest dto) {
-        return service.updateName(id, dto);
+    public SubjectResponseDTO updateSubject(@PathVariable UUID id, @RequestBody SubjectUpdateRequest dto) {
+        return service.update(id, dto);
+    }
+
+    @Operation(summary = "Activate subject")
+    @PatchMapping("/{id}/activate")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public SubjectResponseDTO activateSubject(@PathVariable UUID id) {
+        return service.activate(id);
     }
 
     @Operation(summary = "Deactivate subject")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/deactivate")
     @PreAuthorize("hasAuthority('ADMIN')")
     public void deactivateSubject(@PathVariable UUID id) {
         service.deactivate(id);

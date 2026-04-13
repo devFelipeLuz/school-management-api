@@ -32,7 +32,7 @@ public class AssessmentControllerIT extends AbstractIntegrationTest {
     }
 
     private UUID createSubjectAndReturnId() throws Exception {
-        SubjectRequest request =  new SubjectRequest("História");
+        SubjectCreateRequest request =  new SubjectCreateRequest("História");
         return helper.postAndReturnId("/subjects", request);
     }
 

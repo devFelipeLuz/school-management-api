@@ -1,6 +1,7 @@
 package br.com.backend.service;
 
-import br.com.backend.dto.request.SubjectRequest;
+import br.com.backend.dto.request.SubjectCreateRequest;
+import br.com.backend.dto.request.SubjectUpdateRequest;
 import br.com.backend.dto.response.SubjectResponseDTO;
 import br.com.backend.entity.Subject;
 import br.com.backend.exception.BusinessException;
@@ -28,7 +29,7 @@ public class SubjectService {
         this.repository = repository;
     }
 
-    public SubjectResponseDTO register(SubjectRequest dto) {
+    public SubjectResponseDTO register(SubjectCreateRequest dto) {
         if (repository.existsByNameIgnoreCase(dto.name())) {
             throw new BusinessException("Subject already exists");
         }
@@ -56,13 +57,24 @@ public class SubjectService {
                 .map(SubjectMapper::toDTO);
     }
 
-    public SubjectResponseDTO updateName(UUID id, SubjectRequest dto) {
+    public SubjectResponseDTO update(UUID id, SubjectUpdateRequest dto) {
         if (repository.existsByNameIgnoreCase(dto.name())) {
             throw new BusinessException("Subject already exists");
         }
 
         Subject subject = findActiveSubjectById(id);
-        subject.updateName(dto.name());
+
+        if (dto.name() != null) {
+            subject.updateName(dto.name());
+        }
+
+        return SubjectMapper.toDTO(subject);
+    }
+
+    public SubjectResponseDTO activate(UUID id) {
+        Subject subject = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found"));
+        subject.activate();
         return SubjectMapper.toDTO(subject);
     }
 

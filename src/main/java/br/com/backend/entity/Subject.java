@@ -42,9 +42,20 @@ public class Subject {
         }
     }
 
+    public void ensureInactive() {
+        if (this.active) {
+            throw new BusinessException("Subject is already active");
+        }
+    }
+
     public void updateName(String name) {
         ensureActive();
         this.name = validateName(name);
+    }
+
+    public void activate() {
+        ensureInactive();
+        this.active = true;
     }
 
     public void deactivate() {
