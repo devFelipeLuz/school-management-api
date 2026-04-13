@@ -13,7 +13,9 @@ public final class UserMapper {
         return new UserResponseDTO(
                 user.getId(),
                 user.getEmail(),
-                user.getRole()
+                user.getCreatedAt(),
+                user.getRole(),
+                user.isEnabled()
         );
     }
 }

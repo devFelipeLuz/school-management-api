@@ -34,6 +34,11 @@ public class Professor {
         this.active = true;
     }
 
+    public void activate() {
+        ensureInactive();
+        this.active = true;
+    }
+
     public void deactivate() {
         ensureActive();
         this.active = false;
@@ -52,9 +57,16 @@ public class Professor {
         return name;
     }
 
+
     public void ensureActive() {
         if (!this.active) {
             throw  new BusinessException("Professor is not active");
+        }
+    }
+
+    public void ensureInactive() {
+        if (this.active) {
+            throw  new BusinessException("Professor is already active");
         }
     }
 }

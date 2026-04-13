@@ -92,18 +92,32 @@ public class User implements UserDetails {
     public void updateEmail(String email) {
         ensureActive();
         validateEmail(email);
-        this.email = validateEmail(email);
+        this.email = email;
     }
 
     public void updatePassword(String password) {
         ensureActive();
-        validatePassword(password);
-        this.password = validatePassword(password);
+        this.password = password;
+    }
+
+    public void updateRole(Role role) {
+        ensureActive();
+        this.role = role;
+    }
+
+    public void activate() {
+        this.enabled = true;
     }
 
     public void deactivate() {
         this.enabled = false;
         this.deletedAt = Instant.now();
+    }
+
+    public void ensureInactive() {
+        if (this.enabled) {
+            throw new BusinessException("User is already active");
+        }
     }
 
     public void ensureActive() {
@@ -112,7 +126,7 @@ public class User implements UserDetails {
         }
     }
 
-    public String validateEmail(String email) {
+    private String validateEmail(String email) {
         if (email == null || email.isBlank()) {
            throw new BusinessException("Email is null or blank");
         }
@@ -120,7 +134,7 @@ public class User implements UserDetails {
         return email;
     }
 
-    public String validatePassword(String password) {
+    private String validatePassword(String password) {
         if (password == null || password.isBlank()) {
             throw new BusinessException("Password is null or blank");
         }

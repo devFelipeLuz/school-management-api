@@ -71,6 +71,13 @@ public class ProfessorService {
         return ProfessorMapper.toDTO(professor);
     }
 
+    public ProfessorResponseDTO activate(UUID id) {
+        Professor professor = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Professor not found"));
+        professor.activate();
+        return ProfessorMapper.toDTO(professor);
+    }
+
     public void deactivate(UUID id) {
         Professor professor = findActiveProfessorById(id);
         professor.deactivate();

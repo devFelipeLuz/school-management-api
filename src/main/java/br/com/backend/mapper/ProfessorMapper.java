@@ -16,7 +16,8 @@ public final class ProfessorMapper {
         return new ProfessorResponseDTO(
                 professor.getId(),
                 professor.getName(),
-                user.getUsername()
+                user.getUsername(),
+                professor.isActive()
         );
     }
 }

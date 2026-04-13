@@ -70,9 +70,16 @@ public class ProfessorController {
         return service.update(id, dto);
     }
 
+    @Operation(summary = "Activate professor")
+    @PatchMapping("/{id}/activate")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ProfessorResponseDTO activateProfessor(@PathVariable UUID id) {
+        return service.activate(id);
+    }
+
     @Operation(summary = "Deactivate professor")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/deactivate")
     @PreAuthorize("hasAuthority('ADMIN')")
     public void deactivateProfessor(@PathVariable UUID id) {
         service.deactivate(id);

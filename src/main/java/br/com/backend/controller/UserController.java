@@ -1,9 +1,9 @@
 package br.com.backend.controller;
 
-import br.com.backend.dto.request.UpdatePasswordRequest;
-import br.com.backend.dto.request.UpdateUsernameRequest;
 import br.com.backend.dto.request.UserCreateRequest;
+import br.com.backend.dto.request.UserUpdateRequest;
 import br.com.backend.dto.response.UserResponseDTO;
+import br.com.backend.entity.enums.Role;
 import br.com.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -51,34 +51,36 @@ public class UserController {
             @RequestParam(required = false)
             String email,
 
+            @Parameter(description = "Filter by role")
+            @RequestParam(required = false)
+            Role role,
+
             @Parameter(description = "Filter by enabled status (true or false)")
             @RequestParam(required = false)
             Boolean enabled,
 
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
             Pageable pageable) {
-        return service.findAll(email, enabled, pageable);
+        return service.findAll(email, role, enabled, pageable);
     }
 
-    @Operation(summary = "Update username")
-    @PatchMapping("/{id}/username")
+    @Operation(summary = "Update user")
+    @PatchMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public UserResponseDTO updateUsername(@PathVariable UUID id,
-                                          @Valid @RequestBody UpdateUsernameRequest dto) {
-        return service.updateEmail(id, dto);
+    public UserResponseDTO updateUser(@PathVariable UUID id, @Valid @RequestBody UserUpdateRequest dto) {
+        return service.update(id, dto);
     }
 
-    @Operation(summary = "Update password")
-    @PatchMapping("/{id}/password")
+    @Operation(summary = "Activate user")
+    @PatchMapping("/{id}/activate")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public UserResponseDTO updatePassword(@PathVariable UUID id,
-                                          @Valid @RequestBody UpdatePasswordRequest dto){
-        return service.updatePassword(id, dto);
+    public UserResponseDTO activateUser(@PathVariable UUID id) {
+        return service.activate(id);
     }
 
     @Operation(summary = "Deactivate user")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/deactivate")
     @PreAuthorize("hasAuthority('ADMIN')")
     public void deactivateUser(@PathVariable UUID id) {
         service.deactivate(id);

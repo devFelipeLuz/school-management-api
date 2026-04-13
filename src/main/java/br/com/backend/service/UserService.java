@@ -1,15 +1,14 @@
 package br.com.backend.service;
 
-import br.com.backend.dto.request.UpdatePasswordRequest;
-import br.com.backend.dto.request.UpdateUsernameRequest;
 import br.com.backend.dto.request.UserCreateRequest;
+import br.com.backend.dto.request.UserUpdateRequest;
 import br.com.backend.dto.response.UserResponseDTO;
 import br.com.backend.entity.User;
 import br.com.backend.entity.enums.Role;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.UserMapper;
 import br.com.backend.repository.UserRepository;
-import br.com.backend.specification.GenericSpecification;
+import br.com.backend.specification.UserSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,8 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -56,28 +53,32 @@ public class UserService {
     }
 
     //Usado pelo controller
-    public Page<UserResponseDTO> findAll(String email, Boolean enabled, Pageable pageable) {
-        Map<String, Object> filter = new HashMap<>();
-        filter.put("email", email);
-        filter.put("enabled", enabled);
-
-        Specification<User> spec = GenericSpecification.withFilters(filter);
+    public Page<UserResponseDTO> findAll(String username, Role role, Boolean enabled, Pageable pageable) {
+        Specification<User> spec = UserSpecification.withFilters(username, role, enabled);
 
         return repository.findAll(spec, pageable)
                 .map(UserMapper::toDTO);
     }
 
-    //Usado pelo controller
-    public UserResponseDTO updateEmail(UUID id, UpdateUsernameRequest dto) {
-        User user = changeEmail(id, dto.email());
+    public UserResponseDTO update(UUID id, UserUpdateRequest dto) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        if (dto.email() != null) {
+            user.updateEmail(dto.email());
+        }
+
+        if (dto.password() != null) {
+            user.updatePassword(dto.password());
+        }
+
+        if (dto.role() != null) {
+            user.updateRole(dto.role());
+        }
+
         return UserMapper.toDTO(user);
     }
 
-    //Usado pelo controller
-    public UserResponseDTO updatePassword(UUID id, UpdatePasswordRequest dto) {
-        User user = changePassword(id, dto.password());
-        return UserMapper.toDTO(user);
-    }
 
     //Usado por services internos
     public User changeEmail(UUID id, String email) {
@@ -91,6 +92,13 @@ public class UserService {
         User user = findActiveUserById(id);
         user.updatePassword(encoder.encode(password));
         return user;
+    }
+
+    public UserResponseDTO activate(UUID id) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        user.activate();
+        return UserMapper.toDTO(user);
     }
 
     //Usado pelo controller

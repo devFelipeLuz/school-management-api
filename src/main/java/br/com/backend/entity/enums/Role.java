@@ -4,7 +4,7 @@ public enum Role {
     ADMIN,
     STUDENT,
     PROFESSOR,
-    CORDINATOR;
+    COORDINATOR;
 
     public String getAuthority() {
         return this.name();
