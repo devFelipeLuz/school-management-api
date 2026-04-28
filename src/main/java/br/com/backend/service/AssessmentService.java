@@ -9,15 +9,14 @@ import br.com.backend.entity.enums.AssessmentType;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.AssessmentMapper;
 import br.com.backend.repository.AssessmentRepository;
-import br.com.backend.specification.GenericSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
+import static br.com.backend.specification.AssessmentSpecification.*;
+
 import java.util.UUID;
 
 @Service
@@ -47,21 +46,20 @@ public class AssessmentService {
         return AssessmentMapper.toDTO(saved);
     }
 
-    public Page<AssessmentResponseDTO> findAll(String title, AssessmentType type, Pageable pageable) {
-        Map<String, Object> filter = new HashMap<>();
-        filter.put("title", title);
-        filter.put("type", type);
-
-        Specification<Assessment> spec = GenericSpecification.withFilters(filter);
-
-        return repository.findAll(spec, pageable)
-                .map(AssessmentMapper::toDTO);
-    }
-
     public AssessmentResponseDTO findById(UUID id) {
         return repository.findById(id)
                 .map(AssessmentMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Assessment not found"));
+    }
+
+    public Page<AssessmentResponseDTO> findAll(String title, AssessmentType type, Boolean active, Pageable pageable) {
+        Specification<Assessment> spec = Specification
+                .where(titleContains(title))
+                .and(withType(type))
+                .and(isActive(active));
+
+        return repository.findAll(spec, pageable)
+                .map(AssessmentMapper::toDTO);
     }
 
     public AssessmentResponseDTO update(UUID id, AssessmentUpdateRequest dto) {
@@ -78,7 +76,14 @@ public class AssessmentService {
         return AssessmentMapper.toDTO(assessment);
     }
 
-    public void delete(UUID id) {
+    public AssessmentResponseDTO activate(UUID id) {
+        Assessment assessment = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Assessment not found"));
+        assessment.activate();
+        return AssessmentMapper.toDTO(assessment);
+    }
+
+    public void deactivate(UUID id) {
         Assessment assessment = findActiveAssessmentById(id);
         assessment.deactivate();
     }

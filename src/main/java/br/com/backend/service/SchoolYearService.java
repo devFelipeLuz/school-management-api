@@ -7,8 +7,9 @@ import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.SchoolYearMapper;
 import br.com.backend.repository.SchoolYearRepository;
-import br.com.backend.specification.GenericSpecification;
-import br.com.backend.specification.SchoolYearSpecification;
+
+import static br.com.backend.specification.SchoolYearSpecification.*;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,9 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
+
 
 @Service
 @Transactional
@@ -53,9 +53,18 @@ public class SchoolYearService {
                 .orElseThrow(() -> new EntityNotFoundException("SchoolYear not found"));
     }
 
+    public Page<SchoolYearResponseDTO> searchByYear(String year, Pageable pageable) {
+        Specification<SchoolYear> spec = Specification
+                .where(yearContains(year));
+
+        return repository.findAll(spec, pageable)
+                .map(SchoolYearMapper::toDTO);
+    }
+
     public Page<SchoolYearResponseDTO> findAll(String year, Boolean active, Pageable pageable) {
-        Specification<SchoolYear> spec =
-                SchoolYearSpecification.withFilters(year, active);
+        Specification<SchoolYear> spec = Specification
+                .where(yearContains(year))
+                .and(isActive(active));
 
         return repository.findAll(spec, pageable)
                 .map(SchoolYearMapper::toDTO);

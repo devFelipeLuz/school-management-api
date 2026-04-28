@@ -45,6 +45,11 @@ public class SubjectService {
                 .orElseThrow(() -> new EntityNotFoundException("Subject not found"));
     }
 
+    public Page<SubjectResponseDTO> findByNameContaining(String name, Pageable pageable) {
+        return repository.findByNameContainingIgnoreCase(name, pageable)
+                .map(SubjectMapper::toDTO);
+    }
+
     public Page<SubjectResponseDTO> findAll(String subjectName, Boolean active, Pageable pageable) {
         Map<String, Object> filters = new HashMap<>();
         filters.put("name", subjectName);

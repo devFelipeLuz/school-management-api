@@ -23,7 +23,7 @@ public class AssessmentHelper {
 
         AssessmentCreateRequest request = AssessmentCreateRequestBuilder.builder()
                 .withTitle(title)
-                .withType(AssessmentType.PROVA)
+                .withType(AssessmentType.TEST)
                 .withAssignmentId(assignmentId)
                 .build();
 
@@ -57,9 +57,9 @@ public class AssessmentHelper {
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
-        .when()
+                .when()
                 .post("/assessments")
-        .then()
+                .then()
                 .statusCode(201)
                 .extract()
                 .path("id");

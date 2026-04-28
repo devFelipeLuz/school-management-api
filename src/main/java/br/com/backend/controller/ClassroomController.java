@@ -42,6 +42,19 @@ public class ClassroomController {
         return service.findById(id);
     }
 
+    @Operation(summary = "Find classroom by partial or full name")
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public Page<ClassroomResponseDTO> getClassroomByName(
+            @RequestParam
+            String name,
+
+            @PageableDefault(size = 5)
+            Pageable pageable) {
+
+        return service.searchByName(name, pageable);
+    }
+
     @Operation(summary = "List classrooms")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
@@ -59,10 +72,10 @@ public class ClassroomController {
         return service.findAll(name, active, pageable);
     }
 
-    @Operation(summary = "Change classroom capacity")
+    @Operation(summary = "Update classroom")
     @PatchMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public ClassroomResponseDTO changeClassroomCapacity(
+    public ClassroomResponseDTO updateClassroom(
             @PathVariable UUID id,
             @Valid @RequestBody ClassroomUpdateRequest dto) {
 

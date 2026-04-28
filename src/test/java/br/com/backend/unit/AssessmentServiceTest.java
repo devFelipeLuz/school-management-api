@@ -53,7 +53,7 @@ public class AssessmentServiceTest {
         assignmentId = UUID.randomUUID();
         assessmentId = UUID.randomUUID();
 
-        createRequest = new AssessmentCreateRequest("Prova de história", AssessmentType.PROVA, assignmentId);
+        createRequest = new AssessmentCreateRequest("Prova de história", AssessmentType.TEST, assignmentId);
 
         classroom = ClassroomBuilder.builder().build();
         assignment = TeachingAssignmentBuilder.builder()
@@ -77,21 +77,21 @@ public class AssessmentServiceTest {
 
     @Test
     void shouldUpdateAssessment() {
-        AssessmentUpdateRequest updateRequest = new AssessmentUpdateRequest("Trabalho de História", AssessmentType.TRABALHO);
+        AssessmentUpdateRequest updateRequest = new AssessmentUpdateRequest("Trabalho de História", AssessmentType.PROJECT);
 
         when(repository.findById(assessmentId)).thenReturn(Optional.of(assessment));
 
         service.update(assessmentId, updateRequest);
 
         assertEquals("Trabalho de História", assessment.getTitle());
-        assertEquals(AssessmentType.TRABALHO, assessment.getType());
+        assertEquals(AssessmentType.PROJECT, assessment.getType());
     }
 
     @Test
     void shouldDeleteAssessment() {
         when(repository.findById(assessmentId)).thenReturn(Optional.of(assessment));
 
-        service.delete(assessmentId);
+        service.deactivate(assessmentId);
 
         verify(repository).findById(assessmentId);
         verify(repository).delete(assessment);
@@ -120,6 +120,6 @@ public class AssessmentServiceTest {
 
         classroom.deactivate();
 
-        assertThrows(BusinessException.class, ()-> service.register(createRequest));
+        assertThrows(BusinessException.class, () -> service.register(createRequest));
     }
 }

@@ -42,6 +42,19 @@ public class SubjectController {
         return service.findById(id);
     }
 
+    @Operation(summary = "Find subject by partial or full name")
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public Page<SubjectResponseDTO> findByNameContaining(
+            @RequestParam
+            String name,
+
+            @PageableDefault(size = 5)
+            Pageable pageable
+    ) {
+        return service.findByNameContaining(name, pageable);
+    }
+
     @Operation(summary = "List subjects")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")

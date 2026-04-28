@@ -8,7 +8,7 @@ public class AssessmentBuilder {
 
     private TeachingAssignment assignment = TeachingAssignmentBuilder.builder().build();
     private String title = "Prova de História";
-    private AssessmentType type = AssessmentType.PROVA;
+    private AssessmentType type = AssessmentType.TEST;
 
     public static AssessmentBuilder builder() {
         return new AssessmentBuilder();
@@ -30,6 +30,6 @@ public class AssessmentBuilder {
     }
 
     public Assessment build() {
-        return new Assessment(assignment,  title, type);
+        return new Assessment(assignment, title, type);
     }
 }

@@ -42,6 +42,19 @@ public class ProfessorController {
         return service.findById(id);
     }
 
+    @Operation(summary = "Find professor by partial or full name")
+    @GetMapping("/search")
+    @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
+    public Page<ProfessorResponseDTO> getProfessorByNameContaining(
+            @RequestParam
+            String name,
+
+            @PageableDefault(size = 5)
+            Pageable pageable
+    ) {
+        return service.searchByName(name, pageable);
+    }
+
     @Operation(summary = "List professors")
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")

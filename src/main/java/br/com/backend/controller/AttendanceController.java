@@ -1,7 +1,8 @@
 package br.com.backend.controller;
 
-import br.com.backend.dto.request.AttendanceCreateRequest;
+import br.com.backend.dto.request.AttendanceSessionCreateRequest;
 import br.com.backend.dto.request.AttendanceRecordUpdateRequest;
+import br.com.backend.dto.request.AttendanceSessionFilter;
 import br.com.backend.dto.response.AttendanceRecordResponseDTO;
 import br.com.backend.dto.response.AttendanceSessionResponseDTO;
 import br.com.backend.entity.enums.AttendanceStatus;
@@ -33,7 +34,7 @@ public class AttendanceController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public AttendanceSessionResponseDTO registerAttendance(@Valid @RequestBody AttendanceCreateRequest dto) {
+    public AttendanceSessionResponseDTO registerAttendance(@Valid @RequestBody AttendanceSessionCreateRequest dto) {
         return service.register(dto);
     }
 
@@ -44,23 +45,35 @@ public class AttendanceController {
         return service.findById(id);
     }
 
-    @Operation(summary = "List attendances")
+    @Operation(summary = "List sessions")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public Page<AttendanceRecordResponseDTO> getAttendances(
+    public Page<AttendanceSessionResponseDTO> getSessions(
+            @PageableDefault(size = 10) Pageable pageable,
+
+            @RequestParam(required = false) AttendanceSessionFilter filter
+    ) {
+        return service.listSessions(filter, pageable);
+    }
+
+    @Operation(summary = "List the records")
+    @GetMapping("/session/{id}/records")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public Page<AttendanceRecordResponseDTO> getRecords(
+            @PathVariable UUID id,
+
             @Parameter(description = "Filter by student's name")
             @RequestParam(required = false) String studentName,
 
             @Parameter(description = "Filter by student's email")
-            @RequestParam(required = false)
-            String studentEmail,
+            @RequestParam(required = false) String studentEmail,
 
             @Parameter(description = "Filter by attendance status (PRESENT, ABSENT or JUSTIFIED_ABSENCE)")
             @RequestParam(required = false) AttendanceStatus status,
 
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
             Pageable pageable) {
-        return service.findAll(studentName, studentEmail, status, pageable);
+        return service.listRecords(studentName, studentEmail, status, pageable);
     }
 
     @Operation(summary = "Update attendance")

@@ -22,7 +22,8 @@ public final class AssessmentMapper {
                 assessment.getType(),
                 professor.getName(),
                 classroom.getName(),
-                assessment.getAssessmentDate()
+                assessment.getAssessmentDate(),
+                assessment.isActive()
         );
     }
 }

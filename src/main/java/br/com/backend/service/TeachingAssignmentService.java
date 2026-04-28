@@ -12,8 +12,11 @@ import br.com.backend.mapper.TeachingAssignmentMapper;
 import br.com.backend.repository.TeachingAssignmentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static br.com.backend.specification.TeachingAssignmentSpecification.*;
 
 import java.util.UUID;
 
@@ -54,15 +57,25 @@ public class TeachingAssignmentService {
         return TeachingAssignmentMapper.toDTO(saved);
     }
 
-    public Page<TeachingAssignmentResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
-                .map(TeachingAssignmentMapper::toDTO);
-    }
-
     public TeachingAssignmentResponseDTO findById(UUID id) {
         return repository.findById(id)
                 .map(TeachingAssignmentMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("TeachingAssignment not found"));
+    }
+
+    public Page<TeachingAssignmentResponseDTO> searchBySubjectName(String subjectName, Pageable pageable) {
+        Specification<TeachingAssignment> spec = Specification.where(withSubject(subjectName));
+        return repository.findAll(spec, pageable).map(TeachingAssignmentMapper::toDTO);
+    }
+
+    public Page<TeachingAssignmentResponseDTO> findAll(String professorName, String subjectName, String classroomName, Pageable pageable) {
+        Specification<TeachingAssignment> spec = Specification
+                .where(withProfessor(professorName))
+                .and(withSubject(subjectName))
+                .and(withClassroom(classroomName));
+
+        return repository.findAll(spec, pageable)
+                .map(TeachingAssignmentMapper::toDTO);
     }
 
     public void delete(UUID id) {

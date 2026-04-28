@@ -2,37 +2,43 @@ package br.com.backend.specification;
 
 import br.com.backend.entity.User;
 import br.com.backend.entity.enums.Role;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserSpecification {
 
-    public static Specification<User> withFilters(String email, Role role, Boolean enabled) {
-        return (root, query, criteriaBuilder) -> {
+    public static Specification<User> withEmail(String email) {
+        return (root, query, cb) -> {
 
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (email != null && !email.isBlank()) {
-                predicates.add(
-                        criteriaBuilder.like(
-                                criteriaBuilder.lower(root.get("email")),
-                                "%" + email.toLowerCase() + "%"
-                        )
-                );
+            if (email == null || email.isBlank()) {
+                return null;
             }
 
-            if (role != null) {
-                predicates.add(criteriaBuilder.equal(root.get("role"), role));
+            return cb.like(
+                    cb.lower(root.get("email")),
+                    "%" + email.toLowerCase() + "%"
+            );
+        };
+    }
+
+    public static Specification<User> withRole(Role role) {
+        return (root, query, cb) -> {
+
+            if (role == null) {
+                return null;
             }
 
-            if (enabled != null) {
-                predicates.add(criteriaBuilder.equal(root.get("enabled"), enabled));
+            return cb.equal(root.get("role"), role);
+        };
+    }
+
+    public static Specification<User> isEnabled(Boolean enabled) {
+        return (root, query, cb) -> {
+
+            if (enabled == null) {
+                return null;
             }
 
-            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+            return cb.equal(root.get("enabled"), enabled);
         };
     }
 }

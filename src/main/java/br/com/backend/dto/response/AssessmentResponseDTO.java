@@ -12,5 +12,6 @@ public record AssessmentResponseDTO(
         AssessmentType type,
         String professorName,
         String classroom,
-        Instant date
+        Instant date,
+        Boolean active
 ) {}

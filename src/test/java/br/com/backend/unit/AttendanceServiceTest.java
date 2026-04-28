@@ -4,7 +4,7 @@ import br.com.backend.builders.entity.AttendanceRecordBuilder;
 import br.com.backend.builders.entity.AttendanceSessionBuilder;
 import br.com.backend.builders.entity.EnrollmentBuilder;
 import br.com.backend.builders.entity.TeachingAssignmentBuilder;
-import br.com.backend.dto.request.AttendanceCreateRequest;
+import br.com.backend.dto.request.AttendanceSessionCreateRequest;
 import br.com.backend.dto.request.AttendanceRecordUpdateRequest;
 import br.com.backend.entity.AttendanceRecord;
 import br.com.backend.entity.AttendanceSession;
@@ -57,7 +57,7 @@ public class AttendanceServiceTest {
     private UUID enrollmentId;
     private UUID sessionId;
 
-    private AttendanceCreateRequest createRequest;
+    private AttendanceSessionCreateRequest createRequest;
 
     private TeachingAssignment assignment;
     private Enrollment enrollment;
@@ -69,7 +69,7 @@ public class AttendanceServiceTest {
         enrollmentId = UUID.randomUUID();
         sessionId = UUID.randomUUID();
 
-        createRequest = new AttendanceCreateRequest(assignmentId, LocalDate.now(), enrollmentId, AttendanceStatus.PRESENT);
+        createRequest = new AttendanceSessionCreateRequest(assignmentId, LocalDate.now(), enrollmentId, AttendanceStatus.PRESENT);
 
         assignment = TeachingAssignmentBuilder.builder().build();
         enrollment = EnrollmentBuilder.builder().build();

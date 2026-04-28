@@ -40,7 +40,7 @@ public class AssessmentApiTest extends BaseApiTest {
     void shouldAllowAdminToCreateAssessment() {
         AssessmentCreateRequest request = AssessmentCreateRequestBuilder.builder()
                 .withTitle("Title " + UUID.randomUUID())
-                .withType(AssessmentType.PROVA)
+                .withType(AssessmentType.TEST)
                 .withAssignmentId(assignment.getId())
                 .build();
 
@@ -48,9 +48,9 @@ public class AssessmentApiTest extends BaseApiTest {
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
-        .when()
+                .when()
                 .post("/assessments")
-        .then()
+                .then()
                 .statusCode(201)
                 .body("id", notNullValue())
                 .body("title", equalTo(request.title()))
@@ -65,7 +65,7 @@ public class AssessmentApiTest extends BaseApiTest {
     void shouldAllowProfessorToCreateAssessment() {
         AssessmentCreateRequest request = AssessmentCreateRequestBuilder.builder()
                 .withTitle("Title " + UUID.randomUUID())
-                .withType(AssessmentType.PROVA)
+                .withType(AssessmentType.TEST)
                 .withAssignmentId(assignment.getId())
                 .build();
 
@@ -73,9 +73,9 @@ public class AssessmentApiTest extends BaseApiTest {
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
-        .when()
+                .when()
                 .post("/assessments")
-        .then()
+                .then()
                 .statusCode(201)
                 .body("id", notNullValue())
                 .body("title", equalTo(request.title()))
@@ -90,7 +90,7 @@ public class AssessmentApiTest extends BaseApiTest {
     void shouldReturnForbiddenWhenStudentCreatesAssessment() {
         AssessmentCreateRequest request = AssessmentCreateRequestBuilder.builder()
                 .withTitle("Title " + UUID.randomUUID())
-                .withType(AssessmentType.PROVA)
+                .withType(AssessmentType.TEST)
                 .withAssignmentId(assignment.getId())
                 .build();
 
@@ -98,9 +98,9 @@ public class AssessmentApiTest extends BaseApiTest {
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
-        .when()
+                .when()
                 .post("/assessments")
-        .then()
+                .then()
                 .statusCode(403);
     }
 
@@ -110,9 +110,9 @@ public class AssessmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
-        .when()
+                .when()
                 .get("/assessments/{id}", assessment.getId())
-        .then()
+                .then()
                 .statusCode(200)
                 .body("id", notNullValue())
                 .body("title", equalTo(assessment.getTitle()))
@@ -129,9 +129,9 @@ public class AssessmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
-        .when()
+                .when()
                 .get("/assessments/{id}", assessment.getId())
-        .then()
+                .then()
                 .statusCode(200)
                 .body("id", notNullValue())
                 .body("title", equalTo(assessment.getTitle()))
@@ -148,9 +148,9 @@ public class AssessmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
-        .when()
+                .when()
                 .get("/assessments/{id}", assessment.getId())
-        .then()
+                .then()
                 .statusCode(403);
     }
 
@@ -160,9 +160,9 @@ public class AssessmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
-        .when()
+                .when()
                 .get("/assessments")
-        .then()
+                .then()
                 .statusCode(200)
                 .body("content", not(empty()))
                 .body("content.title", hasItem(assessment.getTitle()))
@@ -175,9 +175,9 @@ public class AssessmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
-        .when()
+                .when()
                 .get("/assessments")
-        .then()
+                .then()
                 .statusCode(200)
                 .body("content", not(empty()))
                 .body("content.title", hasItem(assessment.getTitle()));
@@ -187,18 +187,18 @@ public class AssessmentApiTest extends BaseApiTest {
     void shouldFilterAssessmentsByTitle() {
         AssessmentData assessment =
                 helper.createAssessmentWithData(
-                        assignment.getId(), "Trabalho sobre a Revolução Francesa", AssessmentType.TRABALHO);
+                        assignment.getId(), "Trabalho sobre a Revolução Francesa", AssessmentType.PROJECT);
 
         AssessmentData anotherAssessment =
                 helper.createAssessmentWithData(
-                        assignment.getId(), "Prova de História", AssessmentType.PROVA);
+                        assignment.getId(), "Prova de História", AssessmentType.PROJECT);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .queryParam("title", "Revolução")
-        .when()
+                .when()
                 .get("/assessments")
-        .then()
+                .then()
                 .statusCode(200)
                 .body("content.title", hasItem(assessment.getTitle()))
                 .body("content.title", not(hasItem(anotherAssessment.getTitle())))
@@ -209,18 +209,18 @@ public class AssessmentApiTest extends BaseApiTest {
     void shouldFilterAssessmentsByType() {
         AssessmentData assessment =
                 helper.createAssessmentWithData(
-                        assignment.getId(), "Trabalho: Solos Impermeaveis", AssessmentType.TRABALHO);
+                        assignment.getId(), "Trabalho: Solos Impermeaveis", AssessmentType.PROJECT);
 
         AssessmentData anotherAssessment =
                 helper.createAssessmentWithData(
-                        assignment.getId(), "Prova de História", AssessmentType.PROVA);
+                        assignment.getId(), "Prova de História", AssessmentType.TEST);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
-                .queryParam("type", AssessmentType.TRABALHO.name())
-        .when()
+                .queryParam("type", AssessmentType.PROJECT.name())
+                .when()
                 .get("/assessments")
-        .then()
+                .then()
                 .statusCode(200)
                 .body("content.title", hasItem(assessment.getTitle()))
                 .body("content.title", not(hasItem(anotherAssessment.getTitle())))
@@ -231,19 +231,19 @@ public class AssessmentApiTest extends BaseApiTest {
     void shouldFilterAssessmentsByTitleAndType() {
         AssessmentData assessment =
                 helper.createAssessmentWithData(
-                        assignment.getId(), "Trabalho: Megalópoles", AssessmentType.TRABALHO);
+                        assignment.getId(), "Trabalho: Megalópoles", AssessmentType.PROJECT);
 
         AssessmentData anotherAssessment =
                 helper.createAssessmentWithData(
-                        assignment.getId(), "Prova de Matemática", AssessmentType.PROVA);
+                        assignment.getId(), "Prova de Matemática", AssessmentType.TEST);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .queryParam("title", "Trabalho")
-                .queryParam("type", AssessmentType.TRABALHO.name())
-        .when()
+                .queryParam("type", AssessmentType.PROJECT.name())
+                .when()
                 .get("/assessments")
-        .then()
+                .then()
                 .statusCode(200)
                 .body("content.title", hasItem(assessment.getTitle()))
                 .body("content.type", hasItem(assessment.getType()))
@@ -256,9 +256,9 @@ public class AssessmentApiTest extends BaseApiTest {
     void shouldReturnForbiddenWhenStudentListsAssessments() {
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
-        .when()
+                .when()
                 .get("/assessments")
-        .then()
+                .then()
                 .statusCode(403);
     }
 
@@ -267,18 +267,18 @@ public class AssessmentApiTest extends BaseApiTest {
         AssessmentData assessment = helper.createAssessment(assignment.getId());
 
         AssessmentUpdateRequest request =
-                new AssessmentUpdateRequest("Title " + UUID.randomUUID(), AssessmentType.TRABALHO);
+                new AssessmentUpdateRequest("Title " + UUID.randomUUID(), AssessmentType.PROJECT);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
-        .when()
+                .when()
                 .patch("/assessments/{id}", assessment.getId())
-        .then()
+                .then()
                 .statusCode(200)
                 .body("title", equalTo(request.title()))
-                .body("type", equalTo(AssessmentType.TRABALHO.name()));
+                .body("type", equalTo(AssessmentType.PROJECT.name()));
     }
 
     @Test
@@ -286,18 +286,18 @@ public class AssessmentApiTest extends BaseApiTest {
         AssessmentData assessment = helper.createAssessment(assignment.getId());
 
         AssessmentUpdateRequest request =
-                new AssessmentUpdateRequest("Title " + UUID.randomUUID(), AssessmentType.TRABALHO);
+                new AssessmentUpdateRequest("Title " + UUID.randomUUID(), AssessmentType.PROJECT);
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
-        .when()
+                .when()
                 .patch("/assessments/{id}", assessment.getId())
-        .then()
+                .then()
                 .statusCode(200)
                 .body("title", equalTo(request.title()))
-                .body("type", equalTo(AssessmentType.TRABALHO.name()));
+                .body("type", equalTo(AssessmentType.PROJECT.name()));
     }
 
     @Test
@@ -305,15 +305,15 @@ public class AssessmentApiTest extends BaseApiTest {
         AssessmentData assessment = helper.createAssessment(assignment.getId());
 
         AssessmentUpdateRequest request =
-                new AssessmentUpdateRequest("Title " + UUID.randomUUID(), AssessmentType.TRABALHO);
+                new AssessmentUpdateRequest("Title " + UUID.randomUUID(), AssessmentType.PROJECT);
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
-        .when()
+                .when()
                 .patch("/assessments/{id}", assessment.getId())
-        .then()
+                .then()
                 .statusCode(403);
     }
 
@@ -323,9 +323,9 @@ public class AssessmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
-        .when()
+                .when()
                 .delete("/assessments/{id}", assessment.getId())
-        .then()
+                .then()
                 .statusCode(204);
     }
 
@@ -335,9 +335,9 @@ public class AssessmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
-        .when()
+                .when()
                 .delete("/assessments/{id}", assessment.getId())
-        .then()
+                .then()
                 .statusCode(204);
     }
 
@@ -347,9 +347,9 @@ public class AssessmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
-        .when()
+                .when()
                 .delete("/assessments/{id}", assessment.getId())
-        .then()
+                .then()
                 .statusCode(403);
     }
 }

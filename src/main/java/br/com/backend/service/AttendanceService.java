@@ -1,7 +1,8 @@
 package br.com.backend.service;
 
-import br.com.backend.dto.request.AttendanceCreateRequest;
+import br.com.backend.dto.request.AttendanceSessionCreateRequest;
 import br.com.backend.dto.request.AttendanceRecordUpdateRequest;
+import br.com.backend.dto.request.AttendanceSessionFilter;
 import br.com.backend.dto.response.AttendanceRecordResponseDTO;
 import br.com.backend.dto.response.AttendanceSessionResponseDTO;
 import br.com.backend.entity.AttendanceRecord;
@@ -15,12 +16,14 @@ import br.com.backend.mapper.AttendanceRecordMapper;
 import br.com.backend.mapper.AttendanceSessionMapper;
 import br.com.backend.repository.AttendanceRecordRepository;
 import br.com.backend.repository.AttendanceSessionRepository;
-import br.com.backend.specification.AttendanceRecordSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static br.com.backend.specification.AttendanceRecordSpecification.*;
+import static br.com.backend.specification.AttendanceSessionSpecification.*;
 
 import java.util.UUID;
 
@@ -44,7 +47,7 @@ public class AttendanceService {
         this.enrollmentService = enrollmentService;
     }
 
-    public AttendanceSessionResponseDTO register(AttendanceCreateRequest dto) {
+    public AttendanceSessionResponseDTO register(AttendanceSessionCreateRequest dto) {
         if (sessionRepository.existsByTeachingAssignment_IdAndDate(dto.teachingAssignmentId(), dto.date())) {
             throw new BusinessException("Session already exists");
         }
@@ -62,11 +65,22 @@ public class AttendanceService {
         return AttendanceSessionMapper.toDTO(saved);
     }
 
-    public Page<AttendanceRecordResponseDTO> findAll(
+    public Page<AttendanceSessionResponseDTO> listSessions(AttendanceSessionFilter filter, Pageable pageable) {
+        Specification<AttendanceSession> spec = Specification
+                .where(withProfessor(filter.professorName()))
+                .and(withSubject(filter.subject()))
+                .and(withClassroom(filter.classroomName()))
+                .and(withDate(filter.date()));
+
+        return sessionRepository.findAll(spec, pageable)
+                .map(AttendanceSessionMapper::toDTO);
+    }
+
+    public Page<AttendanceRecordResponseDTO> listRecords(
             String studentName, String studentEmail, AttendanceStatus status, Pageable pageable) {
 
-        Specification<AttendanceRecord> spec =
-                AttendanceRecordSpecification.withFilters(studentName, studentEmail, status);
+        Specification<AttendanceRecord> spec = Specification
+                .where(withFilters(studentName, studentEmail, status));
 
         return recordRepository.findAll(spec, pageable)
                 .map(AttendanceRecordMapper::toDTO);

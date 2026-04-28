@@ -1,29 +1,31 @@
 package br.com.backend.specification;
 
-import br.com.backend.entity.Professor;
+import br.com.backend.entity.Assessment;
+import br.com.backend.entity.enums.AssessmentType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfessorSpecification {
-
-    public static Specification<Professor> nameContains(String name) {
+public class AssessmentSpecification {
+    
+    public static Specification<Assessment> titleContains(String title) {
         return (root, query, cb) -> {
-            if (name == null || name.isBlank()) {
+            if (title == null || title.isBlank()) {
                 return null;
             }
 
             List<Predicate> predicates = new ArrayList<>();
 
-            String[] terms = name.toLowerCase().split("\\s+");
+            String[] terms = title.toLowerCase().split("\\s+");
 
             for (String term : terms) {
                 predicates.add(
                         cb.like(
-                                cb.lower(root.get("name")),
-                                "%" + term + "%")
+                                cb.lower(root.get("title")),
+                                "%" + term + "%"
+                        )
                 );
             }
 
@@ -31,19 +33,17 @@ public class ProfessorSpecification {
         };
     }
 
-    public static Specification<Professor> emailContains(String email) {
+    public static Specification<Assessment> withType(AssessmentType type) {
         return (root, query, cb) -> {
-            if (email == null || email.isBlank()) {
+            if (type == null) {
                 return null;
             }
 
-            return cb.like(
-                    cb.lower(root.get("email")),
-                    "%" + email.toLowerCase() + "%");
+            return cb.equal(root.get("type"), type);
         };
     }
 
-    public static Specification<Professor> isActive(Boolean active) {
+    public static Specification<Assessment> isActive(Boolean active) {
         return (root, query, cb) -> {
             if (active == null) {
                 return null;

@@ -9,27 +9,26 @@ import java.util.List;
 
 public class SchoolYearSpecification {
 
-    public static Specification<SchoolYear> withFilters(String year, Boolean active) {
-        return (root, query, criteriaBuilder) -> {
-
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (year != null && !year.isBlank()) {
-                predicates.add(
-                        criteriaBuilder.like(
-                                criteriaBuilder.toString(root.get("year")),
-                                "%" + year + "%"
-                        )
-                );
+    public static Specification<SchoolYear> yearContains(String year) {
+        return (root, query, cb) -> {
+            if (year == null || year.isBlank()) {
+                return null;
             }
 
-            if (active != null) {
-                predicates.add(
-                        criteriaBuilder.equal(root.get("active"), active)
-                );
+            return cb.like(
+                    cb.toString(root.get("year")),
+                    "%" + year + "%"
+            );
+        };
+    }
+
+    public static Specification<SchoolYear> isActive(Boolean active) {
+        return (root, query, cb) -> {
+            if (active == null) {
+                return null;
             }
 
-            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+            return cb.equal(root.get("active"), active);
         };
     }
 }

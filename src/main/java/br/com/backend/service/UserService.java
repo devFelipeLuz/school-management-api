@@ -8,13 +8,14 @@ import br.com.backend.entity.enums.Role;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.UserMapper;
 import br.com.backend.repository.UserRepository;
-import br.com.backend.specification.UserSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static br.com.backend.specification.UserSpecification.*;
 
 import java.util.UUID;
 
@@ -54,7 +55,10 @@ public class UserService {
 
     //Usado pelo controller
     public Page<UserResponseDTO> findAll(String username, Role role, Boolean enabled, Pageable pageable) {
-        Specification<User> spec = UserSpecification.withFilters(username, role, enabled);
+        Specification<User> spec = Specification
+                .where(withEmail(username))
+                .and(withRole(role))
+                .and(isEnabled(enabled));
 
         return repository.findAll(spec, pageable)
                 .map(UserMapper::toDTO);

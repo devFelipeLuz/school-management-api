@@ -8,28 +8,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassroomSpecification {
-
-    public static Specification<Classroom> withFilters(String name, Boolean active) {
-        return (root, query, criteriaBuilder) -> {
-
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (name != null && !name.isBlank()) {
-                predicates.add(
-                        criteriaBuilder.like(
-                                criteriaBuilder.lower(root.get("name")),
-                                "%" + name.toLowerCase() + "%"
-                        )
-                );
+    
+    public static Specification<Classroom> nameContains(String name) {
+        return (root, query, cb) -> {
+            if (name == null || name.isBlank()) {
+                return null;
             }
 
-            if (active != null) {
-                predicates.add(
-                        criteriaBuilder.equal(root.get("active"), active)
-                );
+            return cb.like(
+                    cb.lower(root.get("name")),
+                    "%" + name.toLowerCase() + "%"
+            );
+        };
+    }
+
+    public static Specification<Classroom> isActive(Boolean active) {
+        return (root, query, cb) -> {
+            if (active == null) {
+                return null;
             }
 
-            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+            return cb.equal(root.get("active"), active);
         };
     }
 }

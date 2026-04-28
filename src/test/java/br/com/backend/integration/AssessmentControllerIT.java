@@ -32,7 +32,7 @@ public class AssessmentControllerIT extends AbstractIntegrationTest {
     }
 
     private UUID createSubjectAndReturnId() throws Exception {
-        SubjectCreateRequest request =  new SubjectCreateRequest("História");
+        SubjectCreateRequest request = new SubjectCreateRequest("História");
         return helper.postAndReturnId("/subjects", request);
     }
 
@@ -56,7 +56,7 @@ public class AssessmentControllerIT extends AbstractIntegrationTest {
         UUID classroomId = createClassroomAndReturnId();
 
         TeachingAssignmentRequest request = new TeachingAssignmentRequest(
-                professorId,  subjectId, classroomId);
+                professorId, subjectId, classroomId);
 
         return helper.postAndReturnId("/assignments", request);
     }
@@ -66,11 +66,11 @@ public class AssessmentControllerIT extends AbstractIntegrationTest {
 
         AssessmentCreateRequest request = AssessmentCreateRequestBuilder.builder()
                 .withTitle("Prova de História")
-                .withType(AssessmentType.PROVA)
+                .withType(AssessmentType.TEST)
                 .withAssignmentId(assignmentId)
                 .build();
 
-        return  helper.postAndReturnId("/assessments", request);
+        return helper.postAndReturnId("/assessments", request);
     }
 
     @Test
@@ -79,18 +79,18 @@ public class AssessmentControllerIT extends AbstractIntegrationTest {
 
         AssessmentCreateRequest request = AssessmentCreateRequestBuilder.builder()
                 .withTitle("Prova de História")
-                .withType(AssessmentType.PROVA)
+                .withType(AssessmentType.TEST)
                 .withAssignmentId(assignmentId)
                 .build();
 
         mockMvc.perform(post("/assessments")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(helper.toJson(request)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(helper.toJson(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.title").value("Prova de História"))
                 .andExpect(jsonPath("$.subject").value("História"))
-                .andExpect(jsonPath("$.type").value(AssessmentType.PROVA.name()))
+                .andExpect(jsonPath("$.type").value(AssessmentType.TEST.name()))
                 .andExpect(jsonPath("$.professorName").value("Cristina Ferrari"))
                 .andExpect(jsonPath("$.classroom").value("3.A"));
     }
@@ -106,18 +106,18 @@ public class AssessmentControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
-    void shouldUpdateAssessment() throws Exception{
+    void shouldUpdateAssessment() throws Exception {
         UUID id = createAssessmentAndReturnId();
 
         AssessmentUpdateRequest request = new AssessmentUpdateRequest(
-                "Trabalho de História", AssessmentType.TRABALHO);
+                "Trabalho de História", AssessmentType.PROJECT);
 
         mockMvc.perform(patch("/assessments/" + id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(helper.toJson(request)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(helper.toJson(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Trabalho de História"))
-                .andExpect(jsonPath("$.type").value(AssessmentType.TRABALHO.name()))
+                .andExpect(jsonPath("$.type").value(AssessmentType.PROJECT.name()))
                 .andExpect(jsonPath("$.professorName").value("Cristina Ferrari"));
 
         mockMvc.perform(get("/assessments/{id}", id))

@@ -55,10 +55,21 @@ public class Assessment {
         this.type = validateType(type);
     }
 
+    public void ensureInactive() {
+        if (this.active) {
+            throw new BusinessException("Assessment is already active");
+        }
+    }
+
     public void ensureActive() {
         if (!this.active) {
             throw new BusinessException("Assessment is not active");
         }
+    }
+
+    public void activate() {
+        ensureInactive();
+        this.active = true;
     }
 
     public void deactivate() {

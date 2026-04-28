@@ -41,11 +41,25 @@ public class SchoolYearController {
         return service.findById(id);
     }
 
+    @Operation(summary = "Find schoolYear by partial or full year")
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public Page<SchoolYearResponseDTO> getSchoolYearByYear(
+            @RequestParam
+            String year,
+
+            @PageableDefault(size = 5)
+            Pageable pageable) {
+
+        return service.searchByYear(year, pageable);
+    }
+
     @Operation(summary = "List schoolYears")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<SchoolYearResponseDTO> getSchoolYears(
             @Parameter(description = "Filter by partial or full school year")
+            @RequestParam(required = false)
             String year,
 
             @Parameter(description = "Filter by status active (true or false)")
@@ -61,7 +75,7 @@ public class SchoolYearController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public SchoolYearResponseDTO updateSchoolYear(@PathVariable UUID id,
-                                        @Valid @RequestBody SchoolYearRequest dto) {
+                                                  @Valid @RequestBody SchoolYearRequest dto) {
         return service.update(id, dto);
     }
 

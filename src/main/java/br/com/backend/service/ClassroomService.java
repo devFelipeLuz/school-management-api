@@ -8,7 +8,6 @@ import br.com.backend.entity.SchoolYear;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.ClassroomMapper;
 import br.com.backend.repository.ClassroomRepository;
-import br.com.backend.specification.ClassroomSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+
+import static br.com.backend.specification.ClassroomSpecification.*;
 
 @Service
 @Transactional
@@ -39,18 +40,27 @@ public class ClassroomService {
         return ClassroomMapper.toDTO(saved);
     }
 
-    public Page<ClassroomResponseDTO> findAll(String name, Boolean active, Pageable pageable) {
-        Specification<Classroom> spec =
-                ClassroomSpecification.withFilters(name, active);
+    public ClassroomResponseDTO findById(UUID id) {
+        return repository.findById(id)
+                .map(ClassroomMapper::toDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Classroom not found"));
+    }
+
+    public Page<ClassroomResponseDTO> searchByName(String name, Pageable pageable) {
+        Specification<Classroom> spec = Specification
+                .where(nameContains(name));
 
         return repository.findAll(spec, pageable)
                 .map(ClassroomMapper::toDTO);
     }
 
-    public ClassroomResponseDTO findById(UUID id) {
-        return repository.findById(id)
-                .map(ClassroomMapper::toDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Classroom not found"));
+    public Page<ClassroomResponseDTO> findAll(String name, Boolean active, Pageable pageable) {
+        Specification<Classroom> spec = Specification
+                .where(nameContains(name))
+                .and(isActive(active));
+
+        return repository.findAll(spec, pageable)
+                .map(ClassroomMapper::toDTO);
     }
 
     public ClassroomResponseDTO update(UUID id, ClassroomUpdateRequest dto) {

@@ -8,7 +8,7 @@ import java.util.UUID;
 public class AssessmentCreateRequestBuilder {
 
     private String title = "Prova de História";
-    private AssessmentType type = AssessmentType.PROVA;
+    private AssessmentType type = AssessmentType.TEST;
     private UUID assignmentId = UUID.randomUUID();
 
     public static AssessmentCreateRequestBuilder builder() {

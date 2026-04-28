@@ -42,6 +42,19 @@ public class StudentController {
         return service.findById(id);
     }
 
+    @Operation(summary = "Find student by partial or full name")
+    @GetMapping("/search")
+    @PreAuthorize("hasAuthority('ADMIN') or @studentService.isOwner(#id, principal.id)")
+    public Page<StudentResponseDTO> getStudentByName(
+            @RequestParam
+            String name,
+
+            @PageableDefault(size = 5)
+            Pageable pageable
+    ) {
+        return service.searchByName(name, pageable);
+    }
+
     @Operation(summary = "List students")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")

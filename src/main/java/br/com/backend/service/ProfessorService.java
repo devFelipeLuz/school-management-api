@@ -9,7 +9,9 @@ import br.com.backend.entity.enums.Role;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.ProfessorMapper;
 import br.com.backend.repository.ProfessorRepository;
-import br.com.backend.specification.ProfessorSpecification;
+
+import static br.com.backend.specification.ProfessorSpecification.*;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -45,9 +47,19 @@ public class ProfessorService {
                 .orElseThrow(() -> new EntityNotFoundException("Professor not found"));
     }
 
+    public Page<ProfessorResponseDTO> searchByName(String name, Pageable pageable) {
+        Specification<Professor> spec = Specification
+                .where(nameContains(name));
+
+        return repository.findAll(spec, pageable)
+                .map(ProfessorMapper::toDTO);
+    }
+
     public Page<ProfessorResponseDTO> findAll(String name, String email, Boolean active, Pageable pageable) {
-        Specification<Professor> spec =
-                ProfessorSpecification.withFilters(name, email, active);
+        Specification<Professor> spec = Specification
+                .where(nameContains(name))
+                .and(emailContains(email))
+                .and(isActive(active));
 
         return repository.findAll(spec, pageable)
                 .map(ProfessorMapper::toDTO);

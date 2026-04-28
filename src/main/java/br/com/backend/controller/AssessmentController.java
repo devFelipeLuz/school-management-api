@@ -55,9 +55,13 @@ public class AssessmentController {
             @RequestParam(required = false)
             AssessmentType type,
 
+            @Parameter(description = "Filter by active or inactive status")
+            @RequestParam(required = false)
+            Boolean active,
+
             @PageableDefault(size = 10, sort = "assessmentDate", direction = Sort.Direction.DESC)
             Pageable pageable) {
-        return service.findAll(title, type, pageable);
+        return service.findAll(title, type, active, pageable);
     }
 
     @Operation(summary = "Update assessment")
@@ -68,11 +72,18 @@ public class AssessmentController {
         return service.update(id, dto);
     }
 
-    @Operation(summary = "Delete assessment")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @Operation(summary = "Activate assessment")
+    @PatchMapping("/{id}/activate")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public void deleteAssessment(@PathVariable UUID id) {
-        service.delete(id);
+    public AssessmentResponseDTO activateAssessment(@PathVariable UUID id) {
+        return service.activate(id);
+    }
+
+    @Operation(summary = "Deactivate assessment")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}/deactivate")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public void deactivateAssessment(@PathVariable UUID id) {
+        service.deactivate(id);
     }
 }

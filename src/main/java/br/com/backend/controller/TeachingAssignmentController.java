@@ -4,6 +4,7 @@ import br.com.backend.dto.request.TeachingAssignmentRequest;
 import br.com.backend.dto.response.TeachingAssignmentResponseDTO;
 import br.com.backend.service.TeachingAssignmentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,20 +34,44 @@ public class TeachingAssignmentController {
         return service.register(dto);
     }
 
-    @Operation(summary = "List assignments")
-    @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public Page<TeachingAssignmentResponseDTO> getAssignments(
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
-            Pageable pageable) {
-        return service.findAll(pageable);
-    }
-
     @Operation(summary = "Find assignment by id")
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public TeachingAssignmentResponseDTO getAssignmentById(@PathVariable UUID id) {
         return service.findById(id);
+    }
+
+    @Operation(summary = "Find assignment by subjectName")
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public Page<TeachingAssignmentResponseDTO> getAssignmentBySubjectName(
+            @RequestParam
+            String subjectName,
+
+            @PageableDefault(size = 5)
+            Pageable pageable) {
+        return service.searchBySubjectName(subjectName, pageable);
+    }
+
+    @Operation(summary = "List assignments")
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public Page<TeachingAssignmentResponseDTO> getAssignments(
+            @Parameter(description = "Filter by partial or full professor name")
+            @RequestParam(required = false)
+            String professorName,
+
+            @Parameter(description = "Filter by partial or full subject name")
+            @RequestParam(required = false)
+            String subjectName,
+
+            @Parameter(description = "Filter by partial or full classroom name")
+            @RequestParam(required = false)
+            String classroomName,
+
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        return service.findAll(professorName, subjectName, classroomName, pageable);
     }
 
     @Operation(summary = "Delete assignment")

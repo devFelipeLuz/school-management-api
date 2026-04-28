@@ -5,9 +5,7 @@ import br.com.backend.entity.Enrollment;
 import br.com.backend.entity.Student;
 import br.com.backend.entity.User;
 import br.com.backend.entity.enums.AttendanceStatus;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
@@ -15,61 +13,74 @@ import java.util.List;
 
 public class AttendanceRecordSpecification {
 
-    public static Specification<AttendanceRecord> withFilters(
-            String studentName, String studentEmail, AttendanceStatus status) {
-
-        return (root, query, criteriaBuilder) -> {
+    public static Specification<AttendanceRecord> withStudentName(String name) {
+        return (root, query, cb) -> {
 
             if (AttendanceRecord.class.equals(query.getResultType())) {
-                root.fetch("session", JoinType.LEFT);
-                root.fetch("enrollment",  JoinType.LEFT)
-                        .fetch("student", JoinType.LEFT)
-                        .fetch("user", JoinType.LEFT);
-
-                query.distinct(true);
+                root.fetch("enrollment", JoinType.LEFT)
+                        .fetch("student", JoinType.LEFT);
             }
 
-            Join<AttendanceRecord, Enrollment> enrollment =
-                    root.join("enrollment", JoinType.LEFT);
-
-            Join<Enrollment, Student> student =
-                    enrollment.join("student", JoinType.LEFT);
-
-            Join<Student, User> user =
-                    student.join("user", JoinType.LEFT);
-
-
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (studentName != null && !studentName.isBlank()) {
-                String[] terms = studentName.toLowerCase().split("\\s+");
-
-                for (String term : terms) {
-                    predicates.add(
-                            criteriaBuilder.like(
-                                    criteriaBuilder.lower(student.get("name")),
-                                    "%" + term + "%"
-                            )
-                    );
-                }
+            if (name == null || name.isBlank()) {
+                return null;
             }
 
-            if (studentEmail != null && !studentEmail.isBlank()) {
-                predicates.add(
-                        criteriaBuilder.like(
-                                criteriaBuilder.lower(user.get("email")),
-                                "%" + studentEmail.toLowerCase() + "%"
-                        )
-                );
-            }
+            Join<Enrollment, Student> studentJoin = root
+                    .join("enrollment", JoinType.LEFT)
+                    .join("student", JoinType.LEFT);
 
-            if (status != null) {
-                predicates.add(
-                        criteriaBuilder.equal(root.get("status"), status)
-                );
-            }
 
-            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+            return buildLikePredicate(cb, studentJoin.get("name"), name);
         };
     }
+
+    public static Specification<AttendanceRecord> withStudentEmail(String email) {
+        return (root, query, cb) -> {
+
+            if (AttendanceRecord.class.equals(query.getResultType())) {
+                root.fetch("enrollment", JoinType.LEFT)
+                        .fetch("student", JoinType.LEFT)
+                        .fetch("email", JoinType.LEFT);
+            }
+
+            if (email == null || email.isBlank()) {
+                return null;
+            }
+
+            Join<Student, User> user = root
+                    .join("enrollment", JoinType.LEFT).
+                    join("student", JoinType.LEFT).
+                    join("user", JoinType.LEFT);
+
+            return buildLikePredicate(cb, user.get("email"), email);
+        };
+    }
+
+    private static Specification<AttendanceRecord> withStatus(AttendanceStatus status) {
+        return (root, query, cb) -> {
+
+            if (status == null) {
+                return null;
+            }
+
+            return cb.equal(root.get("status"), status);
+        };
+    }
+
+    private static Predicate buildLikePredicate(CriteriaBuilder cb, Path<String> field, String value) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        String[] terms = value.toLowerCase().split("\\s+");
+
+        for (String term : terms) {
+            predicates.add(
+                    cb.like(
+                            cb.lower(field), "%" + term + "%")
+            );
+        }
+
+        return cb.and(predicates.toArray(Predicate[]::new));
+    }
+
+
 }
