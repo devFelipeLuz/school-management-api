@@ -8,15 +8,14 @@ import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.SubjectMapper;
 import br.com.backend.repository.SubjectRepository;
-import br.com.backend.specification.GenericSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
+import static br.com.backend.specification.SubjectSpecification.*;
+
 import java.util.UUID;
 
 @Service
@@ -51,12 +50,9 @@ public class SubjectService {
     }
 
     public Page<SubjectResponseDTO> findAll(String subjectName, Boolean active, Pageable pageable) {
-        Map<String, Object> filters = new HashMap<>();
-        filters.put("name", subjectName);
-        filters.put("active", active);
-
-        Specification<Subject> spec =
-                GenericSpecification.withFilters(filters);
+        Specification<Subject> spec = Specification
+                .where(withName(subjectName)).
+                and(isActive(active));
 
         return repository.findAll(spec, pageable)
                 .map(SubjectMapper::toDTO);
