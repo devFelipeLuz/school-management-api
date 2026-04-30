@@ -12,9 +12,9 @@ import java.util.*;
 @Getter
 @Entity
 @Table(name = "classroom",
-uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"name", "school_year_id"})
-    }
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"name", "school_year_id"})
+        }
 )
 public class Classroom {
 
@@ -36,7 +36,7 @@ public class Classroom {
     private int enrollmentCountForSchoolYear;
 
     @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
-    private List<Enrollment> enrollments =  new ArrayList<>();
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     @Column(name = "active", nullable = false)
     private boolean active;
@@ -158,5 +158,11 @@ public class Classroom {
 
     private boolean isEnrollmentActive(Enrollment enrollment) {
         return enrollment.getStatus() == EnrollmentStatus.ACTIVE;
+    }
+
+    public Optional<Enrollment> getActiveEnrollment() {
+        return this.enrollments.stream()
+                .filter(e -> e.getStatus() == EnrollmentStatus.ACTIVE)
+                .findFirst();
     }
 }
