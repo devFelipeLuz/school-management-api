@@ -1,4 +1,4 @@
-package br.com.backend.unit;
+package br.com.backend.unit.service;
 
 import br.com.backend.builders.entity.ClassroomBuilder;
 import br.com.backend.builders.entity.SchoolYearBuilder;
@@ -104,7 +104,7 @@ public class ClassroomServiceTest {
     void shouldThrowExceptionWhenClassroomIsNotFound() {
         when(repository.findById(classroomId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, ()-> service.deactivate(classroomId));
+        assertThrows(EntityNotFoundException.class, () -> service.deactivate(classroomId));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class ClassroomServiceTest {
 
         classroom.increaseActiveEnrollmentsCount();
 
-        assertThrows(BusinessException.class, ()-> service.update(classroomId, updateRequest));
+        assertThrows(BusinessException.class, () -> service.update(classroomId, updateRequest));
     }
 
     @Test
@@ -124,6 +124,6 @@ public class ClassroomServiceTest {
 
         when(repository.findById(classroomId)).thenReturn(Optional.of(classroom));
 
-        assertThrows(BusinessException.class, ()-> service.findActiveClassroomById(classroomId));
+        assertThrows(BusinessException.class, () -> service.findActiveClassroomById(classroomId));
     }
 }

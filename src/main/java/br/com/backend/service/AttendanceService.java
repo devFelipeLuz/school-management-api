@@ -80,7 +80,9 @@ public class AttendanceService {
             String studentName, String studentEmail, AttendanceStatus status, Pageable pageable) {
 
         Specification<AttendanceRecord> spec = Specification
-                .where(withFilters(studentName, studentEmail, status));
+                .where(withStudentName(studentName))
+                .and(withStudentEmail(studentEmail))
+                .and(withStatus(status));
 
         return recordRepository.findAll(spec, pageable)
                 .map(AttendanceRecordMapper::toDTO);

@@ -1,4 +1,4 @@
-package br.com.backend.unit;
+package br.com.backend.unit.service;
 
 import br.com.backend.builders.entity.StudentBuilder;
 import br.com.backend.builders.entity.UserBuilder;
@@ -68,7 +68,7 @@ public class StudentServiceTest {
     }
 
     @Test
-    void shouldRegisterStudent(){
+    void shouldRegisterStudent() {
         when(userService.registerUser(createRequest.email(), createRequest.password(), Role.STUDENT))
                 .thenReturn(user);
         when(repository.save(any()))

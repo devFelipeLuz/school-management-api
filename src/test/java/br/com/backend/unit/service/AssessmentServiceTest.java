@@ -1,4 +1,4 @@
-package br.com.backend.unit;
+package br.com.backend.unit.service;
 
 import br.com.backend.builders.entity.AssessmentBuilder;
 import br.com.backend.builders.entity.ClassroomBuilder;

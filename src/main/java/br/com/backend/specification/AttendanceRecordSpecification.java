@@ -56,7 +56,7 @@ public class AttendanceRecordSpecification {
         };
     }
 
-    private static Specification<AttendanceRecord> withStatus(AttendanceStatus status) {
+    public static Specification<AttendanceRecord> withStatus(AttendanceStatus status) {
         return (root, query, cb) -> {
 
             if (status == null) {

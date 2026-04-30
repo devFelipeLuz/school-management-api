@@ -14,9 +14,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "enrollment",
-uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"student_id", "classroom_id"})
-})
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"student_id", "classroom_id"})
+        })
 public class Enrollment {
 
     @Id
@@ -47,7 +47,7 @@ public class Enrollment {
     private Instant canceledAt;
 
     public Enrollment(Student student, Classroom classroom) {
-        this.student = Objects.requireNonNull(student, "Student must not be null");
+        this.student = Objects.requireNonNull(student, "Student cannot be null");
         this.schoolYear = classroom.getSchoolYear();
         this.classroom = Objects.requireNonNull(classroom, "classroom cannot be null");
         this.status = EnrollmentStatus.ACTIVE;

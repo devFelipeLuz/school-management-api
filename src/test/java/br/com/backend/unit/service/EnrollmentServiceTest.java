@@ -1,8 +1,7 @@
-package br.com.backend.unit;
+package br.com.backend.unit.service;
 
 import br.com.backend.builders.entity.ClassroomBuilder;
 import br.com.backend.builders.entity.EnrollmentBuilder;
-import br.com.backend.builders.entity.SchoolYearBuilder;
 import br.com.backend.builders.entity.StudentBuilder;
 import br.com.backend.dto.request.EnrollmentRequest;
 import br.com.backend.entity.*;
@@ -11,7 +10,6 @@ import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.EnrollmentRepository;
 import br.com.backend.service.ClassroomService;
 import br.com.backend.service.EnrollmentService;
-import br.com.backend.service.SchoolYearService;
 import br.com.backend.service.StudentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,7 +121,7 @@ public class EnrollmentServiceTest {
 
         when(repository.findById(enrollmentId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, ()-> service.cancel(enrollmentId));
+        assertThrows(EntityNotFoundException.class, () -> service.cancel(enrollmentId));
     }
 
     @Test
@@ -131,7 +129,7 @@ public class EnrollmentServiceTest {
         when(repository.findById(enrollmentId)).thenReturn(Optional.of(enrollment));
         enrollment.getStudent().deactivate();
 
-        assertThrows(BusinessException.class, ()-> service.cancel(enrollmentId));
+        assertThrows(BusinessException.class, () -> service.cancel(enrollmentId));
     }
 
     @Test

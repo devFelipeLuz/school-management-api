@@ -2,7 +2,6 @@ package br.com.backend.builders.entity;
 
 import br.com.backend.entity.Classroom;
 import br.com.backend.entity.Enrollment;
-import br.com.backend.entity.SchoolYear;
 import br.com.backend.entity.Student;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -34,7 +33,7 @@ public class EnrollmentBuilder {
     }
 
     public Enrollment build() {
-        Enrollment enrollment =  new Enrollment(student, classroom);
+        Enrollment enrollment = new Enrollment(student, classroom);
         ReflectionTestUtils.setField(enrollment, "id", UUID.randomUUID());
         return enrollment;
     }

@@ -87,10 +87,6 @@ public class Student {
         }
     }
 
-    public List<Enrollment> getEnrollments() {
-        return Collections.unmodifiableList(this.enrollments);
-    }
-
     private String validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new BusinessException("Student name is null or blank");
