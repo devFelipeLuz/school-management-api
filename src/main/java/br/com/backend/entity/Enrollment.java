@@ -81,11 +81,11 @@ public class Enrollment {
     }
 
     public void finishEnrollment() {
-        ensureAllActive();
-
         if (this.isFinished()) {
             throw new BusinessException("Enrollment is already finished");
         }
+
+        ensureAllActive();
 
         this.status = EnrollmentStatus.FINISHED;
         this.finishedAt = Instant.now();
