@@ -19,7 +19,7 @@ public class AssessmentBuilder {
         return this;
     }
 
-    public AssessmentBuilder title(String title) {
+    public AssessmentBuilder withTitle(String title) {
         this.title = title;
         return this;
     }
