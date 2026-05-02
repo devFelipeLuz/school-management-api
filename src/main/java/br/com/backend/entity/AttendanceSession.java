@@ -13,9 +13,9 @@ import java.util.*;
 @Getter
 @Entity
 @Table(name = "attendance_session",
-uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"teaching_assignment_id", "date"})
-    }
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"teaching_assignment_id", "date"})
+        }
 )
 public class AttendanceSession {
 
@@ -47,7 +47,7 @@ public class AttendanceSession {
         ensureActive();
         ensureEnrollmentBelongsToAssignment(enrollment);
 
-        if (isAttendanceIsAlreadyRegistered(enrollment)) {
+        if (isAttendanceAlreadyRegistered(enrollment)) {
             throw new BusinessException("Attendance already registered for this student");
         }
 
@@ -69,8 +69,13 @@ public class AttendanceSession {
         }
     }
 
-    private boolean isAttendanceIsAlreadyRegistered(Enrollment enrollment) {
+    private boolean isAttendanceAlreadyRegistered(Enrollment enrollment) {
         return this.records.stream()
                 .anyMatch(r -> r.getEnrollment().equals(enrollment));
+    }
+
+    public void deactivate() {
+        ensureActive();
+        this.active = false;
     }
 }
