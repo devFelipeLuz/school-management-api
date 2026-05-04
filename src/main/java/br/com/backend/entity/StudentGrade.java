@@ -12,9 +12,9 @@ import java.util.UUID;
 @Getter
 @Entity
 @Table(name = "student_grade",
-uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"enrollment_id", "assessment_id"})
-})
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"enrollment_id", "assessment_id"})
+        })
 public class StudentGrade {
 
     @Id
@@ -49,93 +49,56 @@ public class StudentGrade {
         this.grade = grade;
     }
 
-    private void ensureAssessmentIsNotNullAndIsActive() {
-        if (this.assessment == null) {
-            throw new BusinessException("Assessment cannot be null");
-        }
-
+    private void ensureAssessmentIsActive() {
         if (!this.assessment.isActive()) {
             throw new BusinessException("Assessment is not active");
         }
     }
 
-    private void ensureEnrollmentIsNotNullAndIsActive() {
-        if (this.enrollment == null) {
-            throw new BusinessException("Enrollment cannot be null");
-        }
-
+    private void ensureEnrollmentIsActive() {
         if (!this.enrollment.isActive()) {
             throw new BusinessException("Enrollment is not active");
         }
     }
 
-    private void ensureStudentIsNotNullAndIsActive() {
-        if (this.enrollment.getStudent() == null) {
-            throw new BusinessException("Student cannot be null");
-        }
-
+    private void ensureStudentIsActive() {
         if (!this.enrollment.getStudent().isActive()) {
             throw new BusinessException("Student is not active");
         }
     }
 
-    private void ensureClassroomIsNotNullAndIsActive() {
-        if (this.enrollment.getClassroom() == null) {
-            throw new BusinessException("Classroom cannot be null");
-        }
-
+    private void ensureClassroomIsActive() {
         if (!this.enrollment.getClassroom().isActive()) {
             throw new BusinessException("Classroom is not active");
         }
     }
 
-    private void ensureSchoolYearIsNotNullAndIsActive() {
-        if (this.enrollment.getSchoolYear() == null) {
-            throw new BusinessException("SchoolYear cannot be null");
-        }
-
+    private void ensureSchoolYearIsActive() {
         if (!this.enrollment.getSchoolYear().isActive()) {
             throw new BusinessException("School year is not active");
         }
     }
 
-    private void ensureProfessorIsNotNullAndIsActive() {
-        if (this.assessment.getTeachingAssignment().getProfessor() == null) {
-            throw new BusinessException("Professor cannot be null");
-        }
-
+    private void ensureProfessorIsActive() {
         if (!assessment.getTeachingAssignment().getProfessor().isActive()) {
             throw new BusinessException("Professor is not active");
         }
     }
 
-    private void ensureSubjectIsNotNullAndIsActive() {
-        if (this.assessment.getTeachingAssignment().getSubject() == null) {
-            throw new BusinessException("Subject cannot be null");
-        }
-
+    private void ensureSubjectIsActive() {
         if (!assessment.getTeachingAssignment().getSubject().isActive()) {
             throw new BusinessException("Subject is not active");
         }
     }
 
-    private void ensureSameSchoolYear() {
-        if (!this.enrollment.getSchoolYear().equals(
-                this.assessment.getTeachingAssignment().getClassroom().getSchoolYear())) {
-
-            throw new BusinessException("SchoolYears of the enrollment and assignment are not the same");
-        }
-    }
-
     public void ensureOperational() {
-        ensureAssessmentIsNotNullAndIsActive();
-        ensureEnrollmentIsNotNullAndIsActive();
-        ensureStudentIsNotNullAndIsActive();
-        ensureClassroomIsNotNullAndIsActive();
-        ensureSchoolYearIsNotNullAndIsActive();
-        ensureProfessorIsNotNullAndIsActive();
-        ensureSubjectIsNotNullAndIsActive();
-        ensureSameSchoolYear();
+        ensureAssessmentIsActive();
+        ensureEnrollmentIsActive();
+        ensureStudentIsActive();
+        ensureClassroomIsActive();
+        ensureSchoolYearIsActive();
+        ensureProfessorIsActive();
+        ensureSubjectIsActive();
     }
 
     private void ensureSameClassroom(Assessment assessment, Enrollment enrollment) {

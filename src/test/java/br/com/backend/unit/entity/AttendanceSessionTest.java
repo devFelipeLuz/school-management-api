@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-public class AttendanceTest {
+public class AttendanceSessionTest {
 
     User professorUser;
     User studentUser;
