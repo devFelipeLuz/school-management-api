@@ -167,14 +167,14 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldAllowProfessorToListEnrollments() {
-        StudentData student = studentHelper.createStudentWithData(
+        StudentData studentTest = studentHelper.createStudentWithData(
                 "Alexandre Moreno", "alexandre.moreno@school.com");
 
         SchoolYearData year = schoolYearHelper.createSchoolYearWithData(2030);
-        ClassroomData classroom = classroomHelper.createClassroomWithData(year.getId(), "6.C");
+        ClassroomData classroomTest = classroomHelper.createClassroomWithData(year.getId(), "6.C");
 
         EnrollmentData enrollment =
-                helper.createEnrollment(student, classroom);
+                helper.createEnrollment(studentTest, classroomTest);
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())

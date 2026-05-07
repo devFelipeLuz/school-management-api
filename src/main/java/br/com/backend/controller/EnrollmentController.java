@@ -67,7 +67,7 @@ public class EnrollmentController {
             @RequestParam(required = false)
             EnrollmentStatus status,
 
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
+            @PageableDefault(size = 10, sort = "enrolledAt", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAll(studentName, status, pageable);
     }
