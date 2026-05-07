@@ -1,5 +1,6 @@
 package br.com.backend.service;
 
+import br.com.backend.dto.request.AttendanceRecordCreateRequest;
 import br.com.backend.dto.request.AttendanceSessionCreateRequest;
 import br.com.backend.dto.request.AttendanceRecordUpdateRequest;
 import br.com.backend.dto.request.AttendanceSessionFilter;
@@ -7,7 +8,6 @@ import br.com.backend.dto.response.AttendanceRecordResponseDTO;
 import br.com.backend.dto.response.AttendanceSessionResponseDTO;
 import br.com.backend.entity.AttendanceRecord;
 import br.com.backend.entity.AttendanceSession;
-import br.com.backend.entity.Enrollment;
 import br.com.backend.entity.TeachingAssignment;
 import br.com.backend.entity.enums.AttendanceStatus;
 import br.com.backend.exception.BusinessException;
@@ -22,8 +22,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static br.com.backend.specification.AttendanceRecordSpecification.*;
 import static br.com.backend.specification.AttendanceSessionSpecification.*;
+import static br.com.backend.specification.AttendanceRecordSpecification.*;
 
 import java.util.UUID;
 
@@ -47,7 +47,8 @@ public class AttendanceService {
         this.enrollmentService = enrollmentService;
     }
 
-    public AttendanceSessionResponseDTO register(AttendanceSessionCreateRequest dto) {
+    public AttendanceSessionResponseDTO createSession(AttendanceSessionCreateRequest dto) {
+
         if (sessionRepository.existsByTeachingAssignment_IdAndDate(dto.teachingAssignmentId(), dto.date())) {
             throw new BusinessException("Session already exists");
         }
@@ -55,14 +56,18 @@ public class AttendanceService {
         TeachingAssignment assignment = teachingAssignmentService
                 .findAssignmentById(dto.teachingAssignmentId());
 
-        Enrollment enrollment = enrollmentService
-                .findActiveEnrollmentById(dto.enrollmentId());
-
         AttendanceSession session = new AttendanceSession(assignment, dto.date());
 
-        session.registerAttendance(enrollment, dto.status());
         AttendanceSession saved = sessionRepository.save(session);
         return AttendanceSessionMapper.toDTO(saved);
+    }
+
+    public void registerRecord(UUID sessionId, AttendanceRecordCreateRequest request) {
+        AttendanceSession session = findActiveAttendanceSessionById(sessionId);
+
+        session.registerAttendance(
+                enrollmentService.findActiveEnrollmentById(request.enrollmentId()),
+                request.status());
     }
 
     public Page<AttendanceSessionResponseDTO> listSessions(AttendanceSessionFilter filter, Pageable pageable) {
@@ -76,12 +81,10 @@ public class AttendanceService {
                 .map(AttendanceSessionMapper::toDTO);
     }
 
-    public Page<AttendanceRecordResponseDTO> listRecords(
-            String studentName, String studentEmail, AttendanceStatus status, Pageable pageable) {
-
+    public Page<AttendanceRecordResponseDTO> listRecords(UUID sessionId, String studentName, AttendanceStatus status, Pageable pageable) {
         Specification<AttendanceRecord> spec = Specification
-                .where(withStudentName(studentName))
-                .and(withStudentEmail(studentEmail))
+                .where(withSessionId(sessionId))
+                .and(withStudentName(studentName))
                 .and(withStatus(status));
 
         return recordRepository.findAll(spec, pageable)
@@ -94,20 +97,23 @@ public class AttendanceService {
                 .orElseThrow(() -> new EntityNotFoundException("Attendance Not Found"));
     }
 
-    public AttendanceRecordResponseDTO updateAttendanceRecord(UUID recordId, AttendanceRecordUpdateRequest request) {
-        AttendanceRecord attendanceRecord = findAttendanceRecordById(recordId);
-        attendanceRecord.updateStatus(request.status());
-        return AttendanceRecordMapper.toDTO(attendanceRecord);
+    public AttendanceRecordResponseDTO updateAttendanceRecord(UUID sessionId, UUID recordId, AttendanceRecordUpdateRequest request) {
+        AttendanceSession session = findActiveAttendanceSessionById(sessionId);
+        session.updateAttendance(recordId, request.status());
+
+        return AttendanceRecordMapper.toDTO(findAttendanceRecordById(recordId));
     }
 
-    public void delete(UUID sessionId) {
-        AttendanceSession session = findAttendanceSessionById(sessionId);
-        sessionRepository.delete(session);
+    public void deactivate(UUID sessionId) {
+        AttendanceSession session = findActiveAttendanceSessionById(sessionId);
+        session.deactivate();
     }
 
-    public AttendanceSession findAttendanceSessionById(UUID id) {
-        return sessionRepository.findById(id)
+    public AttendanceSession findActiveAttendanceSessionById(UUID id) {
+        AttendanceSession session = sessionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Attendance session Not Found"));
+        session.ensureActive();
+        return session;
     }
 
     private AttendanceRecord findAttendanceRecordById(UUID id) {

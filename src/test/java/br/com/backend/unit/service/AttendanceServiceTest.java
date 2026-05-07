@@ -42,9 +42,6 @@ public class AttendanceServiceTest {
     private TeachingAssignmentService assignmentService;
 
     @Mock
-    private EnrollmentService enrollmentService;
-
-    @Mock
     private AttendanceSessionRepository repository;
 
     @Mock
@@ -54,7 +51,6 @@ public class AttendanceServiceTest {
     private AttendanceService service;
 
     private UUID assignmentId;
-    private UUID enrollmentId;
     private UUID sessionId;
 
     private AttendanceSessionCreateRequest createRequest;
@@ -66,10 +62,9 @@ public class AttendanceServiceTest {
     @BeforeEach
     void setUp() {
         assignmentId = UUID.randomUUID();
-        enrollmentId = UUID.randomUUID();
         sessionId = UUID.randomUUID();
 
-        createRequest = new AttendanceSessionCreateRequest(assignmentId, LocalDate.now(), enrollmentId, AttendanceStatus.PRESENT);
+        createRequest = new AttendanceSessionCreateRequest(assignmentId, LocalDate.now());
 
         assignment = TeachingAssignmentBuilder.builder().build();
         enrollment = EnrollmentBuilder.builder().build();
@@ -79,7 +74,7 @@ public class AttendanceServiceTest {
     }
 
     @Test
-    void shouldRegisterAttendance() {
+    void shouldCreateSessionAttendance() {
         when(repository.existsByTeachingAssignment_IdAndDate(
                 createRequest.teachingAssignmentId(), createRequest.date()))
                 .thenReturn(false);
@@ -87,13 +82,10 @@ public class AttendanceServiceTest {
         when(assignmentService.findAssignmentById(createRequest.teachingAssignmentId()))
                 .thenReturn(assignment);
 
-        when(enrollmentService.findActiveEnrollmentById(createRequest.enrollmentId()))
-                .thenReturn(enrollment);
-
         when(repository.save(any()))
                 .thenAnswer(i -> i.getArgument(0));
 
-        service.register(createRequest);
+        service.createSession(createRequest);
 
         verify(repository).save(any(AttendanceSession.class));
     }
@@ -113,32 +105,34 @@ public class AttendanceServiceTest {
         AttendanceRecordUpdateRequest request =
                 new AttendanceRecordUpdateRequest(AttendanceStatus.ABSENT);
 
+        when(repository.findById(sessionId)).thenReturn(Optional.of(session));
+
         when(recordRepository.findById(recordId))
                 .thenReturn(Optional.of(attendanceRecord));
 
-        service.updateAttendanceRecord(recordId, request);
+        service.updateAttendanceRecord(sessionId, recordId, request);
 
-        verify(repository).findById(recordId);
+        verify(repository).findById(sessionId);
         assertEquals(AttendanceStatus.ABSENT, attendanceRecord.getStatus());
     }
 
     @Test
-    void shouldDeleteAttendance() {
+    void shouldDeactivateAttendance() {
         when(repository.findById(sessionId))
                 .thenReturn(Optional.of(session));
 
-        service.delete(sessionId);
+        service.deactivate(sessionId);
 
         verify(repository).findById(sessionId);
-        verify(repository).delete(session);
+        assertFalse(session.isActive());
     }
 
     @Test
-    void shouldFindAttendanceSessionById() {
+    void shouldFindActiveAttendanceSessionById() {
         when(repository.findById(sessionId))
                 .thenReturn(Optional.of(session));
 
-        AttendanceSession result = service.findAttendanceSessionById(sessionId);
+        AttendanceSession result = service.findActiveAttendanceSessionById(sessionId);
 
         verify(repository).findById(sessionId);
         assertEquals(session, result);
@@ -151,7 +145,7 @@ public class AttendanceServiceTest {
 
         assertThrows(
                 EntityNotFoundException.class,
-                () -> service.findAttendanceSessionById(sessionId));
+                () -> service.findActiveAttendanceSessionById(sessionId));
     }
 
     @Test
@@ -169,12 +163,11 @@ public class AttendanceServiceTest {
         AttendanceRecordUpdateRequest request =
                 new AttendanceRecordUpdateRequest(null);
 
-        when(recordRepository.findById(recordId))
-                .thenReturn(Optional.of(attendanceRecord));
+        when(repository.findById(sessionId)).thenReturn(Optional.of(session));
 
         assertThrows(
                 BusinessException.class,
-                () -> service.updateAttendanceRecord(recordId, request));
+                () -> service.updateAttendanceRecord(sessionId, recordId, request));
     }
 
     @Test
@@ -184,6 +177,6 @@ public class AttendanceServiceTest {
 
         assertThrows(
                 BusinessException.class,
-                () -> service.register(createRequest));
+                () -> service.createSession(createRequest));
     }
 }

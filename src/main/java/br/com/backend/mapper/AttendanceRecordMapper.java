@@ -14,8 +14,7 @@ public class AttendanceRecordMapper {
         return new AttendanceRecordResponseDTO(
                 record.getId(),
                 record.getEnrollment().getStudent().getName(),
-                record.getStatus().name(),
-                record.getAttendanceSession().getDate()
+                record.getStatus().name()
         );
     }
 }

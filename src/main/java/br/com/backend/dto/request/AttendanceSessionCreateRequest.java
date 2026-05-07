@@ -1,6 +1,5 @@
 package br.com.backend.dto.request;
 
-import br.com.backend.entity.enums.AttendanceStatus;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -11,12 +10,6 @@ public record AttendanceSessionCreateRequest(
         UUID teachingAssignmentId,
 
         @NotNull(message = "date is required")
-        LocalDate date,
-
-        @NotNull(message = "enrollmentID is required")
-        UUID enrollmentId,
-
-        @NotNull(message = "status is required")
-        AttendanceStatus status
+        LocalDate date
 ) {
 }

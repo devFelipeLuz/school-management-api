@@ -57,7 +57,18 @@ public class AttendanceSession {
         records.add(attendanceRecord);
     }
 
-    private void ensureActive() {
+    public void updateAttendance(UUID recordId, AttendanceStatus status) {
+        ensureActive();
+
+        AttendanceRecord record = this.records.stream()
+                .filter(r -> r.getId().equals(recordId))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException("Record not found"));
+
+        record.updateStatus(status);
+    }
+
+    public void ensureActive() {
         if (!this.active) {
             throw new BusinessException("Attendance is not active");
         }

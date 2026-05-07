@@ -5,10 +5,11 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record AttendanceRecordRequest(
+public record AttendanceRecordCreateRequest(
         @NotNull(message = "enrollmentID is required")
         UUID enrollmentId,
 
         @NotNull(message = "status is required")
         AttendanceStatus status
-) {}
+) {
+}

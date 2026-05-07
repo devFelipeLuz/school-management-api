@@ -58,13 +58,13 @@ public class EnrollmentApiTest extends BaseApiTest {
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
-        .when()
+                .when()
                 .post("/enrollments")
-        .then()
+                .then()
                 .statusCode(201)
                 .body("id", notNullValue())
                 .body("studentName", equalTo(student.getName()))
-                .body("schoolYearName", equalTo(schoolYear.getYear()))
+                .body("schoolYear", equalTo(schoolYear.getYear()))
                 .body("classroomName", equalTo(classroom.getName()))
                 .body("status", equalTo(EnrollmentStatus.ACTIVE.name()));
     }
@@ -110,9 +110,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
-        .when()
+                .when()
                 .get("/enrollments/{id}", enrollment.getId())
-        .then()
+                .then()
                 .statusCode(200)
                 .body("id", notNullValue())
                 .body("studentName", equalTo(enrollment.getStudentName()))
@@ -127,9 +127,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
-        .when()
+                .when()
                 .get("/enrollments/{id}", enrollment.getId())
-        .then()
+                .then()
                 .statusCode(200)
                 .body("id", notNullValue())
                 .body("studentName", equalTo(enrollment.getStudentName()))
@@ -144,9 +144,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
-        .when()
+                .when()
                 .get("/enrollments/{id}", enrollment.getId())
-        .then()
+                .then()
                 .statusCode(403);
     }
 
@@ -157,9 +157,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
-        .when()
+                .when()
                 .get("/enrollments")
-        .then()
+                .then()
                 .statusCode(200)
                 .body("content", not(empty()))
                 .body("content.studentName", hasItem(enrollment.getStudentName()));
@@ -167,14 +167,20 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldAllowProfessorToListEnrollments() {
+        StudentData student = studentHelper.createStudentWithData(
+                "Alexandre Moreno", "alexandre.moreno@school.com");
+
+        SchoolYearData year = schoolYearHelper.createSchoolYearWithData(2030);
+        ClassroomData classroom = classroomHelper.createClassroomWithData(year.getId(), "6.C");
+
         EnrollmentData enrollment =
                 helper.createEnrollment(student, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
-        .when()
+                .when()
                 .get("/enrollments")
-        .then()
+                .then()
                 .statusCode(200)
                 .body("content", not(empty()))
                 .body("content.studentName", hasItem(enrollment.getStudentName()));
@@ -195,9 +201,9 @@ public class EnrollmentApiTest extends BaseApiTest {
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .queryParam("studentName", "Guilherme")
-        .when()
+                .when()
                 .get("/enrollments")
-        .then()
+                .then()
                 .statusCode(200)
                 .body("content.studentName", hasItem(enrollment.getStudentName()))
                 .body("content.studentName", not(hasItem(anotherEnrollment.getStudentName())))
@@ -218,17 +224,17 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
-        .when()
+                .when()
                 .patch("/enrollments/{id}/cancel", anotherEnrollment.getId())
-        .then()
+                .then()
                 .statusCode(200);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .queryParam("status", EnrollmentStatus.ACTIVE.name())
-        .when()
+                .when()
                 .get("/enrollments")
-        .then()
+                .then()
                 .statusCode(200)
                 .body("content.studentName", hasItem(enrollment.getStudentName()))
                 .body("content.studentName", not(hasItem(anotherEnrollment.getStudentName())))
@@ -249,18 +255,18 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
-        .when()
+                .when()
                 .patch("/enrollments/{id}/cancel", anotherEnrollment.getId())
-        .then()
+                .then()
                 .statusCode(200);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .queryParam("studentName", "Gilberto")
                 .queryParam("status", EnrollmentStatus.ACTIVE.name())
-        .when()
+                .when()
                 .get("/enrollments")
-        .then()
+                .then()
                 .statusCode(200)
                 .body("content.studentName", hasItem(enrollment.getStudentName()))
                 .body("content.studentName", not(hasItem(anotherEnrollment.getStudentName())))
@@ -271,9 +277,9 @@ public class EnrollmentApiTest extends BaseApiTest {
     void shouldReturnForbiddenWhenStudentListsEnrollments() {
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
-        .when()
+                .when()
                 .get("/enrollments")
-        .then()
+                .then()
                 .statusCode(403);
     }
 
@@ -284,9 +290,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
-        .when()
+                .when()
                 .patch("/enrollments/{id}/finish", enrollment.getId())
-        .then()
+                .then()
                 .statusCode(200)
                 .body("id", notNullValue())
                 .body("status", equalTo(EnrollmentStatus.FINISHED.name()));
@@ -299,9 +305,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
-        .when()
+                .when()
                 .patch("/enrollments/{id}/finish", enrollment.getId())
-        .then()
+                .then()
                 .statusCode(403);
     }
 
@@ -312,9 +318,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
-        .when()
+                .when()
                 .patch("/enrollments/{id}/finish", enrollment.getId())
-        .then()
+                .then()
                 .statusCode(403);
     }
 
@@ -325,9 +331,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
-        .when()
+                .when()
                 .patch("/enrollments/{id}/cancel", enrollment.getId())
-        .then()
+                .then()
                 .statusCode(200)
                 .body("id", notNullValue())
                 .body("status", equalTo(EnrollmentStatus.CANCELED.name()));
@@ -340,9 +346,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
-        .when()
+                .when()
                 .patch("/enrollments/{id}/cancel", enrollment.getId())
-        .then()
+                .then()
                 .statusCode(403);
     }
 
@@ -353,9 +359,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
-        .when()
+                .when()
                 .patch("/enrollments/{id}/cancel", enrollment.getId())
-        .then()
+                .then()
                 .statusCode(403);
     }
 }

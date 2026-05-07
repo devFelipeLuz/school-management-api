@@ -10,5 +10,7 @@ public record AttendanceSessionResponseDTO(
         String subject,
         String classroom,
         LocalDate date,
-        List<AttendanceRecordResponseDTO> students
-) {}
+        List<AttendanceRecordResponseDTO> students,
+        Boolean active
+) {
+}

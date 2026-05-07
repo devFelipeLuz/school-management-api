@@ -94,7 +94,7 @@ public class AssessmentServiceTest {
         service.deactivate(assessmentId);
 
         verify(repository).findById(assessmentId);
-        verify(repository).delete(assessment);
+        assertFalse(assessment.isActive());
     }
 
     @Test

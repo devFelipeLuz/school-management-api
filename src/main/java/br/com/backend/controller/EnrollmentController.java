@@ -28,7 +28,7 @@ public class EnrollmentController {
     }
 
     @Operation(summary = "Create enrollment",
-    description = "Enrolls a student in a classroom for a given school year")
+            description = "Enrolls a student in a classroom for a given school year")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -42,6 +42,17 @@ public class EnrollmentController {
     public EnrollmentResponseDTO getEnrollmentById(
             @PathVariable UUID id) {
         return service.findById(id);
+    }
+
+    @Operation(summary = "Find enrollment by partial or full student's name")
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public Page<EnrollmentResponseDTO> getEnrollmentByStudentName(
+            @RequestParam String student,
+
+            @PageableDefault(size = 5) Pageable pageable
+    ) {
+        return service.searchByStudentName(student, pageable);
     }
 
     @Operation(summary = "List enrollments")

@@ -109,7 +109,7 @@ public class ClassroomServiceTest {
 
     @Test
     void shouldThrowExceptionWhenClassroomIsFull() {
-        ClassroomUpdateRequest updateRequest = new ClassroomUpdateRequest("3.A", 30);
+        ClassroomUpdateRequest updateRequest = new ClassroomUpdateRequest(null, 0);
 
         when(repository.findById(classroomId)).thenReturn(Optional.of(classroom));
 

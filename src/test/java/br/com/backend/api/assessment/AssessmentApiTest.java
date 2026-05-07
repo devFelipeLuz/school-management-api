@@ -8,6 +8,7 @@ import br.com.backend.dto.request.AssessmentUpdateRequest;
 import br.com.backend.entity.enums.AssessmentType;
 import br.com.backend.api.assignment.AssignmentData;
 import br.com.backend.api.authentication.AuthHelper;
+import br.com.backend.repository.TeachingAssignmentRepository;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,9 @@ public class AssessmentApiTest extends BaseApiTest {
     private AssessmentHelper helper;
 
     private AssignmentData assignment;
+
+    @Autowired
+    TeachingAssignmentRepository repository;
 
     @BeforeEach
     public void setup() {
@@ -191,7 +195,7 @@ public class AssessmentApiTest extends BaseApiTest {
 
         AssessmentData anotherAssessment =
                 helper.createAssessmentWithData(
-                        assignment.getId(), "Prova de História", AssessmentType.PROJECT);
+                        assignment.getId(), "Prova de História", AssessmentType.TEST);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -221,6 +225,7 @@ public class AssessmentApiTest extends BaseApiTest {
                 .when()
                 .get("/assessments")
                 .then()
+                .log().body()
                 .statusCode(200)
                 .body("content.title", hasItem(assessment.getTitle()))
                 .body("content.title", not(hasItem(anotherAssessment.getTitle())))
@@ -324,7 +329,7 @@ public class AssessmentApiTest extends BaseApiTest {
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .when()
-                .delete("/assessments/{id}", assessment.getId())
+                .delete("/assessments/{id}/deactivate", assessment.getId())
                 .then()
                 .statusCode(204);
     }
@@ -336,7 +341,7 @@ public class AssessmentApiTest extends BaseApiTest {
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
                 .when()
-                .delete("/assessments/{id}", assessment.getId())
+                .delete("/assessments/{id}/deactivate", assessment.getId())
                 .then()
                 .statusCode(204);
     }
@@ -348,7 +353,7 @@ public class AssessmentApiTest extends BaseApiTest {
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
                 .when()
-                .delete("/assessments/{id}", assessment.getId())
+                .delete("/assessments/{id}/deactivate", assessment.getId())
                 .then()
                 .statusCode(403);
     }

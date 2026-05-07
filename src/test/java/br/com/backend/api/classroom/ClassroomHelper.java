@@ -15,7 +15,7 @@ public class ClassroomHelper {
     private AuthHelper auth;
 
     public ClassroomData createClassroom(UUID schoolYearId) {
-        String name = "Class " +  UUID.randomUUID();
+        String name = "Class " + UUID.randomUUID();
 
         ClassroomCreateRequest request = new ClassroomCreateRequest(name, schoolYearId);
 
@@ -23,9 +23,27 @@ public class ClassroomHelper {
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
-        .when()
+                .when()
                 .post("/classrooms")
-        .then()
+                .then()
+                .log().all()
+                .statusCode(201)
+                .extract()
+                .path("id");
+
+        return new ClassroomData(UUID.fromString(id), name);
+    }
+
+    public ClassroomData createClassroomWithData(UUID schoolYearId, String name) {
+        ClassroomCreateRequest request = new ClassroomCreateRequest(name, schoolYearId);
+
+        String id = given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post("/classrooms")
+                .then()
                 .log().all()
                 .statusCode(201)
                 .extract()

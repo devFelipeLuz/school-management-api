@@ -8,11 +8,11 @@ import br.com.backend.entity.TeachingAssignment;
 import java.util.List;
 
 public class AttendanceSessionMapper {
-    
+
     private AttendanceSessionMapper() {
         throw new IllegalArgumentException("Mapper");
     }
-    
+
     public static AttendanceSessionResponseDTO toDTO(AttendanceSession session) {
         TeachingAssignment assignment = session.getTeachingAssignment();
 
@@ -20,8 +20,7 @@ public class AttendanceSessionMapper {
                 .map(r -> new AttendanceRecordResponseDTO(
                         r.getId(),
                         r.getEnrollment().getStudent().getName(),
-                        r.getStatus().name(),
-                        r.getAttendanceSession().getDate()
+                        r.getStatus().name()
                 ))
                 .toList();
 
@@ -31,7 +30,8 @@ public class AttendanceSessionMapper {
                 assignment.getSubject().getName(),
                 assignment.getClassroom().getName(),
                 session.getDate(),
-                students
+                students,
+                session.isActive()
         );
     }
 }

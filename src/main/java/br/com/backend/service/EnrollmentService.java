@@ -51,11 +51,19 @@ public class EnrollmentService {
                 .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
     }
 
+    public Page<EnrollmentResponseDTO> searchByStudentName(String student, Pageable pageable) {
+        Specification<Enrollment> spec = Specification
+                .where(withStudentName(student));
+
+        return repository.findAll(spec, pageable)
+                .map(EnrollmentMapper::toDTO);
+    }
+
     public Page<EnrollmentResponseDTO> findAll(String studentName, EnrollmentStatus status, Pageable pageable) {
         Specification<Enrollment> spec = Specification
                 .where(withStudentName(studentName))
                 .and(withStatus(status));
-        
+
         return repository.findAll(spec, pageable)
                 .map(EnrollmentMapper::toDTO);
     }

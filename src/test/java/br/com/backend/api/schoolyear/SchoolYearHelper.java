@@ -25,9 +25,27 @@ public class SchoolYearHelper {
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
-        .when()
+                .when()
                 .post("/school-years")
-        .then()
+                .then()
+                .log().all()
+                .statusCode(201)
+                .extract()
+                .path("id");
+
+        return new SchoolYearData(UUID.fromString(id), year);
+    }
+
+    public SchoolYearData createSchoolYearWithData(int year) {
+        SchoolYearRequest request = new SchoolYearRequest(year);
+
+        String id = given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post("/school-years")
+                .then()
                 .log().all()
                 .statusCode(201)
                 .extract()

@@ -1,6 +1,8 @@
 package br.com.backend.specification;
 
 import br.com.backend.entity.Student;
+import br.com.backend.entity.User;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -36,12 +38,14 @@ public class StudentSpecification {
     public static Specification<Student> emailContains(String email) {
         return (root, query, cb) -> {
 
+            Join<Student, User> userJoin = root.join("user");
+
             if (email == null || email.isBlank()) {
                 return null;
             }
 
             return cb.like(
-                    cb.lower(root.get("email")),
+                    cb.lower(userJoin.get("email")),
                     "%" + email + "%"
             );
         };

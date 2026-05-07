@@ -10,8 +10,20 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class AttendanceRecordSpecification {
+
+    public static Specification<AttendanceRecord> withSessionId(UUID sessionId) {
+        return (root, query, cb) -> {
+
+            if (sessionId == null) {
+                return null;
+            }
+
+            return cb.equal(root.get("attendanceSession").get("id"), sessionId);
+        };
+    }
 
     public static Specification<AttendanceRecord> withStudentName(String name) {
         return (root, query, cb) -> {
@@ -40,7 +52,7 @@ public class AttendanceRecordSpecification {
             if (AttendanceRecord.class.equals(query.getResultType())) {
                 root.fetch("enrollment", JoinType.LEFT)
                         .fetch("student", JoinType.LEFT)
-                        .fetch("email", JoinType.LEFT);
+                        .fetch("user", JoinType.LEFT);
             }
 
             if (email == null || email.isBlank()) {
@@ -81,6 +93,4 @@ public class AttendanceRecordSpecification {
 
         return cb.and(predicates.toArray(Predicate[]::new));
     }
-
-
 }
