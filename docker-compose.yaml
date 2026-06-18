@@ -24,7 +24,7 @@ services:
       - postgres
 
     environment:
-      DATABASE_URL: jdbc:postgresql://postgres-dev:5432/school
+      DATABASE_URL: jdbc:postgresql://postgres:5432/school
       SPRING_PROFILES_ACTIVE: dev
 
     ports:
